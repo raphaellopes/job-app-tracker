@@ -26,7 +26,7 @@ export function SearchInput() {
   };
 
   return (
-    <div className="relative mb-6">
+    <div className="relative flex-1">
       <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
         <svg
           className="w-4 h-4 text-gray-500"

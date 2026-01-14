@@ -2,10 +2,11 @@ import Link from 'next/link';
 import { createJob, getJobs, updateJob } from '../actions/jobs';
 import { DeleteJobButton } from '../components/DeleteJobButton';
 import { SearchInput } from '../components/SearchInput';
+import { StatusFilter } from '../components/StatusFilter';
 
-export default async function Home(props: { searchParams: Promise<{ edit?: string; search?: string }> }) {
+export default async function Home(props: { searchParams: Promise<{ edit?: string; search?: string; status?: string }> }) {
   const searchParams = await props.searchParams;
-  const jobs = await getJobs(searchParams.search);
+  const jobs = await getJobs(searchParams.search, searchParams.status);
   const jobToEdit = searchParams.edit ? jobs.find((j) => j.id === Number(searchParams.edit)) : null;
 
   return (
@@ -45,7 +46,10 @@ export default async function Home(props: { searchParams: Promise<{ edit?: strin
       {/* Job List */}
       <div className="space-y-4">
         <h2 className="text-2xl font-bold">Your Jobs</h2>
-        <SearchInput />
+        <div className="flex gap-4 mb-6">
+          <SearchInput />
+          <StatusFilter />
+        </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {jobs.map((job) => (
             <div key={job.id} className="border p-4 rounded-lg shadow-sm bg-white group">
