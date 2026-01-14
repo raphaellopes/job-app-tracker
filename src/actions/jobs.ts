@@ -4,7 +4,7 @@ import { db } from '../db';
 import { jobs } from '../db/schema';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { desc, eq } from 'drizzle-orm';
+import { desc, eq, ilike } from 'drizzle-orm';
 
 const createJobSchema = z.object({
   companyName: z.string().min(1, 'Company name is required'),
@@ -43,7 +43,14 @@ export async function createJob(formData: FormData) {
   revalidatePath('/');
 }
 
-export async function getJobs() {
+export async function getJobs(search?: string) {
+  if (search) {
+    return await db
+      .select()
+      .from(jobs)
+      .where(ilike(jobs.companyName, `%${search}%`))
+      .orderBy(desc(jobs.createdAt));
+  }
   return await db.select().from(jobs).orderBy(desc(jobs.createdAt));
 }
 
