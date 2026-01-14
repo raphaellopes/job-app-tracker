@@ -1,4 +1,4 @@
-import { createJob } from './actions';
+import { createJob } from '../actions/jobs';
 
 export default function Home() {
   return (
