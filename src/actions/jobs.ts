@@ -4,7 +4,7 @@ import { db } from '../db';
 import { jobs } from '../db/schema';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { desc } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 
 const createJobSchema = z.object({
   companyName: z.string().min(1, 'Company name is required'),
@@ -45,4 +45,14 @@ export async function createJob(formData: FormData) {
 
 export async function getJobs() {
   return await db.select().from(jobs).orderBy(desc(jobs.createdAt));
+}
+
+export async function deleteJob(formData: FormData) {
+  const id = Number(formData.get('id'));
+
+  if (!id) return;
+
+  await db.delete(jobs).where(eq(jobs.id, id));
+
+  revalidatePath('/');
 }
