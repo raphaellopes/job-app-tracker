@@ -3,10 +3,11 @@ import { createJob, getJobs, updateJob } from '../actions/jobs';
 import { DeleteJobButton } from '../components/DeleteJobButton';
 import { SearchInput } from '../components/SearchInput';
 import { StatusFilter } from '../components/StatusFilter';
+import { SortSelect } from '../components/SortSelect';
 
-export default async function Home(props: { searchParams: Promise<{ edit?: string; search?: string; status?: string }> }) {
+export default async function Home(props: { searchParams: Promise<{ edit?: string; search?: string; status?: string; sort?: string }> }) {
   const searchParams = await props.searchParams;
-  const jobs = await getJobs(searchParams.search, searchParams.status);
+  const jobs = await getJobs(searchParams.search, searchParams.status, searchParams.sort);
   const jobToEdit = searchParams.edit ? jobs.find((j) => j.id === Number(searchParams.edit)) : null;
 
   return (
@@ -49,6 +50,7 @@ export default async function Home(props: { searchParams: Promise<{ edit?: strin
         <div className="flex gap-4 mb-6">
           <SearchInput />
           <StatusFilter />
+          <SortSelect />
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {jobs.map((job) => (
