@@ -56,3 +56,26 @@ export async function deleteJob(formData: FormData) {
 
   revalidatePath('/');
 }
+
+export async function updateJob(formData: FormData) {
+  const id = Number(formData.get('id'));
+
+  if (!id) return;
+
+  const validatedFields = createJobSchema.safeParse({
+    companyName: formData.get('companyName'),
+    position: formData.get('position'),
+    status: formData.get('status'),
+    salaryRange: formData.get('salaryRange'),
+    notes: formData.get('notes'),
+  });
+
+  if (!validatedFields.success) {
+    console.error('Validation Errors:', validatedFields.error.flatten().fieldErrors);
+    return;
+  }
+
+  await db.update(jobs).set(validatedFields.data).where(eq(jobs.id, id));
+
+  revalidatePath('/');
+}

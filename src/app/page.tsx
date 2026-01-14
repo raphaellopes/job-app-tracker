@@ -1,7 +1,10 @@
-import { createJob, getJobs, deleteJob } from '../actions/jobs';
+import Link from 'next/link';
+import { createJob, getJobs, deleteJob, updateJob } from '../actions/jobs';
 
-export default async function Home() {
+export default async function Home(props: { searchParams: Promise<{ edit?: string }> }) {
+  const searchParams = await props.searchParams;
   const jobs = await getJobs();
+  const jobToEdit = searchParams.edit ? jobs.find((j) => j.id === Number(searchParams.edit)) : null;
 
   return (
     <main className="max-w-5xl mx-auto p-10">
@@ -9,23 +12,31 @@ export default async function Home() {
       
       {/* Temporary Form to Test Server Action */}
       <div className="border p-4 rounded-lg mb-8">
-        <h2 className="font-semibold mb-4">Add New Job</h2>
-        <form action={createJob} className="flex flex-col gap-4 max-w-md">
-          <input name="companyName" placeholder="Company Name" className="border p-2 rounded" required />
-          <input name="position" placeholder="Position" className="border p-2 rounded" required />
-          <select name="status" className="border p-2 rounded">
+        <h2 className="font-semibold mb-4">{jobToEdit ? 'Edit Job' : 'Add New Job'}</h2>
+        <form action={jobToEdit ? updateJob : createJob} className="flex flex-col gap-4 max-w-md">
+          {jobToEdit && <input type="hidden" name="id" value={jobToEdit.id} />}
+          <input name="companyName" defaultValue={jobToEdit?.companyName} placeholder="Company Name" className="border p-2 rounded" required />
+          <input name="position" defaultValue={jobToEdit?.position} placeholder="Position" className="border p-2 rounded" required />
+          <select name="status" defaultValue={jobToEdit?.status} className="border p-2 rounded">
             <option value="WISHLIST">Wishlist</option>
             <option value="APPLIED">Applied</option>
             <option value="INTERVIEWING">Interviewing</option>
             <option value="OFFER">Offer</option>
             <option value="REJECTED">Rejected</option>
           </select>
-          <input name="salaryRange" placeholder="Salary Range" className="border p-2 rounded" />
-          <textarea name="notes" placeholder="Notes" className="border p-2 rounded" />
+          <input name="salaryRange" defaultValue={jobToEdit?.salaryRange || ''} placeholder="Salary Range" className="border p-2 rounded" />
+          <textarea name="notes" defaultValue={jobToEdit?.notes || ''} placeholder="Notes" className="border p-2 rounded" />
           
-          <button type="submit" className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
-            Add Job
-          </button>
+          <div className="flex gap-2">
+            <button type="submit" className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
+              {jobToEdit ? 'Update Job' : 'Add Job'}
+            </button>
+            {jobToEdit && (
+              <Link href="/" className="bg-gray-500 text-white p-2 rounded hover:bg-gray-600">
+                Cancel
+              </Link>
+            )}
+          </div>
         </form>
       </div>
 
@@ -41,7 +52,12 @@ export default async function Home() {
                   <span className="text-xs font-medium px-2 py-1 bg-gray-100 rounded-full text-gray-400">
                     {job.status}
                   </span>
-                  <form action={deleteJob} className="hidden group-hover:block">
+                  <Link href={`/?edit=${job.id}`} className="hidden group-hover:block text-gray-400 hover:text-blue-500 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                    </svg>
+                  </Link>
+                  <form action={deleteJob} className="hidden group-hover:flex">
                     <input type="hidden" name="id" value={job.id} />
                     <button type="submit" className="text-gray-400 hover:text-red-500 transition-colors">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
