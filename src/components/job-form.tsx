@@ -28,11 +28,9 @@ export function JobForm({ job }: JobFormProps) {
           <button type="submit" className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
             {job ? 'Update Job' : 'Add Job'}
           </button>
-          {job && (
-            <Link href="/" className="bg-gray-500 text-white p-2 rounded hover:bg-gray-600">
-              Cancel
-            </Link>
-          )}
+          <Link href="/" className="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 text-center">
+            Cancel
+          </Link>
         </div>
       </form>
     </div>

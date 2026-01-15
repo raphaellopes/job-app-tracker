@@ -3,6 +3,7 @@
 import { db } from '../db';
 import { jobs } from '../db/schema';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { desc, eq, ilike, and, asc } from 'drizzle-orm';
 
@@ -41,6 +42,9 @@ export async function createJob(formData: FormData) {
 
   // 4. Revalidate the cache so the UI updates immediately
   revalidatePath('/');
+  
+  // 5. Redirect to close the form
+  redirect('/');
 }
 
 export async function getJobs(search?: string, status?: string, sort?: string) {
@@ -95,4 +99,7 @@ export async function updateJob(formData: FormData) {
   await db.update(jobs).set(validatedFields.data).where(eq(jobs.id, id));
 
   revalidatePath('/');
+  
+  // Redirect to close the form
+  redirect('/');
 }

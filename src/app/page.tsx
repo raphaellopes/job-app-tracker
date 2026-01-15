@@ -4,17 +4,24 @@ import { StatusFilter } from '@/components/status-filter';
 import { SortSelect } from '@/components/sort-select';
 import { JobCard } from '@/components/job-card';
 import { JobForm } from '@/components/job-form';
+import { AddJobButton } from '@/components/add-job-button';
 
-export default async function Home(props: { searchParams: Promise<{ edit?: string; search?: string; status?: string; sort?: string }> }) {
+export default async function Home(props: { searchParams: Promise<{ edit?: string; add?: string; search?: string; status?: string; sort?: string }> }) {
   const searchParams = await props.searchParams;
   const jobs = await getJobs(searchParams.search, searchParams.status, searchParams.sort);
   const jobToEdit = searchParams.edit ? jobs.find((j) => j.id === Number(searchParams.edit)) : null;
+  const isAdding = searchParams.add === 'true';
+  const isEditing = !!searchParams.edit;
+  const showForm = isAdding || isEditing;
 
   return (
     <main className="max-w-5xl mx-auto p-10">
-      <h1 className="text-3xl font-bold mb-6">Job Application Tracker</h1>
+      <div className="flex items-center gap-3 mb-6">
+        <h1 className="flex-1 text-3xl font-bold">Job Application Tracker</h1>
+        <AddJobButton isDisabled={isEditing || isAdding} />
+      </div>
       
-      <JobForm job={jobToEdit} />
+      {showForm && <JobForm job={jobToEdit} />}
 
       {/* Job List */}
       <div className="space-y-4">

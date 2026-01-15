@@ -1,0 +1,34 @@
+import Link from 'next/link';
+import { PlusIcon } from '@/components/icons/plus-icon';
+
+interface AddJobButtonProps {
+  isDisabled?: boolean;
+}
+
+const baseStyles = "flex items-center justify-center w-8 h-8 rounded-full transition-colors";
+const enabledStyles = "bg-blue-600 text-white hover:bg-blue-700";
+const disabledStyles = "bg-gray-400 text-white cursor-not-allowed opacity-50";
+
+export function AddJobButton({ isDisabled = false }: AddJobButtonProps) {
+  if (isDisabled) {
+    return (
+      <button
+        disabled
+        className={`${baseStyles} ${disabledStyles}`}
+        aria-label="Add new job (disabled while editing)"
+      >
+        <PlusIcon />
+      </button>
+    );
+  }
+
+  return (
+    <Link
+      href="/?add=true"
+      className={`${baseStyles} ${enabledStyles}`}
+      aria-label="Add new job"
+    >
+      <PlusIcon />
+    </Link>
+  );
+}
