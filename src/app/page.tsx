@@ -1,4 +1,4 @@
-import { getJobs } from '../actions/jobs';
+import { getJobs } from '@/actions/jobs';
 import { SearchInput } from '@/components/search-input';
 import { StatusFilter } from '@/components/status-filter';
 import { SortSelect } from '@/components/sort-select';

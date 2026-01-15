@@ -1,8 +1,12 @@
 'use client';
 
-import { deleteJob } from '../actions/jobs';
+import { deleteJob } from '@/actions/jobs';
 
-export function DeleteJobButton({ id }: { id: number }) {
+interface DeleteJobButtonProps {
+  id: number;
+}
+
+export function DeleteJobButton({ id }: DeleteJobButtonProps) {
   return (
     <form
       action={deleteJob}
