@@ -15,9 +15,10 @@ export default async function Home(props: { searchParams: Promise<{ edit?: strin
   const showForm = isAdding || isEditing;
 
   return (
-    <main className="max-w-5xl mx-auto p-10">
+    <main className="p-10">
       <Header 
-        title="Job Application Tracker" 
+        title="Dashboard" 
+        subtitle="Welcome to your job application tracker"
         addButtonDisabled={isEditing || isAdding}
       />
       
