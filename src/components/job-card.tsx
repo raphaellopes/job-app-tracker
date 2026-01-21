@@ -7,7 +7,7 @@ export function JobCard({ job }: { job: Job }) {
   return (
     <div className="border p-4 rounded-lg shadow-sm bg-white group">
       <div className="flex justify-between items-start mb-2">
-        <h3 className="font-bold text-lg text-gray-800">{job.companyName}</h3>
+        <h3 className="font-bold text-lg text-gray-800 truncate">{job.companyName}</h3>
         <div className="flex items-center gap-2">
           <span className="text-xs font-medium px-2 py-1 bg-gray-100 rounded-full text-gray-400">
             {job.status}
