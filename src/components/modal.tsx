@@ -21,7 +21,7 @@ export function Modal({ title, onClose, children }: ModalProps) {
           <h2 className="text-xl font-semibold">{title}</h2>
           <button
             onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded transition-colors"
+            className="p-1 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
             aria-label="Close modal"
           >
             <CloseIcon />

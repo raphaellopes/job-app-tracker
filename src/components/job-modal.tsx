@@ -44,7 +44,7 @@ export function JobModal({ job }: JobModalProps) {
 
   return (
     <Modal title={title} onClose={handleClose}>
-      <JobForm job={job || undefined} returnPath={pathname} />
+      <JobForm job={job} />
     </Modal>
   );
 }
