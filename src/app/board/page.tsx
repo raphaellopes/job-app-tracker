@@ -7,7 +7,11 @@ import { Header } from '@/components/header';
 import { getFormState } from '@/utils/form-state';
 import { JobModal } from '@/components/modals/job-modal';
 
-export default async function Board(props: { searchParams: Promise<{ edit?: string; add?: string; search?: string; status?: string; sort?: string }> }) {
+interface BoardProps {
+  searchParams: Promise<{ edit?: string; add?: string; search?: string; status?: string; sort?: string }>;
+}
+
+export default async function Board(props: BoardProps) {
   const searchParams = await props.searchParams;
   const { isAdding, isEditing } = getFormState(searchParams);
   const jobs = await getJobs(searchParams.search, searchParams.status, searchParams.sort);
@@ -25,7 +29,6 @@ export default async function Board(props: { searchParams: Promise<{ edit?: stri
 
       {/* Job List */}
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold">Your Jobs</h2>
         <div className="flex gap-4 mb-6">
           <SearchInput />
           <StatusFilter />
