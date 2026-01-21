@@ -5,7 +5,7 @@ import { SortSelect } from '@/components/sort-select';
 import { JobCard } from '@/components/job-card';
 import { Header } from '@/components/header';
 import { getFormState } from '@/utils/form-state';
-import { JobModal } from '@/components/job-modal';
+import { JobModal } from '@/components/modals/job-modal';
 
 export default async function Board(props: { searchParams: Promise<{ edit?: string; add?: string; search?: string; status?: string; sort?: string }> }) {
   const searchParams = await props.searchParams;

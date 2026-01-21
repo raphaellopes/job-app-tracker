@@ -1,6 +1,6 @@
 'use client';
 
-import { Modal } from '@/components/modal';
+import { Modal } from '@/components/modals/modal';
 import { JobForm } from '@/components/job-form';
 import { Job } from '@/db/schema';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';

@@ -1,5 +1,5 @@
 import { Header } from '@/components/header';
-import { JobModal } from '@/components/job-modal';
+import { JobModal } from '@/components/modals/job-modal';
 import { getFormState } from '@/utils/form-state';
 
 export default async function Dashboard(props: { searchParams: Promise<{ edit?: string; add?: string }> }) {
