@@ -8,8 +8,8 @@ interface AddJobButtonProps {
   isDisabled?: boolean;
 }
 
-const baseStyles = "flex items-center justify-center w-8 h-8 rounded-full transition-colors";
-const enabledStyles = "bg-blue-600 text-white hover:bg-blue-700";
+const baseStyles = "flex items-center justify-center w-8 h-8 !rounded-full transition-colors";
+const enabledStyles = "button-primary";
 const disabledStyles = "bg-gray-400 text-white cursor-not-allowed opacity-50";
 
 export function AddJobButton({ isDisabled = false }: AddJobButtonProps) {

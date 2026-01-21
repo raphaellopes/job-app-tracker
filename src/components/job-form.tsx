@@ -23,7 +23,7 @@ export function JobForm({ job }: JobFormProps) {
         <textarea name="notes" defaultValue={job?.notes || ''} placeholder="Notes" className="border p-2 rounded" />
         
         <div className="flex">
-          <button type="submit" className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 w-full">
+          <button type="submit" className="button-primary w-full">
             {job ? 'Update Job' : 'Add Job'}
           </button>
         </div>
