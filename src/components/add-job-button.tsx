@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { PlusIcon } from '@/components/icons/plus-icon';
 
 interface AddJobButtonProps {
@@ -10,6 +13,8 @@ const enabledStyles = "bg-blue-600 text-white hover:bg-blue-700";
 const disabledStyles = "bg-gray-400 text-white cursor-not-allowed opacity-50";
 
 export function AddJobButton({ isDisabled = false }: AddJobButtonProps) {
+  const pathname = usePathname();
+
   if (isDisabled) {
     return (
       <button
@@ -24,7 +29,7 @@ export function AddJobButton({ isDisabled = false }: AddJobButtonProps) {
 
   return (
     <Link
-      href="/?add=true"
+      href={`${pathname}?add=true`}
       className={`${baseStyles} ${enabledStyles}`}
       aria-label="Add new job"
     >

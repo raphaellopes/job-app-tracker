@@ -40,11 +40,15 @@ export async function createJob(formData: FormData) {
     notes: validatedFields.data.notes,
   });
 
-  // 4. Revalidate the cache so the UI updates immediately
+  // 4. Get return path or default to /board
+  const returnPath = formData.get('returnPath')?.toString() || '/board';
+
+  // 5. Revalidate the cache so the UI updates immediately
   revalidatePath('/');
+  revalidatePath('/board');
   
-  // 5. Redirect to close the form
-  redirect('/');
+  // 6. Redirect to close the form
+  redirect(returnPath);
 }
 
 export async function getJobs(search?: string, status?: string, sort?: string) {
@@ -98,8 +102,12 @@ export async function updateJob(formData: FormData) {
 
   await db.update(jobs).set(validatedFields.data).where(eq(jobs.id, id));
 
+  // Get return path or default to /board
+  const returnPath = formData.get('returnPath')?.toString() || '/board';
+
   revalidatePath('/');
+  revalidatePath('/board');
   
   // Redirect to close the form
-  redirect('/');
+  redirect(returnPath);
 }

@@ -12,7 +12,7 @@ export function JobCard({ job }: { job: Job }) {
           <span className="text-xs font-medium px-2 py-1 bg-gray-100 rounded-full text-gray-400">
             {job.status}
           </span>
-          <Link href={`/?edit=${job.id}`} className="hidden group-hover:block text-gray-400 hover:text-blue-500 transition-colors">
+          <Link href={`/board?edit=${job.id}`} className="hidden group-hover:block text-gray-400 hover:text-blue-500 transition-colors">
             <EditIcon className="w-4 h-4" />
           </Link>
           <DeleteJobButton id={job.id} />

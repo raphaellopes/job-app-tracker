@@ -4,13 +4,15 @@ import { createJob, updateJob } from '@/actions/jobs';
 
 interface JobFormProps {
   job?: Job | null | undefined;
+  returnPath?: string;
 }
 
-export function JobForm({ job }: JobFormProps) {
+export function JobForm({ job, returnPath = '/' }: JobFormProps) {
   return (
     <div className="border p-4 rounded-lg mb-8">
       <h2 className="font-semibold mb-4">{job ? 'Edit Job' : 'Add New Job'}</h2>
       <form action={job ? updateJob : createJob} className="flex flex-col gap-4 max-w-md">
+        <input type="hidden" name="returnPath" value={returnPath} />
         {job && <input type="hidden" name="id" value={job.id} />}
         <input name="companyName" defaultValue={job?.companyName} placeholder="Company Name" className="border p-2 rounded" required />
         <input name="position" defaultValue={job?.position} placeholder="Position" className="border p-2 rounded" required />
@@ -28,7 +30,7 @@ export function JobForm({ job }: JobFormProps) {
           <button type="submit" className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700">
             {job ? 'Update Job' : 'Add Job'}
           </button>
-          <Link href="/" className="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 text-center">
+          <Link href={returnPath} className="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 text-center">
             Cancel
           </Link>
         </div>
