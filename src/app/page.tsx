@@ -1,10 +1,10 @@
 import { Header } from '@/components/header';
-import { JobForm } from '@/components/job-form';
+import { JobModal } from '@/components/job-modal';
 import { getFormState } from '@/utils/form-state';
 
 export default async function Dashboard(props: { searchParams: Promise<{ edit?: string; add?: string }> }) {
   const searchParams = await props.searchParams;
-  const { isAdding, isEditing, showForm } = getFormState(searchParams);
+  const { isAdding, isEditing } = getFormState(searchParams);
 
   return (
     <main className="p-10">
@@ -14,7 +14,7 @@ export default async function Dashboard(props: { searchParams: Promise<{ edit?: 
         addButtonDisabled={isEditing || isAdding}
       />
       
-      {showForm && <JobForm returnPath="/" />}
+      <JobModal />
 
       {/* Mocked Dashboard Content */}
       <div className="space-y-6">

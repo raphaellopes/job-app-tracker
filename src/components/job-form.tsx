@@ -9,8 +9,7 @@ interface JobFormProps {
 
 export function JobForm({ job, returnPath = '/' }: JobFormProps) {
   return (
-    <div className="border p-4 rounded-lg mb-8">
-      <h2 className="font-semibold mb-4">{job ? 'Edit Job' : 'Add New Job'}</h2>
+    <div className="">
       <form action={job ? updateJob : createJob} className="flex flex-col gap-4 max-w-md">
         <input type="hidden" name="returnPath" value={returnPath} />
         {job && <input type="hidden" name="id" value={job.id} />}

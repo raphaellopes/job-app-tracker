@@ -3,15 +3,15 @@ import { SearchInput } from '@/components/search-input';
 import { StatusFilter } from '@/components/status-filter';
 import { SortSelect } from '@/components/sort-select';
 import { JobCard } from '@/components/job-card';
-import { JobForm } from '@/components/job-form';
 import { Header } from '@/components/header';
 import { getFormState } from '@/utils/form-state';
+import { JobModal } from '@/components/job-modal';
 
 export default async function Board(props: { searchParams: Promise<{ edit?: string; add?: string; search?: string; status?: string; sort?: string }> }) {
   const searchParams = await props.searchParams;
-  const { isAdding, isEditing, showForm } = getFormState(searchParams);
+  const { isAdding, isEditing } = getFormState(searchParams);
   const jobs = await getJobs(searchParams.search, searchParams.status, searchParams.sort);
-  const jobToEdit = searchParams.edit ? jobs.find((j) => j.id === Number(searchParams.edit)) : null;
+  const jobToEdit = searchParams.edit ? jobs.find((j) => j.id === Number(searchParams.edit)) : undefined;
 
   return (
     <main className="p-10">
@@ -21,7 +21,7 @@ export default async function Board(props: { searchParams: Promise<{ edit?: stri
         addButtonDisabled={isEditing || isAdding}
       />
       
-      {showForm && <JobForm job={jobToEdit} returnPath="/board" />}
+      <JobModal job={jobToEdit} />
 
       {/* Job List */}
       <div className="space-y-4">
