@@ -7,10 +7,14 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { desc, eq, ilike, and, asc } from 'drizzle-orm';
 
+const JobStatus = z.enum(['WISHLIST', 'APPLIED', 'INTERVIEWING', 'OFFER', 'REJECTED']);
+export type JobStatusType = z.infer<typeof JobStatus>;
+
+
 const createJobSchema = z.object({
   companyName: z.string().min(1, 'Company name is required'),
   position: z.string().min(1, 'Position is required'),
-  status: z.enum(['WISHLIST', 'APPLIED', 'INTERVIEWING', 'OFFER', 'REJECTED']),
+  status: JobStatus,
   salaryRange: z.string().optional(),
   notes: z.string().optional(),
 });
@@ -54,7 +58,7 @@ export async function createJob(formData: FormData) {
 export async function getJobs(search?: string, status?: string, sort?: string) {
   const filters = [];
   if (search) filters.push(ilike(jobs.companyName, `%${search}%`));
-  if (status) filters.push(eq(jobs.status, status as any));
+  if (status) filters.push(eq(jobs.status, status as JobStatusType));
 
   let orderBy = desc(jobs.createdAt);
   if (sort === 'date-asc') {

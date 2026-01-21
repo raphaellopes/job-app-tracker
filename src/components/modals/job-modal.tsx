@@ -4,7 +4,6 @@ import { Modal } from '@/components/modals/modal';
 import { JobForm } from '@/components/job-form';
 import { Job } from '@/db/schema';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 
 interface JobModalProps {
   job?: Job;
@@ -14,21 +13,10 @@ export function JobModal({ job }: JobModalProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [isOpen, setIsOpen] = useState(false);
+  const addParam = searchParams.get('add');
+  const editParam = searchParams.get('edit');
   const isEditing = !!job;
-
-  useEffect(() => {
-    const addParam = searchParams.get('add');
-    const editParam = searchParams.get('edit');
-
-    if (addParam === 'true') {
-      setIsOpen(true);
-    } else if (editParam && job) {
-      setIsOpen(true);
-    } else {
-      setIsOpen(false);
-    }
-  }, [searchParams, job]);
+  const isOpen = addParam === 'true' || (editParam && job);
 
   const handleClose = () => {
     const newSearchParams = new URLSearchParams(searchParams.toString());
