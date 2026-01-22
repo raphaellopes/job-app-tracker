@@ -112,27 +112,29 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
     >
-      <div className="flex gap-4 overflow-x-auto pb-4">
-        {STATUSES.map((status) => {
-          const columnJobs = jobsByStatus[status];
-          return (
-            <SortableContext
-              key={status}
-              items={columnJobs.map((job) => job.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <KanbanColumn
-                status={status}
-                jobs={columnJobs}
-              />
-            </SortableContext>
-          );
-        })}
+      <div className="w-full overflow-x-auto pb-4 -mx-2 px-2 pt-2 scroll-smooth">
+        <div className="flex gap-4 min-w-max">
+          {STATUSES.map((status) => {
+            const columnJobs = jobsByStatus[status];
+            return (
+              <SortableContext
+                key={status}
+                items={columnJobs.map((job) => job.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <KanbanColumn
+                  status={status}
+                  jobs={columnJobs}
+                />
+              </SortableContext>
+            );
+          })}
+        </div>
       </div>
 
       <DragOverlay>
         {activeJob ? (
-          <div className="rotate-3 opacity-90">
+          <div className="rotate-3 opacity-90 shadow-lg transition-transform">
             <JobCard job={activeJob} />
           </div>
         ) : null}

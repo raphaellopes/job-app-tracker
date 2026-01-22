@@ -18,7 +18,7 @@ export default async function Board(props: BoardProps) {
   const jobToEdit = searchParams.edit ? jobs.find((j) => j.id === Number(searchParams.edit)) : undefined;
 
   return (
-    <main className="p-10">
+    <main className="p-4 sm:p-6 lg:p-10 h-screen !pb-0 flex flex-col">
       <Header 
         title="Board" 
         subtitle="Manage and view all your job applications"
@@ -28,13 +28,15 @@ export default async function Board(props: BoardProps) {
       <JobModal job={jobToEdit} />
 
       {/* Kanban Board */}
-      <div className="space-y-4">
-        <div className="flex gap-4 mb-6">
+      <div className="space-y-4 flex-1 flex flex-col">
+        <div className="flex flex-wrap gap-4 mb-6">
           <SearchInput />
           <StatusFilter />
           <SortSelect />
         </div>
-        <KanbanBoard jobs={jobs} />
+        <div className="w-full flex flex-1">
+          <KanbanBoard jobs={jobs} />
+        </div>
       </div>
     </main>
   );
