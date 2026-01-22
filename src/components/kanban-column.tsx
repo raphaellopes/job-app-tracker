@@ -1,3 +1,6 @@
+'use client';
+
+import { useDroppable } from '@dnd-kit/core';
 import { Job } from '@/db/schema';
 import { JobStatusType } from '@/actions/jobs';
 import { JobCard } from '@/components/job-card';
@@ -14,11 +17,20 @@ function formatStatusName(status: JobStatusType): string {
 }
 
 export function KanbanColumn({ status, jobs, onAddClick }: KanbanColumnProps) {
+  const { setNodeRef, isOver } = useDroppable({
+    id: status,
+  });
+
   const formattedStatus = formatStatusName(status);
   const jobCount = jobs.length;
 
   return (
-    <div className="flex flex-col h-full w-80 bg-gray-50 rounded-lg border border-gray-200">
+    <div
+      ref={setNodeRef}
+      className={`flex flex-col h-full w-80 bg-gray-50 rounded-lg border-2 transition-colors ${
+        isOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200'
+      }`}
+    >
       {/* Column Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white rounded-t-lg">
         <div className="flex items-center gap-2">
