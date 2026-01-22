@@ -60,20 +60,31 @@ export async function getJobs(search?: string, status?: string, sort?: string) {
   if (search) filters.push(ilike(jobs.companyName, `%${search}%`));
   if (status) filters.push(eq(jobs.status, status as JobStatusType));
 
-  let orderBy = desc(jobs.createdAt);
+  // Base ordering: status -> position (asc) -> createdAt (desc)
+  const orderBy = [
+    asc(jobs.status),
+    asc(jobs.position),
+  ];
+
+  // Apply custom sort if specified (replaces createdAt fallback)
   if (sort === 'date-asc') {
-    orderBy = asc(jobs.createdAt);
+    orderBy.push(asc(jobs.createdAt));
+  } else if (sort === 'date-desc') {
+    orderBy.push(desc(jobs.createdAt));
   } else if (sort === 'salary-desc') {
-    orderBy = desc(jobs.salaryRange);
+    orderBy.push(desc(jobs.salaryRange));
   } else if (sort === 'salary-asc') {
-    orderBy = asc(jobs.salaryRange);
+    orderBy.push(asc(jobs.salaryRange));
+  } else {
+    // Default fallback: createdAt (desc)
+    orderBy.push(desc(jobs.createdAt));
   }
 
   return await db
     .select()
     .from(jobs)
     .where(and(...filters))
-    .orderBy(orderBy);
+    .orderBy(...orderBy);
 }
 
 export async function deleteJob(formData: FormData) {
