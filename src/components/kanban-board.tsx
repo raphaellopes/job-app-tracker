@@ -86,32 +86,54 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
     // Check if the job is being moved within the same column (same status)
     if (draggedJob.status === newStatus) {
       // Same column: reorder jobs within the column
+      // Get the current array of jobs for that status
       const columnJobs = jobsByStatus[newStatus];
       
-      // Find the current index of the dragged job
+      // Find the index of the dragged job (active.id)
       const oldIndex = columnJobs.findIndex((j) => j.id === jobId);
       
-      // Find the new index based on where it was dropped
-      let newIndex: number;
-      if (STATUSES.includes(over.id as JobStatusType)) {
-        // Dropped on the column itself - move to the end
-        newIndex = columnJobs.length - 1;
-      } else {
-        // Dropped on another job - find that job's index
-        const targetIndex = columnJobs.findIndex((j) => j.id === over.id);
-        if (targetIndex !== -1) {
-          // Insert at the target position (before the target job)
-          newIndex = targetIndex;
-        } else {
-          newIndex = oldIndex;
-        }
+      if (oldIndex === -1) {
+        console.error('Dragged job not found in column');
+        return;
       }
 
-      // Use arrayMove to calculate the new order
+      // Find the target position (over.id or over position)
+      let newIndex: number;
+      
+      if (STATUSES.includes(over.id as JobStatusType)) {
+        // Dropped directly on the column (droppable area) - move to the end
+        // Edge case: if already at the end, no change needed
+        newIndex = columnJobs.length - 1;
+      } else {
+        // Dropped on another job - find that job's index in the column
+        const targetIndex = columnJobs.findIndex((j) => j.id === over.id);
+        
+        if (targetIndex === -1) {
+          // Target job not found in this column (shouldn't happen, but handle gracefully)
+          console.error('Target job not found in column');
+          return;
+        }
+
+        // Determine insertion position based on drag direction
+        // If dragging down (oldIndex < targetIndex), insert before target (targetIndex)
+        // If dragging up (oldIndex > targetIndex), insert before target (targetIndex)
+        // arrayMove handles the index adjustment automatically
+        newIndex = targetIndex;
+      }
+
+      // Edge case: if oldIndex and newIndex are the same, no reordering needed
+      if (oldIndex === newIndex) {
+        return;
+      }
+
+      // Use arrayMove to reorder the array: arrayMove(currentJobs, oldIndex, newIndex)
       const reorderedJobs = arrayMove(columnJobs, oldIndex, newIndex);
+      
+      // Extract the job IDs from the reordered array
       const newJobIds = reorderedJobs.map((job) => job.id);
 
       try {
+        // Call updateJobPositions with the status and the array of job IDs
         const result = await updateJobPositions(newJobIds, newStatus);
         
         if ('error' in result) {
