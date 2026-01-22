@@ -35,23 +35,34 @@ export async function createJob(formData: FormData) {
     return;
   }
 
-  // 3. Insert into database
+  // 3. Find the maximum position value for jobs with the same status
+  const maxPositionResult = await db
+    .select({ maxPosition: max(jobs.position) })
+    .from(jobs)
+    .where(eq(jobs.status, validatedFields.data.status));
+
+  // Calculate the new position: maxPosition + 1, or 0 if no jobs exist with that status
+  const maxPosition = maxPositionResult[0]?.maxPosition ?? null;
+  const newPosition = maxPosition !== null ? maxPosition + 1 : 0;
+
+  // 4. Insert into database with the calculated position
   await db.insert(jobs).values({
     companyName: validatedFields.data.companyName,
     jobTitle: validatedFields.data.jobTitle,
     status: validatedFields.data.status,
+    position: newPosition,
     salaryRange: validatedFields.data.salaryRange,
     notes: validatedFields.data.notes,
   });
 
-  // 4. Get return path or default to /board
+  // 5. Get return path or default to /board
   const returnPath = formData.get('returnPath')?.toString() || '/board';
 
-  // 5. Revalidate the cache so the UI updates immediately
+  // 6. Revalidate the cache so the UI updates immediately
   revalidatePath('/');
   revalidatePath('/board');
   
-  // 6. Redirect to close the form
+  // 7. Redirect to close the form
   redirect(returnPath);
 }
 
