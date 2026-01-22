@@ -4,19 +4,18 @@ import { useDroppable } from '@dnd-kit/core';
 import { Job } from '@/db/schema';
 import { JobStatusType } from '@/actions/jobs';
 import { JobCard } from '@/components/job-card';
-import { PlusIcon } from '@/components/icons/plus-icon';
+import { AddJobButton } from '@/components/add-job-button';
 
 interface KanbanColumnProps {
   status: JobStatusType;
   jobs: Job[];
-  onAddClick?: () => void;
 }
 
 function formatStatusName(status: JobStatusType): string {
   return status.charAt(0) + status.slice(1).toLowerCase();
 }
 
-export function KanbanColumn({ status, jobs, onAddClick }: KanbanColumnProps) {
+export function KanbanColumn({ status, jobs }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: status,
   });
@@ -31,7 +30,6 @@ export function KanbanColumn({ status, jobs, onAddClick }: KanbanColumnProps) {
         isOver ? 'border-blue-400 bg-blue-50' : 'border-gray-200'
       }`}
     >
-      {/* Column Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white rounded-t-lg">
         <div className="flex items-center gap-2">
           <h2 className="font-semibold text-gray-800">{formattedStatus}</h2>
@@ -39,18 +37,9 @@ export function KanbanColumn({ status, jobs, onAddClick }: KanbanColumnProps) {
             {jobCount}
           </span>
         </div>
-        {onAddClick && (
-          <button
-            onClick={onAddClick}
-            className="flex items-center justify-center w-8 h-8 rounded-md hover:bg-gray-100 text-gray-600 hover:text-gray-800 transition-colors"
-            aria-label={`Add job to ${formattedStatus}`}
-          >
-            <PlusIcon size="base" />
-          </button>
-        )}
+        <AddJobButton status={status} />
       </div>
 
-      {/* Scrollable Job Cards Container */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {jobs.length === 0 ? (
           <div className="text-center py-8 text-gray-400 text-sm">
