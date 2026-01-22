@@ -156,3 +156,56 @@ export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
     return { error: 'Failed to update job status' };
   }
 }
+
+export async function updateJobPositions(
+  jobIds: number[],
+  status?: JobStatusType
+): Promise<{ success: true } | { error: string }> {
+  try {
+    // Validate inputs
+    if (!Array.isArray(jobIds) || jobIds.length === 0) {
+      return { error: 'Job IDs array is required and cannot be empty' };
+    }
+
+    // Validate all job IDs are numbers
+    if (!jobIds.every(id => typeof id === 'number' && id > 0)) {
+      return { error: 'All job IDs must be valid positive numbers' };
+    }
+
+    // Validate status if provided
+    if (status) {
+      const validatedStatus = JobStatus.safeParse(status);
+      if (!validatedStatus.success) {
+        return { error: 'Invalid status value' };
+      }
+    }
+
+    // Use transaction to ensure all updates happen atomically
+    await db.transaction(async (tx) => {
+      // Update position for each job based on its index in the array
+      for (let i = 0; i < jobIds.length; i++) {
+        const updateData: { position: number; status?: JobStatusType } = {
+          position: i,
+        };
+
+        // If status is provided, also update it (for when jobs move between columns)
+        if (status) {
+          updateData.status = status;
+        }
+
+        await tx
+          .update(jobs)
+          .set(updateData)
+          .where(eq(jobs.id, jobIds[i]));
+      }
+    });
+
+    // Revalidate the /board path after update
+    revalidatePath('/board');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating job positions:', error);
+    return { error: 'Failed to update job positions' };
+  }
+}
