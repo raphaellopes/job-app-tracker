@@ -12,9 +12,9 @@ import {
   DragEndEvent,
   closestCenter,
 } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import { Job } from '@/db/schema';
-import { JobStatusType, updateJobStatus } from '@/actions/jobs';
+import { JobStatusType, updateJobStatus, updateJobPositions } from '@/actions/jobs';
 import { KanbanColumn } from '@/components/kanban-column';
 import { JobCard } from '@/components/job-card';
 
@@ -59,6 +59,12 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
     }
 
     const jobId = active.id as number;
+    const draggedJob = jobs.find((j) => j.id === jobId);
+    
+    if (!draggedJob) {
+      return;
+    }
+
     let newStatus: JobStatusType | null = null;
 
     // Check if dropped on a column (status) or on another job
@@ -77,26 +83,62 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
       return;
     }
 
-    // Check if the job is being moved to a different status
-    const job = jobs.find((j) => j.id === jobId);
-    if (!job || job.status === newStatus) {
-      return;
-    }
-
-    try {
-      const result = await updateJobStatus(jobId, newStatus);
+    // Check if the job is being moved within the same column (same status)
+    if (draggedJob.status === newStatus) {
+      // Same column: reorder jobs within the column
+      const columnJobs = jobsByStatus[newStatus];
       
-      if (result.error) {
-        console.error('Failed to update job status:', result.error);
-        // Optionally show an error toast/notification here
-        return;
+      // Find the current index of the dragged job
+      const oldIndex = columnJobs.findIndex((j) => j.id === jobId);
+      
+      // Find the new index based on where it was dropped
+      let newIndex: number;
+      if (STATUSES.includes(over.id as JobStatusType)) {
+        // Dropped on the column itself - move to the end
+        newIndex = columnJobs.length - 1;
+      } else {
+        // Dropped on another job - find that job's index
+        const targetIndex = columnJobs.findIndex((j) => j.id === over.id);
+        if (targetIndex !== -1) {
+          // Insert at the target position (before the target job)
+          newIndex = targetIndex;
+        } else {
+          newIndex = oldIndex;
+        }
       }
 
-      // Refresh the page to show updated data
-      router.refresh();
-    } catch (error) {
-      console.error('Error updating job status:', error);
-      // Optionally show an error toast/notification here
+      // Use arrayMove to calculate the new order
+      const reorderedJobs = arrayMove(columnJobs, oldIndex, newIndex);
+      const newJobIds = reorderedJobs.map((job) => job.id);
+
+      try {
+        const result = await updateJobPositions(newJobIds, newStatus);
+        
+        if ('error' in result) {
+          console.error('Failed to update job positions:', result.error);
+          return;
+        }
+
+        // Refresh the page to show updated data
+        router.refresh();
+      } catch (error) {
+        console.error('Error updating job positions:', error);
+      }
+    } else {
+      // Different column: update status (which will also set position to bottom)
+      try {
+        const result = await updateJobStatus(jobId, newStatus);
+        
+        if ('error' in result) {
+          console.error('Failed to update job status:', result.error);
+          return;
+        }
+
+        // Refresh the page to show updated data
+        router.refresh();
+      } catch (error) {
+        console.error('Error updating job status:', error);
+      }
     }
   };
 
