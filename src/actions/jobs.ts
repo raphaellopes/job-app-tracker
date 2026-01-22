@@ -13,7 +13,7 @@ export type JobStatusType = z.infer<typeof JobStatus>;
 
 const createJobSchema = z.object({
   companyName: z.string().min(1, 'Company name is required'),
-  position: z.string().min(1, 'Position is required'),
+  jobTitle: z.string().min(1, 'Position is required'),
   status: JobStatus,
   salaryRange: z.string().optional(),
   notes: z.string().optional(),
@@ -23,7 +23,7 @@ export async function createJob(formData: FormData) {
   // 1. Validate the data
   const validatedFields = createJobSchema.safeParse({
     companyName: formData.get('companyName'),
-    position: formData.get('position'),
+    jobTitle: formData.get('jobTitle'),
     status: formData.get('status'),
     salaryRange: formData.get('salaryRange'),
     notes: formData.get('notes'),
@@ -38,7 +38,7 @@ export async function createJob(formData: FormData) {
   // 3. Insert into database
   await db.insert(jobs).values({
     companyName: validatedFields.data.companyName,
-    position: validatedFields.data.position,
+    jobTitle: validatedFields.data.jobTitle,
     status: validatedFields.data.status,
     salaryRange: validatedFields.data.salaryRange,
     notes: validatedFields.data.notes,
@@ -93,7 +93,7 @@ export async function updateJob(formData: FormData) {
 
   const validatedFields = createJobSchema.safeParse({
     companyName: formData.get('companyName'),
-    position: formData.get('position'),
+    jobTitle: formData.get('jobTitle'),
     status: formData.get('status'),
     salaryRange: formData.get('salaryRange'),
     notes: formData.get('notes'),

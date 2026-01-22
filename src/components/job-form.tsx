@@ -16,7 +16,7 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
       <form action={job ? updateJob : createJob} className="flex flex-col gap-4 max-w-md">
         {job && <input type="hidden" name="id" value={job.id} />}
         <input name="companyName" defaultValue={job?.companyName} placeholder="Company Name" className="border p-2 rounded" required />
-        <input name="position" defaultValue={job?.position} placeholder="Position" className="border p-2 rounded" required />
+        <input name="jobTitle" defaultValue={job?.jobTitle} placeholder="Position" className="border p-2 rounded" required />
         <select name="status" defaultValue={statusValue} className="border p-2 rounded">
           <option value="WISHLIST">Wishlist</option>
           <option value="APPLIED">Applied</option>

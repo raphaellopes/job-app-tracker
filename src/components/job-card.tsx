@@ -53,7 +53,7 @@ export function JobCard({ job }: JobCardProps) {
           <DeleteJobButton id={job.id} />
         </div>
       </div>
-      <p className="text-gray-600 mb-2">{job.position}</p>
+      <p className="text-gray-600 mb-2">{job.jobTitle}</p>
       {job.salaryRange && (
         <p className="text-sm text-gray-500">💰 {job.salaryRange}</p>
       )}
