@@ -5,7 +5,7 @@ import { jobs } from '../db/schema';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { desc, eq, ilike, and, asc } from 'drizzle-orm';
+import { desc, eq, ilike, and, asc, max } from 'drizzle-orm';
 
 const JobStatus = z.enum(['WISHLIST', 'APPLIED', 'INTERVIEWING', 'OFFER', 'REJECTED']);
 export type JobStatusType = z.infer<typeof JobStatus>;
@@ -141,10 +141,23 @@ export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
       return { error: 'Invalid status value' };
     }
 
-    // Update only the status field in the database
+    // Find the maximum position value for jobs in the new status
+    const maxPositionResult = await db
+      .select({ maxPosition: max(jobs.position) })
+      .from(jobs)
+      .where(eq(jobs.status, validatedStatus.data));
+
+    // Calculate the new position: maxPosition + 1, or 0 if no jobs exist in that status
+    const maxPosition = maxPositionResult[0]?.maxPosition ?? null;
+    const newPosition = maxPosition !== null ? maxPosition + 1 : 0;
+
+    // Update both status and position in a single database operation
     await db
       .update(jobs)
-      .set({ status: validatedStatus.data })
+      .set({ 
+        status: validatedStatus.data,
+        position: newPosition,
+      })
       .where(eq(jobs.id, jobId));
 
     // Revalidate the /board path after update
