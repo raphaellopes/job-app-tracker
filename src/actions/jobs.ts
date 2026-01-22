@@ -115,3 +115,33 @@ export async function updateJob(formData: FormData) {
   // Redirect to close the form
   redirect(returnPath);
 }
+
+export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
+  try {
+    if (!jobId || typeof jobId !== 'number') {
+      console.error('Invalid job ID:', jobId);
+      return { error: 'Invalid job ID' };
+    }
+
+    // Validate status using the existing JobStatus zod enum
+    const validatedStatus = JobStatus.safeParse(newStatus);
+    if (!validatedStatus.success) {
+      console.error('Validation Errors:', validatedStatus.error.flatten().fieldErrors);
+      return { error: 'Invalid status value' };
+    }
+
+    // Update only the status field in the database
+    await db
+      .update(jobs)
+      .set({ status: validatedStatus.data })
+      .where(eq(jobs.id, jobId));
+
+    // Revalidate the /board path after update
+    revalidatePath('/board');
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating job status:', error);
+    return { error: 'Failed to update job status' };
+  }
+}
