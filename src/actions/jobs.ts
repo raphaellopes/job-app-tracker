@@ -5,7 +5,7 @@ import { jobs } from '../db/schema';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { desc, eq, ilike, and, asc, max } from 'drizzle-orm';
+import { desc, eq, ilike, and, asc, max, count, sql, inArray, isNotNull } from 'drizzle-orm';
 
 const JobStatus = z.enum(['WISHLIST', 'APPLIED', 'INTERVIEWING', 'OFFER', 'REJECTED']);
 export type JobStatusType = z.infer<typeof JobStatus>;
@@ -232,4 +232,69 @@ export async function updateJobPositions(
     console.error('Error updating job positions:', error);
     return { error: 'Failed to update job positions' };
   }
+}
+
+export interface DashboardStats {
+  statusDistribution: Array<{ status: string; count: number }>;
+  pipelineTotal: number;
+  offerCount: number;
+  interviewingCount: number;
+  totalJobs: number;
+}
+
+/**
+ * Returns dashboard statistics including status distribution and aggregate counts.
+ * Optimized to minimize database round trips using parallel queries.
+ */
+export async function getDashboardStats(): Promise<DashboardStats> {
+  // Query 1: Get status distribution using GROUP BY
+  const statusDistributionResult = await db
+    .select({
+      status: jobs.status,
+      count: count(),
+    })
+    .from(jobs)
+    .groupBy(jobs.status);
+
+  // Query 2: Get aggregate counts in a single query using conditional aggregation
+  const aggregateResult = await db
+    .select({
+      totalJobs: count(),
+      pipelineTotal: sql<number>`COUNT(CASE WHEN ${jobs.status} IN ('APPLIED', 'INTERVIEWING', 'OFFER') THEN 1 END)`,
+      offerCount: sql<number>`COUNT(CASE WHEN ${jobs.status} = 'OFFER' THEN 1 END)`,
+      interviewingCount: sql<number>`COUNT(CASE WHEN ${jobs.status} = 'INTERVIEWING' THEN 1 END)`,
+    })
+    .from(jobs);
+
+  const aggregates = aggregateResult[0] || {
+    totalJobs: 0,
+    pipelineTotal: 0,
+    offerCount: 0,
+    interviewingCount: 0,
+  };
+
+  return {
+    statusDistribution: statusDistributionResult.map((row) => ({
+      status: row.status,
+      count: Number(row.count),
+    })),
+    pipelineTotal: Number(aggregates.pipelineTotal),
+    offerCount: Number(aggregates.offerCount),
+    interviewingCount: Number(aggregates.interviewingCount),
+    totalJobs: Number(aggregates.totalJobs),
+  };
+}
+
+/**
+ * Returns the most recently applied jobs, ordered by appliedDate DESC, then createdAt DESC.
+ * Only returns jobs that have an appliedDate set.
+ * @param limit - Maximum number of jobs to return (default: 4)
+ */
+export async function getRecentJobs(limit: number = 4): Promise<typeof jobs.$inferSelect[]> {
+  return await db
+    .select()
+    .from(jobs)
+    .where(isNotNull(jobs.appliedDate))
+    .orderBy(desc(jobs.appliedDate), desc(jobs.createdAt))
+    .limit(limit);
 }
