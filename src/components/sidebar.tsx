@@ -1,28 +1,28 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import classNames from 'classnames';
-import { BriefcaseIcon } from './icons/briefcase-icon';
-import { DashboardIcon } from './icons/dashboard-icon';
-import { BoardIcon } from './icons/board-icon';
-import { AnalyticsIcon } from './icons/analytics-icon';
-import { AvatarIcon } from './icons/avatar-icon';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import classNames from "classnames";
+import { BriefcaseIcon } from "./icons/briefcase-icon";
+import { DashboardIcon } from "./icons/dashboard-icon";
+import { BoardIcon } from "./icons/board-icon";
+import { AnalyticsIcon } from "./icons/analytics-icon";
+import { AvatarIcon } from "./icons/avatar-icon";
 
 const menuItems = [
   {
-    label: 'Dashboard',
-    href: '/',
+    label: "Dashboard",
+    href: "/",
     icon: DashboardIcon,
   },
   {
-    label: 'Board',
-    href: '/board',
+    label: "Board",
+    href: "/board",
     icon: BoardIcon,
   },
   {
-    label: 'Analytics',
-    href: '/analytics',
+    label: "Analytics",
+    href: "/analytics",
     icon: AnalyticsIcon,
   },
 ];
@@ -45,23 +45,25 @@ export function Sidebar() {
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
-          
+
           return (
             <Link
               key={item.href}
               href={item.href}
               className={classNames(
-                'flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg transition-colors text-xs sm:text-sm font-medium',
+                "flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg transition-colors text-xs sm:text-sm font-medium",
                 {
-                  'bg-blue-50 text-blue-700': isActive,
-                  'text-gray-700 hover:bg-gray-50': !isActive,
-                }
+                  "bg-blue-50 text-blue-700": isActive,
+                  "text-gray-700 hover:bg-gray-50": !isActive,
+                },
               )}
             >
-              <Icon className={classNames('w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0', {
-                'text-blue-700': isActive,
-                'text-gray-500': !isActive,
-              })} />
+              <Icon
+                className={classNames("w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0", {
+                  "text-blue-700": isActive,
+                  "text-gray-500": !isActive,
+                })}
+              />
               <span className="truncate">{item.label}</span>
             </Link>
           );

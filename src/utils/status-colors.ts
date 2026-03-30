@@ -1,4 +1,4 @@
-export type JobStatus = 'WISHLIST' | 'APPLIED' | 'INTERVIEWING' | 'OFFER' | 'REJECTED';
+export type JobStatus = "WISHLIST" | "APPLIED" | "INTERVIEWING" | "OFFER" | "REJECTED";
 
 export interface StatusColors {
   bg: string;
@@ -8,29 +8,29 @@ export interface StatusColors {
 
 export const STATUS_COLORS: Record<JobStatus, StatusColors> = {
   WISHLIST: {
-    bg: 'bg-purple-500',
-    text: 'text-purple-500',
-    border: 'border-purple-500',
+    bg: "bg-purple-500",
+    text: "text-purple-500",
+    border: "border-purple-500",
   },
   APPLIED: {
-    bg: 'bg-blue-500',
-    text: 'text-blue-500',
-    border: 'border-blue-500',
+    bg: "bg-blue-500",
+    text: "text-blue-500",
+    border: "border-blue-500",
   },
   INTERVIEWING: {
-    bg: 'bg-amber-500',
-    text: 'text-amber-500',
-    border: 'border-amber-500',
+    bg: "bg-amber-500",
+    text: "text-amber-500",
+    border: "border-amber-500",
   },
   OFFER: {
-    bg: 'bg-green-500',
-    text: 'text-green-500',
-    border: 'border-green-500',
+    bg: "bg-green-500",
+    text: "text-green-500",
+    border: "border-green-500",
   },
   REJECTED: {
-    bg: 'bg-red-500',
-    text: 'text-red-500',
-    border: 'border-red-500',
+    bg: "bg-red-500",
+    text: "text-red-500",
+    border: "border-red-500",
   },
 };
 
@@ -41,9 +41,11 @@ export const STATUS_COLORS: Record<JobStatus, StatusColors> = {
  */
 export function getStatusColor(status: string): StatusColors {
   const normalizedStatus = status.toUpperCase() as JobStatus;
-  return STATUS_COLORS[normalizedStatus] || {
-    bg: 'bg-gray-500',
-    text: 'text-gray-500',
-    border: 'border-gray-500',
-  };
+  return (
+    STATUS_COLORS[normalizedStatus] || {
+      bg: "bg-gray-500",
+      text: "text-gray-500",
+      border: "border-gray-500",
+    }
+  );
 }

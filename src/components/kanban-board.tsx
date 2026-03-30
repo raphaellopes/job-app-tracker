@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   DndContext,
   DragOverlay,
@@ -11,18 +11,18 @@ import {
   DragStartEvent,
   DragEndEvent,
   closestCenter,
-} from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
-import { Job } from '@/db/schema';
-import { JobStatusType, updateJobStatus, updateJobPositions } from '@/actions/jobs';
-import { KanbanColumn } from '@/components/kanban-column';
-import { JobCard } from '@/components/job-card';
+} from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
+import { Job } from "@/db/schema";
+import { JobStatusType, updateJobStatus, updateJobPositions } from "@/actions/jobs";
+import { KanbanColumn } from "@/components/kanban-column";
+import { JobCard } from "@/components/job-card";
 
 interface KanbanBoardProps {
   jobs: Job[];
 }
 
-const STATUSES: JobStatusType[] = ['WISHLIST', 'APPLIED', 'INTERVIEWING', 'OFFER', 'REJECTED'];
+const STATUSES: JobStatusType[] = ["WISHLIST", "APPLIED", "INTERVIEWING", "OFFER", "REJECTED"];
 
 export function KanbanBoard({ jobs }: KanbanBoardProps) {
   const router = useRouter();
@@ -33,14 +33,17 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
       activationConstraint: {
         distance: 8,
       },
-    })
+    }),
   );
 
   // Group jobs by status
-  const jobsByStatus = STATUSES.reduce((acc, status) => {
-    acc[status] = jobs.filter((job) => job.status === status);
-    return acc;
-  }, {} as Record<JobStatusType, Job[]>);
+  const jobsByStatus = STATUSES.reduce(
+    (acc, status) => {
+      acc[status] = jobs.filter((job) => job.status === status);
+      return acc;
+    },
+    {} as Record<JobStatusType, Job[]>,
+  );
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -60,7 +63,7 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
 
     const jobId = active.id as number;
     const draggedJob = jobs.find((j) => j.id === jobId);
-    
+
     if (!draggedJob) {
       return;
     }
@@ -88,18 +91,18 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
       // Same column: reorder jobs within the column
       // Get the current array of jobs for that status
       const columnJobs = jobsByStatus[newStatus];
-      
+
       // Find the index of the dragged job (active.id)
       const oldIndex = columnJobs.findIndex((j) => j.id === jobId);
-      
+
       if (oldIndex === -1) {
-        console.error('Dragged job not found in column');
+        console.error("Dragged job not found in column");
         return;
       }
 
       // Find the target position (over.id or over position)
       let newIndex: number;
-      
+
       if (STATUSES.includes(over.id as JobStatusType)) {
         // Dropped directly on the column (droppable area) - move to the end
         // Edge case: if already at the end, no change needed
@@ -107,10 +110,10 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
       } else {
         // Dropped on another job - find that job's index in the column
         const targetIndex = columnJobs.findIndex((j) => j.id === over.id);
-        
+
         if (targetIndex === -1) {
           // Target job not found in this column (shouldn't happen, but handle gracefully)
-          console.error('Target job not found in column');
+          console.error("Target job not found in column");
           return;
         }
 
@@ -128,38 +131,38 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
 
       // Use arrayMove to reorder the array: arrayMove(currentJobs, oldIndex, newIndex)
       const reorderedJobs = arrayMove(columnJobs, oldIndex, newIndex);
-      
+
       // Extract the job IDs from the reordered array
       const newJobIds = reorderedJobs.map((job) => job.id);
 
       try {
         // Call updateJobPositions with the status and the array of job IDs
         const result = await updateJobPositions(newJobIds, newStatus);
-        
-        if ('error' in result) {
-          console.error('Failed to update job positions:', result.error);
+
+        if ("error" in result) {
+          console.error("Failed to update job positions:", result.error);
           return;
         }
 
         // Refresh the page to show updated data
         router.refresh();
       } catch (error) {
-        console.error('Error updating job positions:', error);
+        console.error("Error updating job positions:", error);
       }
     } else {
       // Different column: update status (which will also set position to bottom)
       try {
         const result = await updateJobStatus(jobId, newStatus);
-        
-        if ('error' in result) {
-          console.error('Failed to update job status:', result.error);
+
+        if ("error" in result) {
+          console.error("Failed to update job status:", result.error);
           return;
         }
 
         // Refresh the page to show updated data
         router.refresh();
       } catch (error) {
-        console.error('Error updating job status:', error);
+        console.error("Error updating job status:", error);
       }
     }
   };
@@ -186,10 +189,7 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
                 items={columnJobs.map((job) => job.id)}
                 strategy={verticalListSortingStrategy}
               >
-                <KanbanColumn
-                  status={status}
-                  jobs={columnJobs}
-                />
+                <KanbanColumn status={status} jobs={columnJobs} />
               </SortableContext>
             );
           })}

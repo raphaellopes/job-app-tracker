@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { PlusIcon } from '@/components/icons/plus-icon';
-import { JobStatusType } from '@/actions/jobs';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { PlusIcon } from "@/components/icons/plus-icon";
+import { JobStatusType } from "@/actions/jobs";
 
 interface AddJobButtonProps {
   isDisabled?: boolean;
@@ -30,18 +30,14 @@ export function AddJobButton({ isDisabled = false, status }: AddJobButtonProps) 
   }
 
   // Build query string with optional status parameter
-  const queryParams = new URLSearchParams({ add: 'true' });
+  const queryParams = new URLSearchParams({ add: "true" });
   if (status) {
-    queryParams.set('status', status);
+    queryParams.set("status", status);
   }
   const href = `${pathname}?${queryParams.toString()}`;
 
   return (
-    <Link
-      href={href}
-      className={`${baseStyles} ${enabledStyles}`}
-      aria-label="Add new job"
-    >
+    <Link href={href} className={`${baseStyles} ${enabledStyles}`} aria-label="Add new job">
       <PlusIcon />
     </Link>
   );

@@ -1,30 +1,38 @@
-import { getJobs } from '@/actions/jobs';
-import { SearchInput } from '@/components/search-input';
-import { StatusFilter } from '@/components/status-filter';
-import { SortSelect } from '@/components/sort-select';
-import { KanbanBoard } from '@/components/kanban-board';
-import { Header } from '@/components/header';
-import { getFormState } from '@/utils/form-state';
-import { JobModal } from '@/components/modals/job-modal';
+import { getJobs } from "@/actions/jobs";
+import { SearchInput } from "@/components/search-input";
+import { StatusFilter } from "@/components/status-filter";
+import { SortSelect } from "@/components/sort-select";
+import { KanbanBoard } from "@/components/kanban-board";
+import { Header } from "@/components/header";
+import { getFormState } from "@/utils/form-state";
+import { JobModal } from "@/components/modals/job-modal";
 
 interface BoardProps {
-  searchParams: Promise<{ edit?: string; add?: string; search?: string; status?: string; sort?: string }>;
+  searchParams: Promise<{
+    edit?: string;
+    add?: string;
+    search?: string;
+    status?: string;
+    sort?: string;
+  }>;
 }
 
 export default async function Board(props: BoardProps) {
   const searchParams = await props.searchParams;
   const { isAdding, isEditing } = getFormState(searchParams);
   const jobs = await getJobs(searchParams.search, searchParams.status, searchParams.sort);
-  const jobToEdit = searchParams.edit ? jobs.find((j) => j.id === Number(searchParams.edit)) : undefined;
+  const jobToEdit = searchParams.edit
+    ? jobs.find((j) => j.id === Number(searchParams.edit))
+    : undefined;
 
   return (
     <main className="p-4 sm:p-6 lg:p-10 h-screen !pb-0 flex flex-col">
-      <Header 
-        title="Board" 
+      <Header
+        title="Board"
         subtitle="Manage and view all your job applications"
         addButtonDisabled={isEditing || isAdding}
       />
-      
+
       <JobModal job={jobToEdit} />
 
       {/* Kanban Board */}

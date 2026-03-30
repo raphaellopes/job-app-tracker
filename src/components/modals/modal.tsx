@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import { CloseIcon } from '@/components/icons/close-icon';
+import { ReactNode } from "react";
+import { CloseIcon } from "@/components/icons/close-icon";
 
 interface ModalProps {
   title: string;
@@ -27,9 +27,7 @@ export function Modal({ title, onClose, children }: ModalProps) {
             <CloseIcon />
           </button>
         </div>
-        <div className="p-4">
-          {children}
-        </div>
+        <div className="p-4">{children}</div>
       </div>
     </div>
   );

@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Job } from '@/db/schema';
-import { getStatusColor } from '@/utils/status-colors';
+import Link from "next/link";
+import { Job } from "@/db/schema";
+import { getStatusColor } from "@/utils/status-colors";
 
 interface RecentJobsTableProps {
   jobs: Array<Job>;
 }
 
 function formatDate(date: string | null): string {
-  if (!date) return 'N/A';
-  
+  if (!date) return "N/A";
+
   try {
     const dateObj = new Date(date);
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     }).format(dateObj);
   } catch {
-    return 'N/A';
+    return "N/A";
   }
 }
 
@@ -46,13 +46,15 @@ export function RecentJobsTable({ jobs }: RecentJobsTableProps) {
   return (
     <div className="border border-gray-200 rounded-lg shadow-sm bg-white p-6">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Jobs</h2>
-      
+
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200">
               <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Job Title</th>
-              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Company Name</th>
+              <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">
+                Company Name
+              </th>
               <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Status</th>
               <th className="text-left py-3 px-4 text-sm font-semibold text-gray-700">Date</th>
             </tr>
@@ -60,7 +62,7 @@ export function RecentJobsTable({ jobs }: RecentJobsTableProps) {
           <tbody>
             {jobs.map((job) => {
               const statusColors = getStatusColor(job.status);
-              
+
               return (
                 <tr
                   key={job.id}

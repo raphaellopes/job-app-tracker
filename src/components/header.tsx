@@ -1,4 +1,4 @@
-import { AddJobButton } from '@/components/add-job-button';
+import { AddJobButton } from "@/components/add-job-button";
 
 interface HeaderProps {
   title: string;
@@ -7,7 +7,12 @@ interface HeaderProps {
   addButtonDisabled?: boolean;
 }
 
-export function Header({ title, subtitle, showAddButton = true, addButtonDisabled = false }: HeaderProps) {
+export function Header({
+  title,
+  subtitle,
+  showAddButton = true,
+  addButtonDisabled = false,
+}: HeaderProps) {
   return (
     <header className="flex items-center gap-3 mb-6">
       <div className="flex-1">

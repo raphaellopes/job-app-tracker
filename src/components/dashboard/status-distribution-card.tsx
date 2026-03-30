@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { StatusDistributionChart } from './status-distribution-chart';
+import { StatusDistributionChart } from "./status-distribution-chart";
 
 interface StatusDistributionCardProps {
   data: Array<{ status: string; count: number }>;

@@ -1,8 +1,8 @@
-import classNames from 'classnames';
-import { IconProps, sizeClasses } from './icon-props';
+import classNames from "classnames";
+import { IconProps, sizeClasses } from "./icon-props";
 
 export function TrashIcon(props: IconProps) {
-  const { size = 'base', className, ...restProps } = props;
+  const { size = "base", className, ...restProps } = props;
   const mergedClassName = classNames(sizeClasses[size], className);
 
   return (

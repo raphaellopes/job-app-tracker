@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: theme('colors.gray.100');
-  --foreground: theme('colors.gray.900');
+  --background: theme("colors.gray.100");
+  --foreground: theme("colors.gray.900");
 }
 
 @theme inline {
@@ -25,7 +25,9 @@ body {
 }
 
 /** inputs */
-input, select, textarea {
+input,
+select,
+textarea {
   @apply border border-gray-300 rounded focus:border-transparent;
 }
 

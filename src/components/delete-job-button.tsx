@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { deleteJob } from '@/actions/jobs';
-import { TrashIcon } from '@/components/icons/trash-icon';
+import { deleteJob } from "@/actions/jobs";
+import { TrashIcon } from "@/components/icons/trash-icon";
 
 interface DeleteJobButtonProps {
   id: number;
@@ -12,7 +12,7 @@ export function DeleteJobButton({ id }: DeleteJobButtonProps) {
     <form
       action={deleteJob}
       onSubmit={(e) => {
-        if (!confirm('Are you sure you want to delete this job?')) {
+        if (!confirm("Are you sure you want to delete this job?")) {
           e.preventDefault();
         }
       }}

@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useDroppable } from '@dnd-kit/core';
-import { Job } from '@/db/schema';
-import { JobStatusType } from '@/actions/jobs';
-import { JobCard } from '@/components/job-card';
-import { AddJobButton } from '@/components/add-job-button';
+import { useDroppable } from "@dnd-kit/core";
+import { Job } from "@/db/schema";
+import { JobStatusType } from "@/actions/jobs";
+import { JobCard } from "@/components/job-card";
+import { AddJobButton } from "@/components/add-job-button";
 
 interface KanbanColumnProps {
   status: JobStatusType;
@@ -29,11 +29,11 @@ export function KanbanColumn({ status, jobs }: KanbanColumnProps) {
       ref={setNodeRef}
       className={`flex flex-col min-w-[280px] w-[280px] max-w-[280px] bg-gray-50 rounded-lg border-2 transition-all duration-200 ${
         isOver
-          ? 'border-blue-500 bg-blue-50 shadow-lg scale-[1.02]'
-          : 'border-gray-200 hover:border-gray-300'
+          ? "border-blue-500 bg-blue-50 shadow-lg scale-[1.02]"
+          : "border-gray-200 hover:border-gray-300"
       }`}
       style={{
-        maxHeight: 'calc(100vh - 240px)',
+        maxHeight: "calc(100vh - 240px)",
       }}
     >
       <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white rounded-t-lg flex-shrink-0">
@@ -50,12 +50,12 @@ export function KanbanColumn({ status, jobs }: KanbanColumnProps) {
         {isEmpty ? (
           <div className="flex flex-col items-center justify-center py-12 text-gray-400">
             <div className="text-sm font-medium mb-1">No jobs yet</div>
-            <div className="text-xs text-gray-400 text-center px-2">Drop a job here or click + to add</div>
+            <div className="text-xs text-gray-400 text-center px-2">
+              Drop a job here or click + to add
+            </div>
           </div>
         ) : (
-          jobs.map((job) => (
-            <JobCard key={job.id} job={job} />
-          ))
+          jobs.map((job) => <JobCard key={job.id} job={job} />)
         )}
       </div>
     </div>

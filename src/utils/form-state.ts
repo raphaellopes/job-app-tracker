@@ -4,7 +4,7 @@ export interface FormSearchParams {
 }
 
 export function getFormState(searchParams: FormSearchParams) {
-  const isAdding = searchParams.add === 'true';
+  const isAdding = searchParams.add === "true";
   const isEditing = !!searchParams.edit;
   const showForm = isAdding || isEditing;
 

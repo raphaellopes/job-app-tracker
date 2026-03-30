@@ -1,8 +1,8 @@
-import classNames from 'classnames';
-import { IconProps, sizeClasses } from './icon-props';
+import classNames from "classnames";
+import { IconProps, sizeClasses } from "./icon-props";
 
 export function CloseIcon(props: IconProps) {
-  const { size = 'base', className, ...restProps } = props;
+  const { size = "base", className, ...restProps } = props;
   const mergedClassName = classNames(sizeClasses[size], className);
 
   return (
@@ -15,11 +15,7 @@ export function CloseIcon(props: IconProps) {
       className={mergedClassName}
       {...restProps}
     >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M6 18L18 6M6 6l12 12"
-      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
     </svg>
   );
 }

@@ -85,9 +85,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
     const data = payload[0].payload;
     return (
       <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-        <p className="font-semibold text-gray-800">
-          {formatStatusName(data.status)}
-        </p>
+        <p className="font-semibold text-gray-800">{formatStatusName(data.status)}</p>
         <p className="text-sm text-gray-600">
           Count: <span className="font-medium">{data.count}</span>
         </p>
@@ -101,9 +99,7 @@ const CustomPie: React.FC<PieSectorShapeProps> = (props) => {
   return <Sector {...props} />;
 };
 
-export function StatusDistributionChart({
-  data,
-}: StatusDistributionChartProps) {
+export function StatusDistributionChart({ data }: StatusDistributionChartProps) {
   if (!data || data.length === 0) {
     return (
       <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg border border-gray-200">

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { useRef } from 'react';
-import { SearchIcon } from '@/components/icons/search-icon';
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { useRef } from "react";
+import { SearchIcon } from "@/components/icons/search-icon";
 
 export function SearchInput() {
   const searchParams = useSearchParams();
@@ -18,9 +18,9 @@ export function SearchInput() {
     timeoutRef.current = setTimeout(() => {
       const params = new URLSearchParams(searchParams);
       if (term) {
-        params.set('search', term);
+        params.set("search", term);
       } else {
-        params.delete('search');
+        params.delete("search");
       }
       replace(`${pathname}?${params.toString()}`);
     }, 300);
@@ -36,7 +36,7 @@ export function SearchInput() {
         className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
         placeholder="Search by company name..."
         onChange={(e) => handleSearch(e.target.value)}
-        defaultValue={searchParams.get('search')?.toString()}
+        defaultValue={searchParams.get("search")?.toString()}
       />
     </div>
   );

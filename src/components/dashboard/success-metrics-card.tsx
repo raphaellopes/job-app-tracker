@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 interface SuccessMetricsCardProps {
   pipelineTotal: number;
@@ -16,7 +16,8 @@ export function SuccessMetricsCard({
   const offerRateFormatted = offerRate.toFixed(1);
 
   // Calculate interview pipeline percentage, handling division by zero
-  const interviewPipelinePercent = pipelineTotal > 0 ? (interviewingCount / pipelineTotal) * 100 : 0;
+  const interviewPipelinePercent =
+    pipelineTotal > 0 ? (interviewingCount / pipelineTotal) * 100 : 0;
 
   return (
     <div className="border border-gray-200 rounded-lg shadow-sm bg-white p-6">
@@ -49,7 +50,8 @@ export function SuccessMetricsCard({
       {/* Tip message */}
       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
         <p className="text-sm text-blue-800">
-          <span className="font-semibold">Tip:</span> Roles in the "Interviewing" stage have the highest priority for prep. Focus on these to increase your offer rate.
+          <span className="font-semibold">Tip:</span> Roles in the "Interviewing" stage have the
+          highest priority for prep. Focus on these to increase your offer rate.
         </p>
       </div>
     </div>
