@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Job } from "@/db/schema";
 import { DeleteJobButton } from "@/components/delete-job-button";
 import { EditIcon } from "@/components/icons/edit-icon";
+import TagChipList from "@/components/tag-chip-list";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import classNames from "classnames";
@@ -27,32 +28,35 @@ export function JobCard({ job }: JobCardProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className={classNames("border p-2 rounded-lg shadow-sm bg-white group", {
+      className={classNames("border p-2 rounded-lg shadow-sm bg-white group flex flex-col gap-3", {
         "cursor-grabbing": isDragging,
         "cursor-grab": !isDragging,
       })}
       {...attributes}
       {...listeners}
     >
-      <div className="flex justify-between items-center">
-        <h3 className="font-bold text-lg text-gray-800 truncate">{job.companyName}</h3>
-        <div
-          className="flex items-center gap-2"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <Link
-            href={`/board?edit=${job.id}`}
-            className="hidden group-hover:block text-gray-400 hover:text-blue-500 transition-colors"
+      <div>
+        <div className="flex justify-between items-center">
+          <h3 className="font-bold text-lg text-gray-800 truncate">{job.companyName}</h3>
+          <div
+            className="flex items-center gap-2"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
-            <EditIcon className="w-4 h-4" />
-          </Link>
-          <DeleteJobButton id={job.id} />
+            <Link
+              href={`/board?edit=${job.id}`}
+              className="hidden group-hover:block text-gray-400 hover:text-blue-500 transition-colors"
+            >
+              <EditIcon className="w-4 h-4" />
+            </Link>
+            <DeleteJobButton id={job.id} />
+          </div>
         </div>
+        <p className="text-gray-600">{job.jobTitle}</p>
+        {job.salaryRange && <p className="text-sm text-gray-500">💰 {job.salaryRange}</p>}
       </div>
-      <p className="text-gray-600">{job.jobTitle}</p>
-      {job.salaryRange && <p className="text-sm text-gray-500">💰 {job.salaryRange}</p>}
-      {job.notes && <p className="text-sm text-gray-500 mt-2 italic truncate">{job.notes}</p>}
+      <TagChipList tags={job.tags ?? []} />
+      {job.notes && <p className="text-sm text-gray-500 italic truncate">{job.notes}</p>}
     </div>
   );
 }
