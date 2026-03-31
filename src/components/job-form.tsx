@@ -43,11 +43,16 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
       data.append("salaryRange", values.salaryRange);
       data.append("notes", values.notes);
 
-      if (job) {
-        data.append("id", job.id.toString());
-        await updateJob(data);
-      } else {
-        await createJob(data);
+      try {
+        if (job) {
+          data.append("id", job.id.toString());
+          await updateJob(data);
+        } else {
+          await createJob(data);
+        }
+      } catch (error) {
+        // @TODO: apply some logger here to trace the error
+        console.error("Error submitting form:", error);
       }
     },
   });
