@@ -1,6 +1,9 @@
 import { Job } from "@/db/schema";
 import { createJob, updateJob } from "@/actions/jobs";
 import { JobStatusType } from "@/actions/jobs";
+import Input from "./form/input";
+import Textarea from "./form/textarea";
+import Select from "./form/select";
 
 interface JobFormProps {
   job?: Job | null;
@@ -8,46 +11,46 @@ interface JobFormProps {
 }
 
 export function JobForm({ job, initialStatus }: JobFormProps) {
-  // Use initialStatus if provided, otherwise fall back to job?.status
   const statusValue = initialStatus || job?.status;
 
   return (
     <div className="">
       <form action={job ? updateJob : createJob} className="flex flex-col gap-4 max-w-md">
         {job && <input type="hidden" name="id" value={job.id} />}
-        <input
+        <Input
+          label="Company Name"
           name="companyName"
           defaultValue={job?.companyName}
           placeholder="Company Name"
-          className="border p-2 rounded"
           required
         />
-        <input
+        <Input
+          label="Position"
           name="jobTitle"
           defaultValue={job?.jobTitle}
           placeholder="Position"
           className="border p-2 rounded"
           required
         />
-        <select name="status" defaultValue={statusValue} className="border p-2 rounded">
-          <option value="WISHLIST">Wishlist</option>
-          <option value="APPLIED">Applied</option>
-          <option value="INTERVIEWING">Interviewing</option>
-          <option value="OFFER">Offer</option>
-          <option value="REJECTED">Rejected</option>
-        </select>
-        <input
+        <Select
+          label="Status"
+          name="status"
+          defaultValue={statusValue}
+          options={[
+            { label: "Wishlist", value: "WISHLIST" },
+            { label: "Applied", value: "APPLIED" },
+            { label: "Interviewing", value: "INTERVIEWING" },
+            { label: "Offer", value: "OFFER" },
+            { label: "Rejected", value: "REJECTED" },
+          ]}
+        />
+        <Input
+          label="Salary Range"
           name="salaryRange"
           defaultValue={job?.salaryRange || ""}
           placeholder="Salary Range"
-          className="border p-2 rounded"
         />
-        <textarea
-          name="notes"
-          defaultValue={job?.notes || ""}
-          placeholder="Notes"
-          className="border p-2 rounded"
-        />
+        <Textarea label="Notes" name="notes" defaultValue={job?.notes || ""} placeholder="Notes" />
 
         <div className="flex">
           <button type="submit" className="button-primary w-full">
