@@ -21,7 +21,7 @@ const schema = Yup.object().shape({
   status: Yup.string().required("Status is required"),
   // @TODO: convert this to a number range later
   salaryRange: Yup.string().optional(),
-  notes: Yup.string().optional(),
+  description: Yup.string().optional(),
   tags: Yup.string().optional(),
 });
 
@@ -33,7 +33,7 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
       jobTitle: job?.jobTitle || "",
       status: statusValue || "",
       salaryRange: job?.salaryRange || "",
-      notes: job?.notes || "",
+      description: job?.description || "",
       tags: job?.tags?.join(", ") || "",
     },
     validationSchema: schema,
@@ -43,7 +43,7 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
       data.append("jobTitle", values.jobTitle);
       data.append("status", values.status);
       data.append("salaryRange", values.salaryRange);
-      data.append("notes", values.notes);
+      data.append("description", values.description);
       data.append("tags", values.tags);
 
       try {
@@ -112,11 +112,11 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
           {...getFieldProps("tags")}
         />
         <Textarea
-          id="notes"
-          label="Notes"
-          placeholder="Notes"
-          error={getError("notes")}
-          {...getFieldProps("notes")}
+          id="description"
+          label="Description"
+          placeholder="Description"
+          error={getError("description")}
+          {...getFieldProps("description")}
         />
 
         <div className="flex">

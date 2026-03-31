@@ -15,6 +15,13 @@
       "when": 1774980407143,
       "tag": "0001_goofy_lionheart",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1774982504211,
+      "tag": "0002_silky_scarlet_witch",
+      "breakpoints": true
     }
   ]
 }

@@ -1,11 +1,12 @@
 "use server";
 
-import { db } from "../db";
-import { jobs } from "../db/schema";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { desc, eq, ilike, and, asc, max, count, sql, inArray, isNotNull } from "drizzle-orm";
+import { desc, eq, ilike, and, asc, max, count, sql, isNotNull } from "drizzle-orm";
+
+import { db } from "../db";
+import { jobs } from "../db/schema";
 
 const JobStatus = z.enum(["WISHLIST", "APPLIED", "INTERVIEWING", "OFFER", "REJECTED"]);
 export type JobStatusType = z.infer<typeof JobStatus>;
@@ -15,13 +16,20 @@ const createJobSchema = z.object({
   jobTitle: z.string().min(1, "Position is required"),
   status: JobStatus,
   salaryRange: z.string().optional(),
-  notes: z.string().optional(),
+  description: z.string().optional(),
   tags: z.string().optional(),
 });
 
 function parseTagsInput(tags?: string): string[] {
   if (!tags) return [];
-  return [...new Set(tags.split(",").map((tag) => tag.trim()).filter(Boolean))];
+  return [
+    ...new Set(
+      tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+    ),
+  ];
 }
 
 export async function createJob(formData: FormData) {
@@ -31,7 +39,7 @@ export async function createJob(formData: FormData) {
     jobTitle: formData.get("jobTitle"),
     status: formData.get("status"),
     salaryRange: formData.get("salaryRange"),
-    notes: formData.get("notes"),
+    description: formData.get("description"),
     tags: formData.get("tags"),
   });
 
@@ -59,7 +67,7 @@ export async function createJob(formData: FormData) {
     status: validatedFields.data.status,
     position: newPosition,
     salaryRange: validatedFields.data.salaryRange,
-    notes: validatedFields.data.notes,
+    description: validatedFields.data.description,
   });
 
   // 5. Get return path or default to /board
@@ -122,7 +130,7 @@ export async function updateJob(formData: FormData) {
     jobTitle: formData.get("jobTitle"),
     status: formData.get("status"),
     salaryRange: formData.get("salaryRange"),
-    notes: formData.get("notes"),
+    description: formData.get("description"),
     tags: formData.get("tags"),
   });
 
@@ -138,12 +146,11 @@ export async function updateJob(formData: FormData) {
       jobTitle: validatedFields.data.jobTitle,
       status: validatedFields.data.status,
       salaryRange: validatedFields.data.salaryRange,
-      notes: validatedFields.data.notes,
+      description: validatedFields.data.description,
       tags: parseTagsInput(validatedFields.data.tags),
     })
     .where(eq(jobs.id, id));
 
-  // Get return path or default to /board
   const returnPath = formData.get("returnPath")?.toString() || "/board";
 
   revalidatePath("/");
@@ -160,7 +167,6 @@ export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
       return { error: "Invalid job ID" };
     }
 
-    // Validate status using the existing JobStatus zod enum
     const validatedStatus = JobStatus.safeParse(newStatus);
     if (!validatedStatus.success) {
       console.error("Validation Errors:", validatedStatus.error.flatten().fieldErrors);

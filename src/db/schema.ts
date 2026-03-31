@@ -18,6 +18,7 @@ export const jobs = pgTable("jobs", {
   position: integer("position").default(0).notNull(),
   salaryRange: text("salary_range"),
   appliedDate: date("applied_date"),
+  description: text("description"),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")

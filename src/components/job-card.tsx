@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import classNames from "classnames";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
 import { Job } from "@/db/schema";
 import { DeleteJobButton } from "@/components/delete-job-button";
 import { EditIcon } from "@/components/icons/edit-icon";
 import TagChipList from "@/components/tag-chip-list";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import classNames from "classnames";
 
 interface JobCardProps {
   job: Job;
@@ -56,7 +57,9 @@ export function JobCard({ job }: JobCardProps) {
         {job.salaryRange && <p className="text-sm text-gray-500">💰 {job.salaryRange}</p>}
       </div>
       <TagChipList tags={job.tags ?? []} />
-      {job.notes && <p className="text-sm text-gray-500 italic truncate">{job.notes}</p>}
+      {job.description && (
+        <p className="text-sm text-gray-500 italic truncate">{job.description}</p>
+      )}
     </div>
   );
 }
