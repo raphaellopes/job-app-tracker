@@ -1,3 +1,8 @@
+"use client";
+
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 import { Job } from "@/db/schema";
 import { createJob, updateJob } from "@/actions/jobs";
 import { JobStatusType } from "@/actions/jobs";
@@ -10,35 +15,64 @@ interface JobFormProps {
   initialStatus?: JobStatusType;
 }
 
+const schema = Yup.object().shape({
+  companyName: Yup.string().required("Company name is required"),
+  jobTitle: Yup.string().required("Position is required"),
+  status: Yup.string().required("Status is required"),
+  // @TODO: convert this to a number range later
+  salaryRange: Yup.string().optional(),
+  notes: Yup.string().optional(),
+});
+
 export function JobForm({ job, initialStatus }: JobFormProps) {
   const statusValue = initialStatus || job?.status;
+  const formik = useFormik({
+    initialValues: {
+      companyName: job?.companyName || "",
+      jobTitle: job?.jobTitle || "",
+      status: statusValue || "",
+      salaryRange: job?.salaryRange || "",
+      notes: job?.notes || "",
+    },
+    validationSchema: schema,
+    onSubmit: async (values) => {
+      const data = new FormData();
+      data.append("companyName", values.companyName);
+      data.append("jobTitle", values.jobTitle);
+      data.append("status", values.status);
+      data.append("salaryRange", values.salaryRange);
+      data.append("notes", values.notes);
+
+      if (job) {
+        data.append("id", job.id.toString());
+        await updateJob(data);
+      } else {
+        await createJob(data);
+      }
+    },
+  });
+  const { errors, touched, getFieldProps } = formik;
+
+  console.log(">>>>", errors, touched);
 
   return (
     <div className="">
-      <form action={job ? updateJob : createJob} className="flex flex-col gap-4 max-w-md">
-        {job && <input type="hidden" name="id" value={job.id} />}
+      <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4 max-w-md">
         <Input
           id="companyName"
           label="Company Name"
-          name="companyName"
-          defaultValue={job?.companyName}
           placeholder="Company Name"
-          required
+          {...getFieldProps("companyName")}
         />
         <Input
           id="jobTitle"
           label="Position"
-          name="jobTitle"
-          defaultValue={job?.jobTitle}
           placeholder="Position"
-          className="border p-2 rounded"
-          required
+          {...getFieldProps("jobTitle")}
         />
         <Select
           id="status"
           label="Status"
-          name="status"
-          defaultValue={statusValue}
           options={[
             { label: "Wishlist", value: "WISHLIST" },
             { label: "Applied", value: "APPLIED" },
@@ -46,21 +80,15 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
             { label: "Offer", value: "OFFER" },
             { label: "Rejected", value: "REJECTED" },
           ]}
+          {...getFieldProps("status")}
         />
         <Input
           id="salaryRange"
           label="Salary Range"
-          name="salaryRange"
-          defaultValue={job?.salaryRange || ""}
           placeholder="Salary Range"
+          {...getFieldProps("salaryRange")}
         />
-        <Textarea
-          id="notes"
-          label="Notes"
-          name="notes"
-          defaultValue={job?.notes || ""}
-          placeholder="Notes"
-        />
+        <Textarea id="notes" label="Notes" placeholder="Notes" {...getFieldProps("notes")} />
 
         <div className="flex">
           <button type="submit" className="button-primary w-full">
