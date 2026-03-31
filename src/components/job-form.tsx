@@ -18,6 +18,7 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
       <form action={job ? updateJob : createJob} className="flex flex-col gap-4 max-w-md">
         {job && <input type="hidden" name="id" value={job.id} />}
         <Input
+          id="companyName"
           label="Company Name"
           name="companyName"
           defaultValue={job?.companyName}
@@ -25,6 +26,7 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
           required
         />
         <Input
+          id="jobTitle"
           label="Position"
           name="jobTitle"
           defaultValue={job?.jobTitle}
@@ -33,6 +35,7 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
           required
         />
         <Select
+          id="status"
           label="Status"
           name="status"
           defaultValue={statusValue}
@@ -45,12 +48,19 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
           ]}
         />
         <Input
+          id="salaryRange"
           label="Salary Range"
           name="salaryRange"
           defaultValue={job?.salaryRange || ""}
           placeholder="Salary Range"
         />
-        <Textarea label="Notes" name="notes" defaultValue={job?.notes || ""} placeholder="Notes" />
+        <Textarea
+          id="notes"
+          label="Notes"
+          name="notes"
+          defaultValue={job?.notes || ""}
+          placeholder="Notes"
+        />
 
         <div className="flex">
           <button type="submit" className="button-primary w-full">
