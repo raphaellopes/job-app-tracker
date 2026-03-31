@@ -16,7 +16,13 @@ const createJobSchema = z.object({
   status: JobStatus,
   salaryRange: z.string().optional(),
   notes: z.string().optional(),
+  tags: z.string().optional(),
 });
+
+function parseTagsInput(tags?: string): string[] {
+  if (!tags) return [];
+  return [...new Set(tags.split(",").map((tag) => tag.trim()).filter(Boolean))];
+}
 
 export async function createJob(formData: FormData) {
   // 1. Validate the data
@@ -26,6 +32,7 @@ export async function createJob(formData: FormData) {
     status: formData.get("status"),
     salaryRange: formData.get("salaryRange"),
     notes: formData.get("notes"),
+    tags: formData.get("tags"),
   });
 
   // 2. Handle validation errors
@@ -48,6 +55,7 @@ export async function createJob(formData: FormData) {
   await db.insert(jobs).values({
     companyName: validatedFields.data.companyName,
     jobTitle: validatedFields.data.jobTitle,
+    tags: parseTagsInput(validatedFields.data.tags),
     status: validatedFields.data.status,
     position: newPosition,
     salaryRange: validatedFields.data.salaryRange,
@@ -115,6 +123,7 @@ export async function updateJob(formData: FormData) {
     status: formData.get("status"),
     salaryRange: formData.get("salaryRange"),
     notes: formData.get("notes"),
+    tags: formData.get("tags"),
   });
 
   if (!validatedFields.success) {
@@ -122,7 +131,17 @@ export async function updateJob(formData: FormData) {
     return;
   }
 
-  await db.update(jobs).set(validatedFields.data).where(eq(jobs.id, id));
+  await db
+    .update(jobs)
+    .set({
+      companyName: validatedFields.data.companyName,
+      jobTitle: validatedFields.data.jobTitle,
+      status: validatedFields.data.status,
+      salaryRange: validatedFields.data.salaryRange,
+      notes: validatedFields.data.notes,
+      tags: parseTagsInput(validatedFields.data.tags),
+    })
+    .where(eq(jobs.id, id));
 
   // Get return path or default to /board
   const returnPath = formData.get("returnPath")?.toString() || "/board";

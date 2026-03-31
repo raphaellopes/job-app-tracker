@@ -22,6 +22,7 @@ const schema = Yup.object().shape({
   // @TODO: convert this to a number range later
   salaryRange: Yup.string().optional(),
   notes: Yup.string().optional(),
+  tags: Yup.string().optional(),
 });
 
 export function JobForm({ job, initialStatus }: JobFormProps) {
@@ -33,6 +34,7 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
       status: statusValue || "",
       salaryRange: job?.salaryRange || "",
       notes: job?.notes || "",
+      tags: job?.tags?.join(", ") || "",
     },
     validationSchema: schema,
     onSubmit: async (values) => {
@@ -42,6 +44,7 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
       data.append("status", values.status);
       data.append("salaryRange", values.salaryRange);
       data.append("notes", values.notes);
+      data.append("tags", values.tags);
 
       try {
         if (job) {
@@ -100,6 +103,13 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
           placeholder="Salary Range"
           error={getError("salaryRange")}
           {...getFieldProps("salaryRange")}
+        />
+        <Input
+          id="tags"
+          label="Tags"
+          placeholder="frontend, remote, react"
+          error={getError("tags")}
+          {...getFieldProps("tags")}
         />
         <Textarea
           id="notes"
