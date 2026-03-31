@@ -25,7 +25,7 @@ const schema = Yup.object().shape({
 });
 
 export function JobForm({ job, initialStatus }: JobFormProps) {
-  const statusValue = initialStatus || job?.status;
+  const statusValue = initialStatus || job?.status || "WISHLIST";
   const formik = useFormik({
     initialValues: {
       companyName: job?.companyName || "",
@@ -53,7 +53,11 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
   });
   const { errors, touched, getFieldProps } = formik;
 
-  console.log(">>>>", errors, touched);
+  const getError = (field: string) => {
+    return errors[field as keyof typeof errors] && touched[field as keyof typeof touched]
+      ? errors[field as keyof typeof errors]
+      : null;
+  };
 
   return (
     <div className="">
@@ -62,12 +66,14 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
           id="companyName"
           label="Company Name"
           placeholder="Company Name"
+          error={getError("companyName")}
           {...getFieldProps("companyName")}
         />
         <Input
           id="jobTitle"
           label="Position"
           placeholder="Position"
+          error={getError("jobTitle")}
           {...getFieldProps("jobTitle")}
         />
         <Select
@@ -80,15 +86,23 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
             { label: "Offer", value: "OFFER" },
             { label: "Rejected", value: "REJECTED" },
           ]}
+          error={getError("status")}
           {...getFieldProps("status")}
         />
         <Input
           id="salaryRange"
           label="Salary Range"
           placeholder="Salary Range"
+          error={getError("salaryRange")}
           {...getFieldProps("salaryRange")}
         />
-        <Textarea id="notes" label="Notes" placeholder="Notes" {...getFieldProps("notes")} />
+        <Textarea
+          id="notes"
+          label="Notes"
+          placeholder="Notes"
+          error={getError("notes")}
+          {...getFieldProps("notes")}
+        />
 
         <div className="flex">
           <button type="submit" className="button-primary w-full">

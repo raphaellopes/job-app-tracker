@@ -31,6 +31,10 @@ textarea {
   @apply border border-gray-300 rounded focus:border-transparent;
 }
 
+.input-error {
+  @apply border-red-500 ring-1 ring-red-500;
+}
+
 /** Buttons */
 .button-primary {
   @apply bg-blue-700 text-white p-2 rounded hover:bg-blue-800 cursor-pointer;

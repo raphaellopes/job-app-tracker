@@ -1,5 +1,5 @@
-import classNames from "classnames";
 import FormField from "./form-field";
+import { getFormFieldClassName } from "./utils";
 
 type SelectOption = {
   label: string;
@@ -9,6 +9,7 @@ type SelectOption = {
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   options: SelectOption[];
+  error?: string | null;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -17,13 +18,14 @@ const Select: React.FC<SelectProps> = ({
   required = false,
   className,
   options,
+  error,
   ...props
 }) => {
   return (
-    <FormField label={label} id={id} required={required}>
+    <FormField label={label} id={id} required={required} error={error}>
       <select
         id={id}
-        className={classNames("border p-2 rounded", className)}
+        className={getFormFieldClassName(className, !!error)}
         required={required}
         {...props}
       >

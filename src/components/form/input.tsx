@@ -1,16 +1,24 @@
-import classNames from "classnames";
 import FormField from "./form-field";
+import { getFormFieldClassName } from "./utils";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  error?: string | null;
 }
 
-const Input: React.FC<InputProps> = ({ id, label, required = false, className, ...props }) => {
+const Input: React.FC<InputProps> = ({
+  id,
+  label,
+  required = false,
+  className,
+  error,
+  ...props
+}) => {
   return (
-    <FormField label={label} id={id} required={required}>
+    <FormField label={label} id={id} required={required} error={error}>
       <input
         id={id}
-        className={classNames("border p-2 rounded", className)}
+        className={getFormFieldClassName(className, !!error)}
         required={required}
         {...props}
       />

@@ -1,8 +1,9 @@
-import classNames from "classnames";
 import FormField from "./form-field";
+import { getFormFieldClassName } from "./utils";
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
+  error?: string | null;
 }
 
 const Textarea: React.FC<TextareaProps> = ({
@@ -10,13 +11,14 @@ const Textarea: React.FC<TextareaProps> = ({
   label,
   required = false,
   className,
+  error,
   ...props
 }) => {
   return (
-    <FormField label={label} id={id} required={required}>
+    <FormField label={label} id={id} required={required} error={error}>
       <textarea
         id={id}
-        className={classNames("border p-2 rounded", className)}
+        className={getFormFieldClassName(className, !!error)}
         required={required}
         {...props}
       />
