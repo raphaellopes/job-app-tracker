@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { Job } from "@/db/schema";
 import { analyzeJob, type InterviewPrepResult } from "@/actions/gemini-service";
 import AIInterviewPrepResult from "@/components/ai-interview-prep-result";
-import { Job } from "@/db/schema";
-import ErrorBox from "./form/error-box";
+import ErrorBox from "@/components/form/error-box";
 
 interface AIInterviewPrepProps {
   job: Job;
