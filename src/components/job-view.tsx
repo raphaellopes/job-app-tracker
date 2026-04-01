@@ -32,7 +32,7 @@ const JobView: React.FC<JobViewProps> = ({ job }) => {
       </div>
 
       <div>
-        <AIInterviewPrep />
+        <AIInterviewPrep job={job} />
       </div>
     </div>
   );

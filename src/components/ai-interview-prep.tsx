@@ -1,24 +1,44 @@
 "use client";
 
-const MOCK_PREP_ITEMS = [
-  "Tell me about yourself in 60 seconds.",
-  "Why are you interested in this company?",
-  "Describe a recent project and your impact.",
-];
+import { useState } from "react";
+import { analyzeJob } from "@/actions/gemini-service";
+import { Job } from "@/db/schema";
 
-export function AIInterviewPrep() {
+interface AIInterviewPrepProps {
+  job: Job;
+}
+
+export function AIInterviewPrep({ job }: AIInterviewPrepProps) {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<any>(null);
+
+  const handleGenerateInterviewPrep = async () => {
+    setIsGenerating(true);
+    setError(null);
+
+    try {
+      const result = await analyzeJob(job);
+      setResult(result);
+    } catch (error) {
+      setError(error as string);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
   return (
     <section className="rounded-lg border border-blue-100 bg-blue-50/40 p-4">
       <h3 className="text-sm font-semibold text-blue-900">AI Interview Prep</h3>
-      <p className="mt-1 text-sm text-blue-800">Mocked suggestions for your next interview.</p>
+      <p className="mt-1 text-sm text-blue-800">
+        Get AI-generated interview questions and resume matching analysis for this specific role.
+      </p>
 
-      <ul className="mt-3 space-y-2">
-        {MOCK_PREP_ITEMS.map((item) => (
-          <li key={item} className="rounded-md bg-white px-3 py-2 text-sm text-gray-700">
-            {item}
-          </li>
-        ))}
-      </ul>
+      <div className="mt-3">
+        <button className="button-primary w-full" onClick={handleGenerateInterviewPrep}>
+          {isGenerating ? "Generating..." : "Generate Interview Prep"}
+        </button>
+      </div>
     </section>
   );
 }
