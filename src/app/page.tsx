@@ -3,7 +3,7 @@ import { JobModal } from "@/components/modals/job-modal";
 import { getFormState } from "@/utils/form-state";
 import { getDashboardStats, getRecentJobs } from "@/actions/jobs";
 import { StatusDistributionCard } from "@/components/dashboard/status-distribution-card";
-import { SuccessMetricsCard } from "@/components/dashboard/success-metrics-card";
+import SuccessMetricsCard from "@/components/dashboard/success-metrics-card";
 import { RecentJobsTable } from "@/components/dashboard/recent-jobs-table";
 
 export default async function Dashboard(props: {

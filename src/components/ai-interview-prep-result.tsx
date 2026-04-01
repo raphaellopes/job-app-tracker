@@ -1,6 +1,7 @@
 import type { InterviewPrepResult } from "@/actions/gemini-service";
 import InterviewPrepMatchScore from "@/components/interview-prep-match-score";
 import TagChipList from "@/components/tag-chip-list";
+import Card from "@/components/card";
 
 interface AIInterviewPrepResultProps {
   result: InterviewPrepResult;
@@ -30,11 +31,9 @@ const AIInterviewPrepResult: React.FC<AIInterviewPrepResultProps> = ({ result })
         </ul>
       </div>
 
-      <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
-        <p className="text-sm text-blue-800">
-          <span className="font-semibold">Tip:</span> {result.tips}
-        </p>
-      </div>
+      <Card variant="primary">
+        <span className="font-semibold">Tip:</span> {result.tips}
+      </Card>
     </div>
   );
 };
