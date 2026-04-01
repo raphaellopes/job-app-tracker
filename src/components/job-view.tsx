@@ -1,7 +1,7 @@
 import { Job } from "@/db/schema";
 import TagChipList from "@/components/tag-chip-list";
 import JobNotesForm from "@/components/job-notes-form";
-import { AIInterviewPrep } from "@/components/ai-interview-prep";
+import AIInterviewPrep from "@/components/ai-interview-prep";
 
 interface JobViewProps {
   job: Job;

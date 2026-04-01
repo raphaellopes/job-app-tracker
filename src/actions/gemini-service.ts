@@ -5,8 +5,14 @@ const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
 
 const gemini = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
-export const analyzeJob = async (job: Job) => {
-  console.log("Analyzing job:", job);
+export interface InterviewPrepResult {
+  suggestedSkills: string[];
+  mockQuestions: string[];
+  resumeMatchScore: number;
+  tips: string;
+}
+
+export const analyzeJob = async (job: Job): Promise<InterviewPrepResult | null> => {
   const { jobTitle, description } = job;
   const response = await gemini.models.generateContent({
     model: "gemini-3-flash-preview",
@@ -46,11 +52,8 @@ export const analyzeJob = async (job: Job) => {
     },
   });
 
-  console.log("Gemini response:", response);
-
   try {
-    const parsedResponse = JSON.parse(response?.text?.trim() ?? "");
-    console.log("Parsed response:", parsedResponse);
+    const parsedResponse = JSON.parse(response?.text?.trim() ?? "") as InterviewPrepResult;
     return parsedResponse;
   } catch (error) {
     console.error("Error parsing Gemini response:", error);
