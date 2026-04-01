@@ -252,6 +252,31 @@ export async function updateJobPositions(
   }
 }
 
+export async function updateJobNotes(
+  jobId: number,
+  notes: string,
+): Promise<{ success: true } | { error: string }> {
+  try {
+    if (!jobId || typeof jobId !== "number") {
+      return { error: "Invalid job ID" };
+    }
+
+    if (typeof notes !== "string") {
+      return { error: "Invalid notes value" };
+    }
+
+    await db.update(jobs).set({ notes }).where(eq(jobs.id, jobId));
+
+    revalidatePath("/board");
+    revalidatePath("/");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating job notes:", error);
+    return { error: "Failed to update job notes" };
+  }
+}
+
 export interface DashboardStats {
   statusDistribution: Array<{ status: string; count: number }>;
   pipelineTotal: number;

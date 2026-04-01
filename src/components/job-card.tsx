@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import classNames from "classnames";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -15,6 +16,9 @@ interface JobCardProps {
 }
 
 export function JobCard({ job }: JobCardProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: job.id,
   });
@@ -25,6 +29,15 @@ export function JobCard({ job }: JobCardProps) {
     opacity: isDragging ? 0.5 : 1,
   };
 
+  const handleOpenView = () => {
+    const nextSearchParams = new URLSearchParams(searchParams.toString());
+    nextSearchParams.set("view", job.id.toString());
+    nextSearchParams.delete("add");
+    nextSearchParams.delete("edit");
+    const queryString = nextSearchParams.toString();
+    router.push(queryString ? `${pathname}?${queryString}` : pathname);
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -33,6 +46,7 @@ export function JobCard({ job }: JobCardProps) {
         "cursor-grabbing": isDragging,
         "cursor-grab": !isDragging,
       })}
+      onClick={handleOpenView}
       {...attributes}
       {...listeners}
     >

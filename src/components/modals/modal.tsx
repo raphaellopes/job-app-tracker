@@ -1,24 +1,42 @@
 import { ReactNode } from "react";
+import classNames from "classnames";
+
 import { CloseIcon } from "@/components/icons/close-icon";
+
+type ModalSizes = "sm" | "md";
 
 interface ModalProps {
   title: string;
+  description?: string;
+  size?: ModalSizes;
   onClose: () => void;
   children: ReactNode;
 }
 
-export function Modal({ title, onClose, children }: ModalProps) {
+const modalSizeClasses: Record<ModalSizes, string> = {
+  sm: "max-w-md",
+  md: "max-w-4xl",
+};
+
+export function Modal({ title, description, size = "sm", onClose, children }: ModalProps) {
+  const maxWidthClassName = modalSizeClasses[size];
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto"
+        className={classNames(
+          "bg-white rounded-2xl shadow-xl w-full mx-4 max-h-[90vh] overflow-y-auto",
+          maxWidthClassName,
+        )}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between p-4">
-          <h2 className="text-xl font-semibold">{title}</h2>
+        <div className="flex items-start justify-between p-4 gap-4">
+          <div>
+            <h2 className="text-xl font-semibold">{title}</h2>
+            {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
+          </div>
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"

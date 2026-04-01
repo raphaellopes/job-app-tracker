@@ -6,10 +6,12 @@ import { KanbanBoard } from "@/components/kanban-board";
 import { Header } from "@/components/header";
 import { getFormState } from "@/utils/form-state";
 import { JobModal } from "@/components/modals/job-modal";
+import JobViewModal from "@/components/modals/job-view-modal";
 
 interface BoardProps {
   searchParams: Promise<{
     edit?: string;
+    view?: string;
     add?: string;
     search?: string;
     status?: string;
@@ -24,6 +26,9 @@ export default async function Board(props: BoardProps) {
   const jobToEdit = searchParams.edit
     ? jobs.find((j) => j.id === Number(searchParams.edit))
     : undefined;
+  const jobToView = searchParams.view
+    ? jobs.find((j) => j.id === Number(searchParams.view))
+    : undefined;
 
   return (
     <main className="p-4 sm:p-6 lg:p-10 h-screen !pb-0 flex flex-col">
@@ -34,6 +39,7 @@ export default async function Board(props: BoardProps) {
       />
 
       <JobModal job={jobToEdit} />
+      <JobViewModal job={jobToView} />
 
       {/* Kanban Board */}
       <div className="space-y-4 flex-1 flex flex-col">
