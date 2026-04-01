@@ -18,7 +18,7 @@ const FormField: React.FC<FormFieldProps> = ({
 }) => {
   return (
     <div
-      className={classNames("flex flex-col gap-1", className, error && "text-red-500")}
+      className={classNames("flex flex-col gap-1", className, error && "text-red-800")}
       {...props}
     >
       {label && (

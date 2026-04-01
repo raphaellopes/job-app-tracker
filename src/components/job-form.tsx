@@ -73,14 +73,14 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
         <Input
           id="companyName"
           label="Company Name"
-          placeholder="Company Name"
+          placeholder="e.g. Google, Apple, Facebook"
           error={getError("companyName")}
           {...getFieldProps("companyName")}
         />
         <Input
           id="jobTitle"
           label="Position"
-          placeholder="Position"
+          placeholder="e.g. Software Engineer, Product Manager, etc."
           error={getError("jobTitle")}
           {...getFieldProps("jobTitle")}
         />
@@ -107,15 +107,16 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
         <Input
           id="tags"
           label="Tags"
-          placeholder="frontend, remote, react"
+          placeholder="Front-end, Remote, React, etc."
           error={getError("tags")}
           {...getFieldProps("tags")}
         />
         <Textarea
           id="description"
           label="Description"
-          placeholder="Description"
+          placeholder="Paste the job description for AI analysis later..."
           error={getError("description")}
+          rows={6}
           {...getFieldProps("description")}
         />
 
