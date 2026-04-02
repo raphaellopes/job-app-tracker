@@ -2,7 +2,7 @@ import { getJobInterviewPrepByJobId, getJobs } from "@/actions/jobs";
 import { SearchInput } from "@/components/search-input";
 import { StatusFilter } from "@/components/status-filter";
 import { SortSelect } from "@/components/sort-select";
-import { KanbanBoard } from "@/components/kanban-board";
+import { KanbanBoard } from "@/components/kanban/kanban-board";
 import { Header } from "@/components/header";
 import { getFormState } from "@/utils/form-state";
 import { JobModal } from "@/components/job/job-modal";

@@ -15,7 +15,7 @@ import {
 import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { Job } from "@/db/schema";
 import { JobStatusType, updateJobStatus, updateJobPositions } from "@/actions/jobs";
-import { KanbanColumn } from "@/components/kanban-column";
+import { KanbanColumn } from "@/components/kanban/kanban-column";
 import { JobCard } from "@/components/job/job-card";
 
 interface KanbanBoardProps {
