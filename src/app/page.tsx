@@ -1,5 +1,5 @@
 import { Header } from "@/components/header";
-import { JobModal } from "@/components/modals/job-modal";
+import { JobModal } from "@/components/job/job-modal";
 import { getFormState } from "@/utils/form-state";
 import { getDashboardStats, getRecentJobs } from "@/actions/jobs";
 import { StatusDistributionCard } from "@/components/dashboard/status-distribution-card";

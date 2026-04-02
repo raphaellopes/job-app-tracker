@@ -1,4 +1,4 @@
-import { AddJobButton } from "@/components/add-job-button";
+import { AddJobButton } from "@/components/job/add-job-button";
 
 interface HeaderProps {
   title: string;

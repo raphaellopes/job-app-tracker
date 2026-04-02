@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Modal } from "@/components/modals/modal";
-import JobView from "@/components/job-view";
+import JobView from "@/components/job/job-view";
 import { Job } from "@/db/schema";
 import type { InterviewPrepResult } from "@/actions/gemini";
 

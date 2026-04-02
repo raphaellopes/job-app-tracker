@@ -3,7 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Modal } from "@/components/modals/modal";
-import { JobForm } from "@/components/job-form";
+import { JobForm } from "@/components/job/job-form";
 import { Job } from "@/db/schema";
 import { JobStatusType } from "@/actions/jobs";
 

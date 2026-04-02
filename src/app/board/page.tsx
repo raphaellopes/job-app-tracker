@@ -5,8 +5,8 @@ import { SortSelect } from "@/components/sort-select";
 import { KanbanBoard } from "@/components/kanban-board";
 import { Header } from "@/components/header";
 import { getFormState } from "@/utils/form-state";
-import { JobModal } from "@/components/modals/job-modal";
-import JobViewModal from "@/components/modals/job-view-modal";
+import { JobModal } from "@/components/job/job-modal";
+import JobViewModal from "@/components/job/job-view-modal";
 
 interface BoardProps {
   searchParams: Promise<{
@@ -29,9 +29,7 @@ export default async function Board(props: BoardProps) {
   const jobToView = searchParams.view
     ? jobs.find((j) => j.id === Number(searchParams.view))
     : undefined;
-  const initialInterviewPrep = jobToView
-    ? await getJobInterviewPrepByJobId(jobToView.id)
-    : null;
+  const initialInterviewPrep = jobToView ? await getJobInterviewPrepByJobId(jobToView.id) : null;
 
   return (
     <main className="p-4 sm:p-6 lg:p-10 h-screen !pb-0 flex flex-col">

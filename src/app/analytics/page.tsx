@@ -1,4 +1,4 @@
-import { JobModal } from "@/components/modals/job-modal";
+import { JobModal } from "@/components/job/job-modal";
 import { Header } from "@/components/header";
 import { getFormState } from "@/utils/form-state";
 
