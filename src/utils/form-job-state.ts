@@ -3,7 +3,17 @@ export interface FormSearchParams {
   edit?: string;
 }
 
-export function getFormState(searchParams: FormSearchParams) {
+export type JobViewSearchParams = FormSearchParams & {
+  view?: string;
+};
+
+export type BoardPageSearchParams = JobViewSearchParams & {
+  search?: string;
+  status?: string;
+  sort?: string;
+};
+
+export function getFormState(searchParams: JobViewSearchParams) {
   const isAdding = searchParams.add === "true";
   const isEditing = !!searchParams.edit;
   const showForm = isAdding || isEditing;

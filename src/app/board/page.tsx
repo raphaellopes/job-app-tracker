@@ -1,35 +1,22 @@
-import { getJobInterviewPrepByJobId, getJobs } from "@/actions/jobs";
+import { getJobs } from "@/actions/jobs";
 import { SearchInput } from "@/components/search-input";
 import { StatusFilter } from "@/components/status-filter";
 import { SortSelect } from "@/components/sort-select";
 import { KanbanBoard } from "@/components/kanban/kanban-board";
 import { Header } from "@/components/header";
-import { getFormState } from "@/utils/form-state";
+import { getFormState, type BoardPageSearchParams } from "@/utils/form-job-state";
+import { resolveJobViewState } from "@/utils/job-view-state";
 import { JobModal } from "@/components/job/job-modal";
 import JobViewModal from "@/components/job/job-view-modal";
 
-interface BoardProps {
-  searchParams: Promise<{
-    edit?: string;
-    view?: string;
-    add?: string;
-    search?: string;
-    status?: string;
-    sort?: string;
-  }>;
-}
-
-export default async function Board(props: BoardProps) {
+export default async function Board(props: { searchParams: Promise<BoardPageSearchParams> }) {
   const searchParams = await props.searchParams;
   const { isAdding, isEditing } = getFormState(searchParams);
   const jobs = await getJobs(searchParams.search, searchParams.status, searchParams.sort);
   const jobToEdit = searchParams.edit
     ? jobs.find((j) => j.id === Number(searchParams.edit))
     : undefined;
-  const jobToView = searchParams.view
-    ? jobs.find((j) => j.id === Number(searchParams.view))
-    : undefined;
-  const initialInterviewPrep = jobToView ? await getJobInterviewPrepByJobId(jobToView.id) : null;
+  const { jobToView, initialInterviewPrep } = await resolveJobViewState(searchParams.view, jobs);
 
   return (
     <main className="p-4 sm:p-6 lg:p-10 h-screen !pb-0 flex flex-col">

@@ -1,10 +1,8 @@
 import { JobModal } from "@/components/job/job-modal";
 import { Header } from "@/components/header";
-import { getFormState } from "@/utils/form-state";
+import { getFormState, type JobViewSearchParams } from "@/utils/form-job-state";
 
-export default async function Analytics(props: {
-  searchParams: Promise<{ edit?: string; add?: string }>;
-}) {
+export default async function Analytics(props: { searchParams: Promise<JobViewSearchParams> }) {
   const searchParams = await props.searchParams;
   const { isAdding, isEditing } = getFormState(searchParams);
 

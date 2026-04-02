@@ -1,24 +1,23 @@
 import { Header } from "@/components/header";
 import { JobModal } from "@/components/job/job-modal";
 import JobViewModal from "@/components/job/job-view-modal";
-import { getFormState } from "@/utils/form-state";
-import { getDashboardStats, getJobInterviewPrepByJobId, getRecentJobs } from "@/actions/jobs";
+import { getFormState, type JobViewSearchParams } from "@/utils/form-job-state";
+import { resolveJobViewState } from "@/utils/job-view-state";
+import { getDashboardStats, getRecentJobs } from "@/actions/jobs";
 import { StatusDistributionCard } from "@/components/dashboard/status-distribution-card";
 import SuccessMetricsCard from "@/components/dashboard/success-metrics-card";
 import { RecentJobsTable } from "@/components/dashboard/recent-jobs-table";
 
-export default async function Dashboard(props: {
-  searchParams: Promise<{ edit?: string; add?: string; view?: string }>;
-}) {
+export default async function Dashboard(props: { searchParams: Promise<JobViewSearchParams> }) {
   const searchParams = await props.searchParams;
   const { isAdding, isEditing } = getFormState(searchParams);
 
   const [dashboardStats, recentJobs] = await Promise.all([getDashboardStats(), getRecentJobs(4)]);
 
-  const jobToView = searchParams.view
-    ? recentJobs.find((j) => j.id === Number(searchParams.view))
-    : undefined;
-  const initialInterviewPrep = jobToView ? await getJobInterviewPrepByJobId(jobToView.id) : null;
+  const { jobToView, initialInterviewPrep } = await resolveJobViewState(
+    searchParams.view,
+    recentJobs,
+  );
 
   return (
     <main className="p-10">
