@@ -13,7 +13,7 @@ import {
   closestCenter,
 } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
-import { Job } from "@/db/schema";
+import { Job, JOB_STATUSES } from "@/db/schema";
 import { JobStatusType, updateJobStatus, updateJobPositions } from "@/actions/jobs";
 import { KanbanColumn } from "@/components/kanban/kanban-column";
 import { JobCard } from "@/components/job/job-card";
@@ -21,8 +21,6 @@ import { JobCard } from "@/components/job/job-card";
 interface KanbanBoardProps {
   jobs: Job[];
 }
-
-const STATUSES: JobStatusType[] = ["WISHLIST", "APPLIED", "INTERVIEWING", "OFFER", "REJECTED"];
 
 export function KanbanBoard({ jobs }: KanbanBoardProps) {
   const router = useRouter();
@@ -36,8 +34,7 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
     }),
   );
 
-  // Group jobs by status
-  const jobsByStatus = STATUSES.reduce(
+  const jobsByStatus = JOB_STATUSES.reduce(
     (acc, status) => {
       acc[status] = jobs.filter((job) => job.status === status);
       return acc;
@@ -71,7 +68,7 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
     let newStatus: JobStatusType | null = null;
 
     // Check if dropped on a column (status) or on another job
-    if (STATUSES.includes(over.id as JobStatusType)) {
+    if (JOB_STATUSES.includes(over.id as JobStatusType)) {
       // Dropped directly on a column
       newStatus = over.id as JobStatusType;
     } else {
@@ -103,7 +100,7 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
       // Find the target position (over.id or over position)
       let newIndex: number;
 
-      if (STATUSES.includes(over.id as JobStatusType)) {
+      if (JOB_STATUSES.includes(over.id as JobStatusType)) {
         // Dropped directly on the column (droppable area) - move to the end
         // Edge case: if already at the end, no change needed
         newIndex = columnJobs.length - 1;
@@ -181,7 +178,7 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
     >
       <div className="w-full overflow-x-auto pb-4 -mx-2 px-2 pt-2 scroll-smooth">
         <div className="flex gap-4 min-w-max">
-          {STATUSES.map((status) => {
+          {JOB_STATUSES.map((status) => {
             const columnJobs = jobsByStatus[status];
             return (
               <SortableContext

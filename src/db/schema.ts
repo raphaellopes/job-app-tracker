@@ -18,6 +18,8 @@ export const jobStatusEnum = pgEnum("job_status", [
   "REJECTED",
 ]);
 
+export const JOB_STATUSES = jobStatusEnum.enumValues;
+
 export const jobs = pgTable("jobs", {
   id: serial("id").primaryKey(),
   companyName: text("company_name").notNull(),
