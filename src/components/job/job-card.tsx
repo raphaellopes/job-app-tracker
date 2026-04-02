@@ -9,7 +9,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Job } from "@/db/schema";
 import { DeleteJobButton } from "@/components/job/delete-job-button";
 import { EditIcon } from "@/components/icons/edit-icon";
-import TagChipList from "@/components/tag-chip-list";
+import TagChipList from "@/components/tag/tag-chip-list";
 
 interface JobCardProps {
   job: Job;

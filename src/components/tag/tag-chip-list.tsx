@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import TagChip from "@/components/tag-chip";
+import TagChip from "@/components/tag/tag-chip";
 
 interface TagChipListProps {
   tags?: string[] | null;
