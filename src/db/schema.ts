@@ -1,5 +1,14 @@
 import { sql } from "drizzle-orm";
-import { pgTable, serial, text, timestamp, date, pgEnum, integer } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  date,
+  pgEnum,
+  integer,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 
 export const jobStatusEnum = pgEnum("job_status", [
   "WISHLIST",
@@ -13,7 +22,10 @@ export const jobs = pgTable("jobs", {
   id: serial("id").primaryKey(),
   companyName: text("company_name").notNull(),
   jobTitle: text("job_title").notNull(),
-  tags: text("tags").array().default(sql`'{}'::text[]`).notNull(),
+  tags: text("tags")
+    .array()
+    .default(sql`'{}'::text[]`)
+    .notNull(),
   status: jobStatusEnum("status").default("WISHLIST").notNull(),
   position: integer("position").default(0).notNull(),
   salaryRange: text("salary_range"),
@@ -27,5 +39,33 @@ export const jobs = pgTable("jobs", {
     .$onUpdate(() => new Date()),
 });
 
+export const jobInterviewPrep = pgTable(
+  "job_interview_prep",
+  {
+    id: serial("id").primaryKey(),
+    jobId: integer("job_id")
+      .notNull()
+      .references(() => jobs.id, { onDelete: "cascade" }),
+    suggestedSkills: text("suggested_skills")
+      .array()
+      .default(sql`'{}'::text[]`)
+      .notNull(),
+    mockQuestions: text("mock_questions")
+      .array()
+      .default(sql`'{}'::text[]`)
+      .notNull(),
+    resumeMatchScore: integer("resume_match_score").notNull(),
+    tips: text("tips").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [uniqueIndex("job_interview_prep_job_id_unique").on(table.jobId)],
+);
+
 export type Job = typeof jobs.$inferSelect;
 export type NewJob = typeof jobs.$inferInsert;
+export type JobInterviewPrep = typeof jobInterviewPrep.$inferSelect;
+export type NewJobInterviewPrep = typeof jobInterviewPrep.$inferInsert;

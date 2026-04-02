@@ -1,10 +1,12 @@
 import { Job } from "@/db/schema";
+import type { InterviewPrepResult } from "@/actions/gemini";
 import TagChipList from "@/components/tag-chip-list";
 import JobNotesForm from "@/components/job-notes-form";
 import AIInterviewPrep from "@/components/ai-interview-prep";
 
 interface JobViewProps {
   job: Job;
+  initialInterviewPrep?: InterviewPrepResult | null;
 }
 
 interface SectionProps {
@@ -21,7 +23,7 @@ const Section: React.FC<SectionProps> = ({ title, children }) => {
   );
 };
 
-const JobView: React.FC<JobViewProps> = ({ job }) => {
+const JobView: React.FC<JobViewProps> = ({ job, initialInterviewPrep = null }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-w-[36rem]">
       <div className="space-y-5">
@@ -45,7 +47,7 @@ const JobView: React.FC<JobViewProps> = ({ job }) => {
       </div>
 
       <div>
-        <AIInterviewPrep job={job} />
+        <AIInterviewPrep job={job} initialSavedResult={initialInterviewPrep} />
       </div>
     </div>
   );

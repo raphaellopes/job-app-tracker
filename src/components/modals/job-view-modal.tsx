@@ -4,12 +4,14 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Modal } from "@/components/modals/modal";
 import JobView from "@/components/job-view";
 import { Job } from "@/db/schema";
+import type { InterviewPrepResult } from "@/actions/gemini";
 
 interface JobViewModalProps {
   job?: Job;
+  initialInterviewPrep?: InterviewPrepResult | null;
 }
 
-const JobViewModal: React.FC<JobViewModalProps> = ({ job }) => {
+const JobViewModal: React.FC<JobViewModalProps> = ({ job, initialInterviewPrep = null }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -27,7 +29,7 @@ const JobViewModal: React.FC<JobViewModalProps> = ({ job }) => {
 
   return (
     <Modal title={job.jobTitle} description={job.companyName} size="md" onClose={handleClose}>
-      <JobView job={job} />
+      <JobView job={job} initialInterviewPrep={initialInterviewPrep} />
     </Modal>
   );
 };

@@ -1,4 +1,4 @@
-import { getJobs } from "@/actions/jobs";
+import { getJobInterviewPrepByJobId, getJobs } from "@/actions/jobs";
 import { SearchInput } from "@/components/search-input";
 import { StatusFilter } from "@/components/status-filter";
 import { SortSelect } from "@/components/sort-select";
@@ -29,6 +29,9 @@ export default async function Board(props: BoardProps) {
   const jobToView = searchParams.view
     ? jobs.find((j) => j.id === Number(searchParams.view))
     : undefined;
+  const initialInterviewPrep = jobToView
+    ? await getJobInterviewPrepByJobId(jobToView.id)
+    : null;
 
   return (
     <main className="p-4 sm:p-6 lg:p-10 h-screen !pb-0 flex flex-col">
@@ -39,7 +42,7 @@ export default async function Board(props: BoardProps) {
       />
 
       <JobModal job={jobToEdit} />
-      <JobViewModal job={jobToView} />
+      <JobViewModal job={jobToView} initialInterviewPrep={initialInterviewPrep} />
 
       {/* Kanban Board */}
       <div className="space-y-4 flex-1 flex flex-col">

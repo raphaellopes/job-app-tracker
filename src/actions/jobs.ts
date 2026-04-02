@@ -5,8 +5,9 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { desc, eq, ilike, and, asc, max, count, sql, isNotNull } from "drizzle-orm";
 
-import { db } from "../db";
-import { jobs } from "../db/schema";
+import { db } from "@/db";
+import { jobInterviewPrep, jobs } from "@/db/schema";
+import type { InterviewPrepResult } from "./gemini";
 
 const JobStatus = z.enum(["WISHLIST", "APPLIED", "INTERVIEWING", "OFFER", "REJECTED"]);
 export type JobStatusType = z.infer<typeof JobStatus>;
@@ -18,6 +19,13 @@ const createJobSchema = z.object({
   salaryRange: z.string().optional(),
   description: z.string().optional(),
   tags: z.string().optional(),
+});
+
+const interviewPrepSchema = z.object({
+  suggestedSkills: z.array(z.string().min(1)).min(1),
+  mockQuestions: z.array(z.string().min(1)).min(1),
+  resumeMatchScore: z.number().int().min(0).max(100),
+  tips: z.string().min(1),
 });
 
 function parseTagsInput(tags?: string): string[] {
@@ -274,6 +282,73 @@ export async function updateJobNotes(
   } catch (error) {
     console.error("Error updating job notes:", error);
     return { error: "Failed to update job notes" };
+  }
+}
+
+export async function getJobInterviewPrepByJobId(
+  jobId: number,
+): Promise<InterviewPrepResult | null> {
+  if (!jobId || typeof jobId !== "number") {
+    return null;
+  }
+
+  const prep = await db.query.jobInterviewPrep.findFirst({
+    where: eq(jobInterviewPrep.jobId, jobId),
+  });
+
+  if (!prep) {
+    return null;
+  }
+
+  return {
+    suggestedSkills: prep.suggestedSkills,
+    mockQuestions: prep.mockQuestions,
+    resumeMatchScore: prep.resumeMatchScore,
+    tips: prep.tips,
+  };
+}
+
+export async function saveJobInterviewPrep(
+  jobId: number,
+  prep: InterviewPrepResult,
+): Promise<{ success: true } | { error: string }> {
+  try {
+    if (!jobId || typeof jobId !== "number") {
+      return { error: "Invalid job ID" };
+    }
+
+    const validatedPrep = interviewPrepSchema.safeParse(prep);
+    if (!validatedPrep.success) {
+      return { error: "Invalid interview prep payload" };
+    }
+
+    await db
+      .insert(jobInterviewPrep)
+      .values({
+        jobId,
+        suggestedSkills: validatedPrep.data.suggestedSkills,
+        mockQuestions: validatedPrep.data.mockQuestions,
+        resumeMatchScore: validatedPrep.data.resumeMatchScore,
+        tips: validatedPrep.data.tips,
+      })
+      .onConflictDoUpdate({
+        target: jobInterviewPrep.jobId,
+        set: {
+          suggestedSkills: validatedPrep.data.suggestedSkills,
+          mockQuestions: validatedPrep.data.mockQuestions,
+          resumeMatchScore: validatedPrep.data.resumeMatchScore,
+          tips: validatedPrep.data.tips,
+          updatedAt: new Date(),
+        },
+      });
+
+    revalidatePath("/board");
+    revalidatePath("/");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error saving interview prep:", error);
+    return { error: "Failed to save interview prep" };
   }
 }
 

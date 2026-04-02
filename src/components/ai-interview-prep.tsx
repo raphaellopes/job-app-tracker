@@ -3,19 +3,23 @@
 import { useState } from "react";
 import { Job } from "@/db/schema";
 import { analyzeJob, type InterviewPrepResult } from "@/actions/gemini";
+import { saveJobInterviewPrep } from "@/actions/jobs";
 import AIInterviewPrepResult from "@/components/ai-interview-prep-result";
 import ErrorBox from "@/components/form/error-box";
 import type { ButtonProps } from "@/components/buttons/button";
-import ActionButtons from "./buttons/action-buttons";
+import ActionButtons from "@/components/buttons/action-buttons";
 
 interface AIInterviewPrepProps {
   job: Job;
+  initialSavedResult?: InterviewPrepResult | null;
 }
 
-const AIInterviewPrep: React.FC<AIInterviewPrepProps> = ({ job }) => {
+const AIInterviewPrep: React.FC<AIInterviewPrepProps> = ({ job, initialSavedResult = null }) => {
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<InterviewPrepResult | null>(null);
+  const [result, setResult] = useState<InterviewPrepResult | null>(initialSavedResult);
+  const [isSaved, setIsSaved] = useState(Boolean(initialSavedResult));
 
   const handleGenerateInterviewPrep = async () => {
     setIsGenerating(true);
@@ -28,6 +32,7 @@ const AIInterviewPrep: React.FC<AIInterviewPrepProps> = ({ job }) => {
         return;
       }
       setResult(next);
+      setIsSaved(false);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Something went wrong. Please try again.";
@@ -37,10 +42,38 @@ const AIInterviewPrep: React.FC<AIInterviewPrepProps> = ({ job }) => {
     }
   };
 
-  const getButtonLabel = () => {
+  const handleSaveInterviewPrep = async () => {
+    if (!result) return;
+
+    setIsSaving(true);
+    setError(null);
+
+    try {
+      const saveResult = await saveJobInterviewPrep(job.id, result);
+      if ("error" in saveResult) {
+        setError(saveResult.error);
+        return;
+      }
+
+      setIsSaved(true);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong while saving.";
+      setError(message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const getGenerateResultButtonLabel = () => {
     if (isGenerating) return "Generating...";
     if (result) return "Regenerate";
     return "Generate";
+  };
+
+  const getSaveResultButtonLabel = () => {
+    if (isSaving) return "Saving...";
+    if (isSaved) return "Saved";
+    return "Save";
   };
 
   return (
@@ -58,16 +91,17 @@ const AIInterviewPrep: React.FC<AIInterviewPrepProps> = ({ job }) => {
                 id: "generate",
                 type: "button",
                 className: "w-full",
-                disabled: isGenerating,
+                disabled: isGenerating || isSaving,
                 onClick: handleGenerateInterviewPrep,
-                children: getButtonLabel(),
+                children: getGenerateResultButtonLabel(),
               },
               result && {
                 id: "save",
                 type: "button",
                 className: "w-full",
-                onClick: () => console.log("it should save!"),
-                children: "Save",
+                disabled: isSaving || isSaved,
+                onClick: handleSaveInterviewPrep,
+                children: getSaveResultButtonLabel(),
               },
             ].filter(Boolean) as ButtonProps[]
           }
