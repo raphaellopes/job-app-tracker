@@ -42,10 +42,13 @@ export function JobCard({ job }: JobCardProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className={classNames("border p-2 rounded-lg shadow-sm bg-white group flex flex-col gap-3", {
-        "cursor-grabbing": isDragging,
-        "cursor-grab": !isDragging,
-      })}
+      className={classNames(
+        "border border-gray-100 p-2 rounded-lg shadow-sm bg-white group flex flex-col gap-3",
+        {
+          "cursor-grabbing": isDragging,
+          "cursor-grab": !isDragging,
+        },
+      )}
       onClick={handleOpenView}
       {...attributes}
       {...listeners}
