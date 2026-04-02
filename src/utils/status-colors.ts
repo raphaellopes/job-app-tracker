@@ -9,28 +9,28 @@ export interface StatusColors {
 export const STATUS_COLORS: Record<JobStatus, StatusColors> = {
   WISHLIST: {
     bg: "bg-purple-500",
-    text: "text-purple-500",
-    border: "border-purple-500",
+    text: "text-purple-200",
+    border: "border-purple-900",
   },
   APPLIED: {
     bg: "bg-blue-500",
-    text: "text-blue-500",
-    border: "border-blue-500",
+    text: "text-blue-200",
+    border: "border-blue-900",
   },
   INTERVIEWING: {
     bg: "bg-amber-500",
-    text: "text-amber-500",
-    border: "border-amber-500",
+    text: "text-amber-200",
+    border: "border-amber-900",
   },
   OFFER: {
     bg: "bg-green-500",
-    text: "text-green-500",
-    border: "border-green-500",
+    text: "text-green-200",
+    border: "border-green-900",
   },
   REJECTED: {
     bg: "bg-red-500",
-    text: "text-red-500",
-    border: "border-red-500",
+    text: "text-red-200",
+    border: "border-red-900",
   },
 };
 
