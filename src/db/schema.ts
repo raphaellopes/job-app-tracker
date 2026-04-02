@@ -68,7 +68,29 @@ export const jobInterviewPrep = pgTable(
   (table) => [uniqueIndex("job_interview_prep_job_id_unique").on(table.jobId)],
 );
 
+export const users = pgTable(
+  "users",
+  {
+    id: serial("id").primaryKey(),
+    firstName: text("first_name").notNull(),
+    lastName: text("last_name").notNull(),
+    email: text("email").notNull(),
+    username: text("username").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    uniqueIndex("users_email_unique").on(table.email),
+    uniqueIndex("users_username_unique").on(table.username),
+  ],
+);
+
 export type Job = typeof jobs.$inferSelect;
 export type NewJob = typeof jobs.$inferInsert;
 export type JobInterviewPrep = typeof jobInterviewPrep.$inferSelect;
 export type NewJobInterviewPrep = typeof jobInterviewPrep.$inferInsert;
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;

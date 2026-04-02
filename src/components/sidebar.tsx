@@ -147,7 +147,14 @@ export function Sidebar() {
   );
 
   const renderUserSection = () => (
-    <div className="p-3 sm:p-4 border-t border-gray-200">
+    <div className="p-3 sm:p-4 border-t border-gray-200 space-y-2">
+      <Link
+        href="/sign-up"
+        onClick={closeMobileMenu}
+        className="block w-full text-center text-xs sm:text-sm font-medium text-blue-700 hover:text-blue-800 py-2 rounded-lg hover:bg-blue-50 transition-colors"
+      >
+        Sign up
+      </Link>
       <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gray-50">
         <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-200 flex items-center justify-center">
           <AvatarIcon className="w-4 h-4 sm:w-6 sm:h-6 text-gray-600" />
