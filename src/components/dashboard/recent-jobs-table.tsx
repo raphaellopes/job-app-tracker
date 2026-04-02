@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Job } from "@/db/schema";
 import { getStatusColor } from "@/utils/status-colors";
 
@@ -24,6 +25,19 @@ function formatDate(date: string | null): string {
 }
 
 export function RecentJobsTable({ jobs }: RecentJobsTableProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const openJobView = (jobId: number) => {
+    const nextSearchParams = new URLSearchParams(searchParams.toString());
+    nextSearchParams.set("view", jobId.toString());
+    nextSearchParams.delete("add");
+    nextSearchParams.delete("edit");
+    const queryString = nextSearchParams.toString();
+    router.push(queryString ? `${pathname}?${queryString}` : pathname);
+  };
+
   if (jobs.length === 0) {
     return (
       <div className="border border-gray-200 rounded-lg shadow-sm bg-white p-6">
@@ -66,7 +80,16 @@ export function RecentJobsTable({ jobs }: RecentJobsTableProps) {
               return (
                 <tr
                   key={job.id}
-                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                  tabIndex={0}
+                  aria-label={`View ${job.jobTitle} at ${job.companyName}`}
+                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors cursor-pointer"
+                  onClick={() => openJobView(job.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      openJobView(job.id);
+                    }
+                  }}
                 >
                   <td className="py-3 px-4 text-sm text-gray-900">{job.jobTitle}</td>
                   <td className="py-3 px-4 text-sm text-gray-700">{job.companyName}</td>
