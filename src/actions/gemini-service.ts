@@ -1,7 +1,9 @@
+"use server";
+
 import { GoogleGenAI, Type } from "@google/genai";
 import { Job } from "@/db/schema";
 
-const GEMINI_API_KEY = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const gemini = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
