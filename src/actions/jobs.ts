@@ -40,6 +40,31 @@ function parseTagsInput(tags?: string): string[] {
   ];
 }
 
+function localDateStringForToday(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+/** How `appliedDate` should change when status changes; empty object = leave DB value as-is. */
+function appliedDatePatchForStatusChange(
+  prevStatus: JobStatusType,
+  nextStatus: JobStatusType,
+): { appliedDate: string | null } | Record<string, never> {
+  if (prevStatus === nextStatus) {
+    return {};
+  }
+  if (nextStatus === "WISHLIST") {
+    return { appliedDate: null };
+  }
+  if (prevStatus === "WISHLIST") {
+    return { appliedDate: localDateStringForToday() };
+  }
+  return {};
+}
+
 export async function createJob(formData: FormData) {
   // 1. Validate the data
   const validatedFields = createJobSchema.safeParse({
@@ -68,14 +93,16 @@ export async function createJob(formData: FormData) {
   const newPosition = maxPosition !== null ? maxPosition + 1 : 0;
 
   // 4. Insert into database with the calculated position
+  const status = validatedFields.data.status;
   await db.insert(jobs).values({
     companyName: validatedFields.data.companyName,
     jobTitle: validatedFields.data.jobTitle,
     tags: parseTagsInput(validatedFields.data.tags),
-    status: validatedFields.data.status,
+    status,
     position: newPosition,
     salaryRange: validatedFields.data.salaryRange,
     description: validatedFields.data.description,
+    ...(status !== "WISHLIST" ? { appliedDate: localDateStringForToday() } : {}),
   });
 
   // 5. Get return path or default to /board
@@ -147,6 +174,21 @@ export async function updateJob(formData: FormData) {
     return;
   }
 
+  const [existing] = await db
+    .select({ status: jobs.status })
+    .from(jobs)
+    .where(eq(jobs.id, id))
+    .limit(1);
+
+  if (!existing) {
+    return;
+  }
+
+  const appliedPatch = appliedDatePatchForStatusChange(
+    existing.status,
+    validatedFields.data.status,
+  );
+
   await db
     .update(jobs)
     .set({
@@ -156,6 +198,7 @@ export async function updateJob(formData: FormData) {
       salaryRange: validatedFields.data.salaryRange,
       description: validatedFields.data.description,
       tags: parseTagsInput(validatedFields.data.tags),
+      ...appliedPatch,
     })
     .where(eq(jobs.id, id));
 
@@ -181,6 +224,16 @@ export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
       return { error: "Invalid status value" };
     }
 
+    const [existing] = await db
+      .select({ status: jobs.status })
+      .from(jobs)
+      .where(eq(jobs.id, jobId))
+      .limit(1);
+
+    if (!existing) {
+      return { error: "Job not found" };
+    }
+
     // Find the maximum position value for jobs in the new status
     const maxPositionResult = await db
       .select({ maxPosition: max(jobs.position) })
@@ -191,12 +244,18 @@ export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
     const maxPosition = maxPositionResult[0]?.maxPosition ?? null;
     const newPosition = maxPosition !== null ? maxPosition + 1 : 0;
 
+    const appliedPatch = appliedDatePatchForStatusChange(
+      existing.status,
+      validatedStatus.data,
+    );
+
     // Update both status and position in a single database operation
     await db
       .update(jobs)
       .set({
         status: validatedStatus.data,
         position: newPosition,
+        ...appliedPatch,
       })
       .where(eq(jobs.id, jobId));
 
