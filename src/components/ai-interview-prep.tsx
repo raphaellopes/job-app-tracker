@@ -5,6 +5,7 @@ import { Job } from "@/db/schema";
 import { analyzeJob, type InterviewPrepResult } from "@/actions/gemini";
 import AIInterviewPrepResult from "@/components/ai-interview-prep-result";
 import ErrorBox from "@/components/form/error-box";
+import Button from "@/components/buttons/button";
 
 interface AIInterviewPrepProps {
   job: Job;
@@ -49,14 +50,14 @@ const AIInterviewPrep: React.FC<AIInterviewPrepProps> = ({ job }) => {
       </p>
 
       <div className="mt-3">
-        <button
+        <Button
           type="button"
-          className="button-primary w-full"
+          className="w-full"
           disabled={isGenerating}
           onClick={handleGenerateInterviewPrep}
         >
           {getButtonLabel()}
-        </button>
+        </Button>
       </div>
 
       {error && <ErrorBox>{error}</ErrorBox>}

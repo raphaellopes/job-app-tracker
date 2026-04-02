@@ -39,3 +39,7 @@ textarea {
 .button-primary {
   @apply bg-blue-700 text-white p-2 rounded hover:bg-blue-800 cursor-pointer;
 }
+
+button[disabled] {
+  @apply cursor-not-allowed opacity-50;
+}

@@ -6,9 +6,10 @@ import * as Yup from "yup";
 import { Job } from "@/db/schema";
 import { createJob, updateJob } from "@/actions/jobs";
 import { JobStatusType } from "@/actions/jobs";
-import Input from "./form/input";
-import Textarea from "./form/textarea";
-import Select from "./form/select";
+import Input from "@/components/form/input";
+import Textarea from "@/components/form/textarea";
+import Select from "@/components/form/select";
+import Button from "@/components/buttons/button";
 
 interface JobFormProps {
   job?: Job | null;
@@ -121,9 +122,9 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
         />
 
         <div className="flex">
-          <button type="submit" className="button-primary w-full">
+          <Button type="submit" className="w-full">
             {job ? "Update Job" : "Add Job"}
-          </button>
+          </Button>
         </div>
       </form>
     </div>
