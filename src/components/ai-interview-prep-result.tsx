@@ -1,4 +1,4 @@
-import type { InterviewPrepResult } from "@/actions/gemini-service";
+import type { InterviewPrepResult } from "@/actions/gemini";
 import InterviewPrepMatchScore from "@/components/interview-prep-match-score";
 import TagChipList from "@/components/tag-chip-list";
 import Card from "@/components/card";

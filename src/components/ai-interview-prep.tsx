@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Job } from "@/db/schema";
-import { analyzeJob, type InterviewPrepResult } from "@/actions/gemini-service";
+import { analyzeJob, type InterviewPrepResult } from "@/actions/gemini";
 import AIInterviewPrepResult from "@/components/ai-interview-prep-result";
 import ErrorBox from "@/components/form/error-box";
 
