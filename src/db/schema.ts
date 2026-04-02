@@ -19,6 +19,7 @@ export const jobStatusEnum = pgEnum("job_status", [
 ]);
 
 export const JOB_STATUSES = jobStatusEnum.enumValues;
+export type JobStatusType = (typeof JOB_STATUSES)[number];
 
 export const jobs = pgTable("jobs", {
   id: serial("id").primaryKey(),

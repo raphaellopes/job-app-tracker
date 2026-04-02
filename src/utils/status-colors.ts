@@ -1,4 +1,4 @@
-export type JobStatus = "WISHLIST" | "APPLIED" | "INTERVIEWING" | "OFFER" | "REJECTED";
+import { JobStatusType } from "@/db/schema";
 
 export interface StatusColors {
   bg: string;
@@ -6,7 +6,7 @@ export interface StatusColors {
   border: string;
 }
 
-export const STATUS_COLORS: Record<JobStatus, StatusColors> = {
+export const STATUS_COLORS: Record<JobStatusType, StatusColors> = {
   WISHLIST: {
     bg: "bg-purple-500",
     text: "text-purple-200",
@@ -40,7 +40,7 @@ export const STATUS_COLORS: Record<JobStatus, StatusColors> = {
  * @returns The color classes for the status, or default colors if status is not found
  */
 export function getStatusColor(status: string): StatusColors {
-  const normalizedStatus = status.toUpperCase() as JobStatus;
+  const normalizedStatus = status.toUpperCase() as JobStatusType;
   return (
     STATUS_COLORS[normalizedStatus] || {
       bg: "bg-gray-500",

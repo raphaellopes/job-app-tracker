@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Job } from "@/db/schema";
-import { getStatusColor } from "@/utils/status-colors";
+import JobStatusTag from "@/components/job/job-status-tag";
 
 interface RecentJobsTableProps {
   jobs: Array<Job>;
@@ -75,8 +75,6 @@ export function RecentJobsTable({ jobs }: RecentJobsTableProps) {
           </thead>
           <tbody>
             {jobs.map((job) => {
-              const statusColors = getStatusColor(job.status);
-
               return (
                 <tr
                   key={job.id}
@@ -94,11 +92,7 @@ export function RecentJobsTable({ jobs }: RecentJobsTableProps) {
                   <td className="py-3 px-4 text-sm text-gray-900">{job.jobTitle}</td>
                   <td className="py-3 px-4 text-sm text-gray-700">{job.companyName}</td>
                   <td className="py-3 px-4">
-                    <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors.bg} ${statusColors.text} bg-opacity-10`}
-                    >
-                      {job.status.charAt(0) + job.status.slice(1).toLowerCase()}
-                    </span>
+                    <JobStatusTag status={job.status} />
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-600">{formatDate(job.appliedDate)}</td>
                 </tr>
