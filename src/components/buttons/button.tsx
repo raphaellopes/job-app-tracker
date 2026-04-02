@@ -1,6 +1,6 @@
 import classNames from "classnames";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
 
 const Button: React.FC<ButtonProps> = ({ children, className, ...props }) => {
   return (

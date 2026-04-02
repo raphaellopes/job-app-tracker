@@ -5,7 +5,8 @@ import { Job } from "@/db/schema";
 import { analyzeJob, type InterviewPrepResult } from "@/actions/gemini";
 import AIInterviewPrepResult from "@/components/ai-interview-prep-result";
 import ErrorBox from "@/components/form/error-box";
-import Button from "@/components/buttons/button";
+import type { ButtonProps } from "@/components/buttons/button";
+import ActionButtons from "./buttons/action-buttons";
 
 interface AIInterviewPrepProps {
   job: Job;
@@ -38,8 +39,8 @@ const AIInterviewPrep: React.FC<AIInterviewPrepProps> = ({ job }) => {
 
   const getButtonLabel = () => {
     if (isGenerating) return "Generating...";
-    if (result) return "Regenerate Interview Prep";
-    return "Generate Interview Prep";
+    if (result) return "Regenerate";
+    return "Generate";
   };
 
   return (
@@ -50,14 +51,27 @@ const AIInterviewPrep: React.FC<AIInterviewPrepProps> = ({ job }) => {
       </p>
 
       <div className="mt-3">
-        <Button
-          type="button"
-          className="w-full"
-          disabled={isGenerating}
-          onClick={handleGenerateInterviewPrep}
-        >
-          {getButtonLabel()}
-        </Button>
+        <ActionButtons
+          items={
+            [
+              {
+                id: "generate",
+                type: "button",
+                className: "w-full",
+                disabled: isGenerating,
+                onClick: handleGenerateInterviewPrep,
+                children: getButtonLabel(),
+              },
+              result && {
+                id: "save",
+                type: "button",
+                className: "w-full",
+                onClick: () => console.log("it should save!"),
+                children: "Save",
+              },
+            ].filter(Boolean) as ButtonProps[]
+          }
+        />
       </div>
 
       {error && <ErrorBox>{error}</ErrorBox>}
