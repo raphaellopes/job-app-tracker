@@ -32,10 +32,11 @@ const menuItems = [
 ];
 
 type SidebarProps = {
+  userName: string;
   userEmail?: string;
 };
 
-export function Sidebar({ userEmail }: SidebarProps) {
+export function Sidebar({ userName, userEmail }: SidebarProps) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const closeMobileMenu = () => {
@@ -158,7 +159,7 @@ export function Sidebar({ userEmail }: SidebarProps) {
           <AvatarIcon className="w-4 h-4 sm:w-6 sm:h-6 text-gray-600" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">Authenticated user</p>
+          <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">{userName}</p>
           <p className="text-[10px] sm:text-xs text-gray-500 truncate">{userEmail ?? "No email found"}</p>
         </div>
       </div>
