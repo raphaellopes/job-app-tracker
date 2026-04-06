@@ -2,13 +2,19 @@ import { redirect } from "next/navigation";
 
 import { getDbUserForSession } from "@/lib/auth/user";
 
-export default async function HomePage() {
+export default async function SignInLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   const { session, dbUser } = await getDbUserForSession();
+
   if (session && dbUser) {
     redirect("/dashboard");
   }
   if (session && !dbUser) {
     redirect("/sign-up/complete");
   }
-  redirect("/sign-in");
+
+  return <>{children}</>;
 }

@@ -1,22 +1,25 @@
 import { redirect } from "next/navigation";
 
 import { Sidebar } from "@/components/sidebar";
-import { getCurrentUser } from "@/lib/auth/session";
+import { getDbUserForSession } from "@/lib/auth/user";
 
 export default async function PrivateLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getCurrentUser();
+  const { session, dbUser } = await getDbUserForSession();
 
-  if (!user) {
+  if (!session) {
     redirect("/sign-in");
+  }
+  if (!dbUser) {
+    redirect("/sign-up/complete");
   }
 
   return (
     <>
-      <Sidebar userEmail={user.email} />
+      <Sidebar userEmail={dbUser.email} />
       <div className="ml-0 sm:ml-[280px] pt-16 sm:pt-0 min-h-screen">{children}</div>
     </>
   );

@@ -5,7 +5,11 @@ import { signOut } from "firebase/auth";
 
 import { firebaseAuth } from "@/lib/firebase/client";
 
-export function SignOutButton() {
+interface SignOutButtonProps {
+  className?: string;
+}
+
+export const SignOutButton: React.FC<SignOutButtonProps> = ({ className }) => {
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -19,9 +23,12 @@ export function SignOutButton() {
     <button
       type="button"
       onClick={() => void handleSignOut()}
-      className="block w-full text-center text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 py-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+      className={
+        className ??
+        "block w-full text-center text-xs sm:text-sm font-medium text-gray-700 hover:text-gray-900 py-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
+      }
     >
       Sign out
     </button>
   );
-}
+};

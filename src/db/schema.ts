@@ -21,8 +21,31 @@ export const jobStatusEnum = pgEnum("job_status", [
 export const JOB_STATUSES = jobStatusEnum.enumValues;
 export type JobStatusType = (typeof JOB_STATUSES)[number];
 
+export const users = pgTable(
+  "users",
+  {
+    id: serial("id").primaryKey(),
+    firebaseUid: text("firebase_uid").notNull(),
+    firstName: text("first_name").notNull(),
+    lastName: text("last_name").notNull(),
+    email: text("email").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .notNull()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    uniqueIndex("users_firebase_uid_unique").on(table.firebaseUid),
+    uniqueIndex("users_email_unique").on(table.email),
+  ],
+);
+
 export const jobs = pgTable("jobs", {
   id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "restrict" }),
   companyName: text("company_name").notNull(),
   jobTitle: text("job_title").notNull(),
   tags: text("tags")
@@ -66,26 +89,6 @@ export const jobInterviewPrep = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [uniqueIndex("job_interview_prep_job_id_unique").on(table.jobId)],
-);
-
-export const users = pgTable(
-  "users",
-  {
-    id: serial("id").primaryKey(),
-    firebaseUid: text("firebase_uid").notNull(),
-    firstName: text("first_name").notNull(),
-    lastName: text("last_name").notNull(),
-    email: text("email").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at")
-      .defaultNow()
-      .notNull()
-      .$onUpdate(() => new Date()),
-  },
-  (table) => [
-    uniqueIndex("users_firebase_uid_unique").on(table.firebaseUid),
-    uniqueIndex("users_email_unique").on(table.email),
-  ],
 );
 
 export type Job = typeof jobs.$inferSelect;

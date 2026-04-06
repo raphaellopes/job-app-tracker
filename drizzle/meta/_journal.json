@@ -43,6 +43,13 @@
       "when": 1775457600000,
       "tag": "0005_firebase_uid",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1775497924781,
+      "tag": "0006_jobs_user_id",
+      "breakpoints": true
     }
   ]
 }

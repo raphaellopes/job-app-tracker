@@ -3,11 +3,23 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { desc, eq, ilike, and, asc, max, count, sql, isNotNull } from "drizzle-orm";
+import { desc, eq, ilike, and, asc, max, count, sql, isNotNull, inArray } from "drizzle-orm";
 
 import { db } from "@/db";
 import { jobInterviewPrep, jobs } from "@/db/schema";
+import { getDbUserForSession } from "@/lib/auth/user";
 import type { InterviewPrepResult } from "./gemini";
+
+async function requireDbUserId(): Promise<number> {
+  const { session, dbUser } = await getDbUserForSession();
+  if (!session) {
+    redirect("/sign-in");
+  }
+  if (!dbUser) {
+    redirect("/sign-up/complete");
+  }
+  return dbUser.id;
+}
 
 const JobStatus = z.enum(["WISHLIST", "APPLIED", "INTERVIEWING", "OFFER", "REJECTED"]);
 export type JobStatusType = z.infer<typeof JobStatus>;
@@ -66,6 +78,8 @@ function appliedDatePatchForStatusChange(
 }
 
 export async function createJob(formData: FormData) {
+  const userId = await requireDbUserId();
+
   // 1. Validate the data
   const validatedFields = createJobSchema.safeParse({
     companyName: formData.get("companyName"),
@@ -86,7 +100,7 @@ export async function createJob(formData: FormData) {
   const maxPositionResult = await db
     .select({ maxPosition: max(jobs.position) })
     .from(jobs)
-    .where(eq(jobs.status, validatedFields.data.status));
+    .where(and(eq(jobs.userId, userId), eq(jobs.status, validatedFields.data.status)));
 
   // Calculate the new position: maxPosition + 1, or 0 if no jobs exist with that status
   const maxPosition = maxPositionResult[0]?.maxPosition ?? null;
@@ -95,6 +109,7 @@ export async function createJob(formData: FormData) {
   // 4. Insert into database with the calculated position
   const status = validatedFields.data.status;
   await db.insert(jobs).values({
+    userId,
     companyName: validatedFields.data.companyName,
     jobTitle: validatedFields.data.jobTitle,
     tags: parseTagsInput(validatedFields.data.tags),
@@ -117,7 +132,9 @@ export async function createJob(formData: FormData) {
 }
 
 export async function getJobs(search?: string, status?: string, sort?: string) {
-  const filters = [];
+  const userId = await requireDbUserId();
+
+  const filters = [eq(jobs.userId, userId)];
   if (search) filters.push(ilike(jobs.companyName, `%${search}%`));
   if (status) filters.push(eq(jobs.status, status as JobStatusType));
 
@@ -146,16 +163,21 @@ export async function getJobs(search?: string, status?: string, sort?: string) {
 }
 
 export async function deleteJob(formData: FormData) {
+  const userId = await requireDbUserId();
+
   const id = Number(formData.get("id"));
 
   if (!id) return;
 
-  await db.delete(jobs).where(eq(jobs.id, id));
+  await db.delete(jobs).where(and(eq(jobs.id, id), eq(jobs.userId, userId)));
 
   revalidatePath("/");
+  revalidatePath("/board");
 }
 
 export async function updateJob(formData: FormData) {
+  const userId = await requireDbUserId();
+
   const id = Number(formData.get("id"));
 
   if (!id) return;
@@ -177,7 +199,7 @@ export async function updateJob(formData: FormData) {
   const [existing] = await db
     .select({ status: jobs.status })
     .from(jobs)
-    .where(eq(jobs.id, id))
+    .where(and(eq(jobs.id, id), eq(jobs.userId, userId)))
     .limit(1);
 
   if (!existing) {
@@ -200,7 +222,7 @@ export async function updateJob(formData: FormData) {
       tags: parseTagsInput(validatedFields.data.tags),
       ...appliedPatch,
     })
-    .where(eq(jobs.id, id));
+    .where(and(eq(jobs.id, id), eq(jobs.userId, userId)));
 
   const returnPath = formData.get("returnPath")?.toString() || "/board";
 
@@ -213,6 +235,8 @@ export async function updateJob(formData: FormData) {
 
 export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
   try {
+    const userId = await requireDbUserId();
+
     if (!jobId || typeof jobId !== "number") {
       console.error("Invalid job ID:", jobId);
       return { error: "Invalid job ID" };
@@ -227,7 +251,7 @@ export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
     const [existing] = await db
       .select({ status: jobs.status })
       .from(jobs)
-      .where(eq(jobs.id, jobId))
+      .where(and(eq(jobs.id, jobId), eq(jobs.userId, userId)))
       .limit(1);
 
     if (!existing) {
@@ -238,7 +262,7 @@ export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
     const maxPositionResult = await db
       .select({ maxPosition: max(jobs.position) })
       .from(jobs)
-      .where(eq(jobs.status, validatedStatus.data));
+      .where(and(eq(jobs.userId, userId), eq(jobs.status, validatedStatus.data)));
 
     // Calculate the new position: maxPosition + 1, or 0 if no jobs exist in that status
     const maxPosition = maxPositionResult[0]?.maxPosition ?? null;
@@ -257,7 +281,7 @@ export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
         position: newPosition,
         ...appliedPatch,
       })
-      .where(eq(jobs.id, jobId));
+      .where(and(eq(jobs.id, jobId), eq(jobs.userId, userId)));
 
     // Revalidate the /board path after update
     revalidatePath("/board");
@@ -274,6 +298,8 @@ export async function updateJobPositions(
   status?: JobStatusType,
 ): Promise<{ success: true } | { error: string }> {
   try {
+    const userId = await requireDbUserId();
+
     // Validate inputs
     if (!Array.isArray(jobIds) || jobIds.length === 0) {
       return { error: "Job IDs array is required and cannot be empty" };
@@ -292,6 +318,15 @@ export async function updateJobPositions(
       }
     }
 
+    const owned = await db
+      .select({ id: jobs.id })
+      .from(jobs)
+      .where(and(eq(jobs.userId, userId), inArray(jobs.id, jobIds)));
+
+    if (owned.length !== jobIds.length) {
+      return { error: "Invalid job IDs" };
+    }
+
     // Use transaction to ensure all updates happen atomically
     await db.transaction(async (tx) => {
       // Update position for each job based on its index in the array
@@ -305,7 +340,10 @@ export async function updateJobPositions(
           updateData.status = status;
         }
 
-        await tx.update(jobs).set(updateData).where(eq(jobs.id, jobIds[i]));
+        await tx
+          .update(jobs)
+          .set(updateData)
+          .where(and(eq(jobs.id, jobIds[i]), eq(jobs.userId, userId)));
       }
     });
 
@@ -324,6 +362,8 @@ export async function updateJobNotes(
   notes: string,
 ): Promise<{ success: true } | { error: string }> {
   try {
+    const userId = await requireDbUserId();
+
     if (!jobId || typeof jobId !== "number") {
       return { error: "Invalid job ID" };
     }
@@ -332,7 +372,15 @@ export async function updateJobNotes(
       return { error: "Invalid notes value" };
     }
 
-    await db.update(jobs).set({ notes }).where(eq(jobs.id, jobId));
+    const updated = await db
+      .update(jobs)
+      .set({ notes })
+      .where(and(eq(jobs.id, jobId), eq(jobs.userId, userId)))
+      .returning({ id: jobs.id });
+
+    if (updated.length === 0) {
+      return { error: "Job not found" };
+    }
 
     revalidatePath("/board");
     revalidatePath("/");
@@ -348,6 +396,18 @@ export async function getJobInterviewPrepByJobId(
   jobId: number,
 ): Promise<InterviewPrepResult | null> {
   if (!jobId || typeof jobId !== "number") {
+    return null;
+  }
+
+  const userId = await requireDbUserId();
+
+  const [owned] = await db
+    .select({ id: jobs.id })
+    .from(jobs)
+    .where(and(eq(jobs.id, jobId), eq(jobs.userId, userId)))
+    .limit(1);
+
+  if (!owned) {
     return null;
   }
 
@@ -372,8 +432,20 @@ export async function saveJobInterviewPrep(
   prep: InterviewPrepResult,
 ): Promise<{ success: true } | { error: string }> {
   try {
+    const userId = await requireDbUserId();
+
     if (!jobId || typeof jobId !== "number") {
       return { error: "Invalid job ID" };
+    }
+
+    const [owned] = await db
+      .select({ id: jobs.id })
+      .from(jobs)
+      .where(and(eq(jobs.id, jobId), eq(jobs.userId, userId)))
+      .limit(1);
+
+    if (!owned) {
+      return { error: "Job not found" };
     }
 
     const validatedPrep = interviewPrepSchema.safeParse(prep);
@@ -424,6 +496,8 @@ export interface DashboardStats {
  * Optimized to minimize database round trips using parallel queries.
  */
 export async function getDashboardStats(): Promise<DashboardStats> {
+  const userId = await requireDbUserId();
+
   // Query 1: Get status distribution using GROUP BY
   const statusDistributionResult = await db
     .select({
@@ -431,6 +505,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       count: count(),
     })
     .from(jobs)
+    .where(eq(jobs.userId, userId))
     .groupBy(jobs.status);
 
   // Query 2: Get aggregate counts in a single query using conditional aggregation
@@ -441,7 +516,8 @@ export async function getDashboardStats(): Promise<DashboardStats> {
       offerCount: sql<number>`COUNT(CASE WHEN ${jobs.status} = 'OFFER' THEN 1 END)`,
       interviewingCount: sql<number>`COUNT(CASE WHEN ${jobs.status} = 'INTERVIEWING' THEN 1 END)`,
     })
-    .from(jobs);
+    .from(jobs)
+    .where(eq(jobs.userId, userId));
 
   const aggregates = aggregateResult[0] || {
     totalJobs: 0,
@@ -468,10 +544,12 @@ export async function getDashboardStats(): Promise<DashboardStats> {
  * @param limit - Maximum number of jobs to return (default: 4)
  */
 export async function getRecentJobs(limit: number = 4): Promise<(typeof jobs.$inferSelect)[]> {
+  const userId = await requireDbUserId();
+
   return await db
     .select()
     .from(jobs)
-    .where(isNotNull(jobs.appliedDate))
+    .where(and(eq(jobs.userId, userId), isNotNull(jobs.appliedDate)))
     .orderBy(desc(jobs.appliedDate), desc(jobs.createdAt))
     .limit(limit);
 }
