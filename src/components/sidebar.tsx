@@ -11,11 +11,12 @@ import { AnalyticsIcon } from "./icons/analytics-icon";
 import { AvatarIcon } from "./icons/avatar-icon";
 import { CloseIcon } from "./icons/close-icon";
 import { MenuIcon } from "./icons/menu-icon";
+import { SignOutButton } from "./auth/sign-out-button";
 
 const menuItems = [
   {
     label: "Dashboard",
-    href: "/",
+    href: "/dashboard",
     icon: DashboardIcon,
   },
   {
@@ -30,9 +31,16 @@ const menuItems = [
   },
 ];
 
-export function Sidebar() {
+type SidebarProps = {
+  userEmail?: string;
+};
+
+export function Sidebar({ userEmail }: SidebarProps) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
 
   useEffect(() => {
     if (!isMobileMenuOpen) {
@@ -52,10 +60,6 @@ export function Sidebar() {
   useEffect(() => {
     closeMobileMenu();
   }, [pathname]);
-
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
 
   const renderMobileMenu = () => (
     <header className="sm:hidden fixed inset-x-0 top-0 z-20 h-16 bg-white border-b border-gray-200 px-4">
@@ -148,20 +152,14 @@ export function Sidebar() {
 
   const renderUserSection = () => (
     <div className="p-3 sm:p-4 border-t border-gray-200 space-y-2">
-      <Link
-        href="/sign-up"
-        onClick={closeMobileMenu}
-        className="block w-full text-center text-xs sm:text-sm font-medium text-blue-700 hover:text-blue-800 py-2 rounded-lg hover:bg-blue-50 transition-colors"
-      >
-        Sign up
-      </Link>
+      <SignOutButton />
       <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gray-50">
         <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-200 flex items-center justify-center">
           <AvatarIcon className="w-4 h-4 sm:w-6 sm:h-6 text-gray-600" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">John Doe</p>
-          <p className="text-[10px] sm:text-xs text-gray-500 truncate">user@example.com</p>
+          <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">Authenticated user</p>
+          <p className="text-[10px] sm:text-xs text-gray-500 truncate">{userEmail ?? "No email found"}</p>
         </div>
       </div>
     </div>

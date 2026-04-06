@@ -10,8 +10,8 @@ export default function SignUpPage() {
       <SignUpForm />
       <p className="mt-8 text-sm text-gray-600">
         Already have an account?{" "}
-        <Link href="/" className="text-blue-700 font-medium hover:underline">
-          Back to dashboard
+        <Link href="/sign-in" className="text-blue-700 font-medium hover:underline">
+          Sign in
         </Link>
       </p>
     </main>

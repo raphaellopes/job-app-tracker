@@ -1,21 +1,18 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/db";
 import { users } from "@/db/schema";
+import { firebaseAdminAuth } from "@/lib/firebase/admin";
 
 const registerUserSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required"),
   lastName: z.string().trim().min(1, "Last name is required"),
   email: z.email("Enter a valid email address").trim(),
-  username: z
-    .string()
-    .trim()
-    .min(3, "Username must be at least 3 characters")
-    .max(32, "Username must be at most 32 characters")
-    .regex(/^[a-zA-Z0-9_]+$/, "Username may only contain letters, numbers, and underscores"),
+  idToken: z.string().min(1, "Authentication token is required"),
 });
 
 export type RegisterUserResult = { ok: true } | { ok: false; message: string };
@@ -41,7 +38,7 @@ export async function registerUser(formData: FormData): Promise<RegisterUserResu
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
     email: formData.get("email"),
-    username: formData.get("username"),
+    idToken: formData.get("idToken"),
   });
 
   if (!validated.success) {
@@ -49,26 +46,46 @@ export async function registerUser(formData: FormData): Promise<RegisterUserResu
     return { ok: false, message: first ?? "Invalid input." };
   }
 
-  const { firstName, lastName, email, username } = validated.data;
+  const { firstName, lastName, email, idToken } = validated.data;
   const emailNormalized = email.toLowerCase();
 
+  const decodedToken = await firebaseAdminAuth.verifyIdToken(idToken);
+  if (!decodedToken.email || decodedToken.email.toLowerCase() !== emailNormalized) {
+    return { ok: false, message: "The authenticated email does not match." };
+  }
+
   try {
-    await db.insert(users).values({
-      firstName,
-      lastName,
-      email: emailNormalized,
-      username,
+    const existing = await db.query.users.findFirst({
+      where: eq(users.firebaseUid, decodedToken.uid),
     });
+
+    if (existing) {
+      await db
+        .update(users)
+        .set({
+          firstName,
+          lastName,
+          email: emailNormalized,
+        })
+        .where(eq(users.id, existing.id));
+    } else {
+      await db.insert(users).values({
+        firebaseUid: decodedToken.uid,
+        firstName,
+        lastName,
+        email: emailNormalized,
+      });
+    }
   } catch (error) {
     if (isPostgresUniqueViolation(error)) {
       return {
         ok: false,
-        message: "An account with this email or username already exists.",
+        message: "An account with this email already exists.",
       };
     }
     throw error;
   }
 
-  revalidatePath("/");
+  revalidatePath("/dashboard");
   return { ok: true };
 }

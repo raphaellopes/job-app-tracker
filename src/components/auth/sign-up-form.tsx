@@ -4,11 +4,13 @@ import { useRouter } from "next/navigation";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import classNames from "classnames";
 
 import { registerUser } from "@/actions/sign-up";
 import Input from "@/components/form/input";
 import Button from "@/components/buttons/button";
-import classNames from "classnames";
+import { firebaseAuth } from "@/lib/firebase/client";
 
 const step1Schema = Yup.object({
   firstName: Yup.string().trim().required("First name is required"),
@@ -17,12 +19,6 @@ const step1Schema = Yup.object({
 });
 
 const step2Schema = Yup.object({
-  username: Yup.string()
-    .trim()
-    .min(3, "Username must be at least 3 characters")
-    .max(32, "Username must be at most 32 characters")
-    .matches(/^[a-zA-Z0-9_]+$/, "Only letters, numbers, and underscores")
-    .required("Username is required"),
   password: Yup.string()
     .min(8, "Password must be at least 8 characters")
     .required("Password is required"),
@@ -50,7 +46,6 @@ export function SignUpForm() {
       firstName: "",
       lastName: "",
       email: "",
-      username: "",
       password: "",
     },
     validateOnBlur: true,
@@ -68,19 +63,46 @@ export function SignUpForm() {
       setServerError(null);
       setIsSubmitting(true);
       try {
+        const credential = await createUserWithEmailAndPassword(
+          firebaseAuth,
+          values.email.trim().toLowerCase(),
+          values.password,
+        );
+        const idToken = await credential.user.getIdToken();
+
         const data = new FormData();
         data.append("firstName", values.firstName);
         data.append("lastName", values.lastName);
         data.append("email", values.email);
-        data.append("username", values.username);
+        data.append("idToken", idToken);
 
         const result = await registerUser(data);
         if (!result.ok) {
           setServerError(result.message);
           return;
         }
-        router.push("/");
+
+        const response = await fetch("/api/auth/session", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ idToken }),
+        });
+
+        if (!response.ok) {
+          setServerError("Unable to start your session. Please sign in.");
+          return;
+        }
+
+        router.push("/dashboard");
         router.refresh();
+      } catch (error) {
+        if (error instanceof Error) {
+          setServerError(error.message);
+          return;
+        }
+        setServerError("Unable to create account.");
       } finally {
         setIsSubmitting(false);
       }
@@ -172,7 +194,11 @@ export function SignUpForm() {
               error={getError("email")}
               {...getFieldProps("email")}
             />
-            <Button type="button" className="w-full sm:w-auto self-start" onClick={() => void goToStep2()}>
+            <Button
+              type="button"
+              className="w-full sm:w-auto self-start"
+              onClick={() => void goToStep2()}
+            >
               Continue
             </Button>
           </>
@@ -180,17 +206,6 @@ export function SignUpForm() {
 
         {step === 2 && (
           <>
-            <p className="text-sm text-gray-600">
-              Choose a username and password for signing in later. Your password is not stored in our database;
-              it will be used when you connect Firebase Auth.
-            </p>
-            <Input
-              id="username"
-              label="Username"
-              autoComplete="username"
-              error={getError("username")}
-              {...getFieldProps("username")}
-            />
             <Input
               id="password"
               type="password"

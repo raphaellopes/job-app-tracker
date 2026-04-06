@@ -72,10 +72,10 @@ export const users = pgTable(
   "users",
   {
     id: serial("id").primaryKey(),
+    firebaseUid: text("firebase_uid").notNull(),
     firstName: text("first_name").notNull(),
     lastName: text("last_name").notNull(),
     email: text("email").notNull(),
-    username: text("username").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()
@@ -83,8 +83,8 @@ export const users = pgTable(
       .$onUpdate(() => new Date()),
   },
   (table) => [
+    uniqueIndex("users_firebase_uid_unique").on(table.firebaseUid),
     uniqueIndex("users_email_unique").on(table.email),
-    uniqueIndex("users_username_unique").on(table.username),
   ],
 );
 

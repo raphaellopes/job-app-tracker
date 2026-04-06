@@ -29,7 +29,6 @@ export default async function Board(props: { searchParams: Promise<BoardPageSear
       <JobModal job={jobToEdit} />
       <JobViewModal job={jobToView} initialInterviewPrep={initialInterviewPrep} />
 
-      {/* Kanban Board */}
       <div className="space-y-4 flex-1 flex flex-col">
         <div className="flex flex-wrap gap-4 mb-6">
           <SearchInput />

@@ -16,7 +16,6 @@ export default async function Analytics(props: { searchParams: Promise<JobViewSe
 
       <JobModal />
 
-      {/* Mocked Analytics Content */}
       <div className="space-y-6">
         <p className="text-gray-600">
           Analytics content will be implemented here. This will include charts, graphs, and detailed
