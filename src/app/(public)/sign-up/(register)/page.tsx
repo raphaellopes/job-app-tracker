@@ -1,12 +1,11 @@
 import Link from "next/link";
 
-import { Header } from "@/components/header";
 import { SignUpForm } from "@/components/auth/sign-up-form";
+import CardWithLogoContainer from "@/components/cards/card-with-logo-container";
 
 export default function SignUpPage() {
   return (
-    <main className="p-10 max-w-lg">
-      <Header title="Sign up" subtitle="Create an account to use Job Tracker" showAddButton={false} />
+    <CardWithLogoContainer>
       <SignUpForm />
       <p className="mt-8 text-sm text-gray-600">
         Already have an account?{" "}
@@ -14,6 +13,6 @@ export default function SignUpPage() {
           Sign in
         </Link>
       </p>
-    </main>
+    </CardWithLogoContainer>
   );
 }

@@ -12,6 +12,7 @@ import { AvatarIcon } from "./icons/avatar-icon";
 import { CloseIcon } from "./icons/close-icon";
 import { MenuIcon } from "./icons/menu-icon";
 import { SignOutButton } from "./auth/sign-out-button";
+import Logo from "./logo";
 
 const menuItems = [
   {
@@ -65,10 +66,7 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
   const renderMobileMenu = () => (
     <header className="sm:hidden fixed inset-x-0 top-0 z-20 h-16 bg-white border-b border-gray-200 px-4">
       <div className="h-full flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <BriefcaseIcon className="w-5 h-5 text-gray-900 flex-shrink-0" />
-          <span className="text-lg font-bold text-gray-900">Job Tracker</span>
-        </div>
+        <Logo size="sm" />
         <button
           type="button"
           onClick={() => setIsMobileMenuOpen(true)}
@@ -95,10 +93,7 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
 
   const renderMobileSidebarHeader = () => (
     <div className="sm:hidden p-4 border-b border-gray-200 flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <BriefcaseIcon className="w-5 h-5 text-gray-900 flex-shrink-0" />
-        <span className="text-lg font-bold text-gray-900">Job Tracker</span>
-      </div>
+      <Logo size="sm" />
       <button
         type="button"
         onClick={closeMobileMenu}
@@ -112,10 +107,7 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
 
   const renderSidebarHeader = () => (
     <div className="hidden sm:block p-6 border-b border-gray-200">
-      <div className="flex items-center gap-3">
-        <BriefcaseIcon className="w-6 h-6 text-gray-900 flex-shrink-0" />
-        <span className="text-xl font-bold text-gray-900">Job Tracker</span>
-      </div>
+      <Logo size="md" />
     </div>
   );
 
@@ -160,7 +152,9 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">{userName}</p>
-          <p className="text-[10px] sm:text-xs text-gray-500 truncate">{userEmail ?? "No email found"}</p>
+          <p className="text-[10px] sm:text-xs text-gray-500 truncate">
+            {userEmail ?? "No email found"}
+          </p>
         </div>
       </div>
     </div>

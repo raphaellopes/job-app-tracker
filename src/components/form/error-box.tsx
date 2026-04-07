@@ -1,5 +1,5 @@
 import { WarningIcon } from "@/components/icons/warning-icon";
-import Card from "../card";
+import Card from "../cards/card";
 
 interface ErrorBoxProps extends React.HTMLAttributes<HTMLDivElement> {}
 
