@@ -3,6 +3,7 @@ import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import eslintConfigPrettier from "eslint-config-prettier";
 import reactCompiler from "eslint-plugin-react-compiler";
+import simpleImportSort from "eslint-plugin-simple-import-sort";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -17,9 +18,27 @@ const eslintConfig = defineConfig([
   ]),
   {
     plugins: {
+      "simple-import-sort": simpleImportSort,
       "react-compiler": reactCompiler,
     },
     rules: {
+      "simple-import-sort/imports": [
+        "error",
+        {
+          groups: [
+            // External libraries.
+            ["^react$", "^next", "^@?\\w"],
+            // Internal groups in desired order.
+            ["^@/components(/.*|$)"],
+            ["^@/db(/.*|$)"],
+            ["^@/actions(/.*|$)"],
+            ["^@/lib(/.*|$)"],
+            // Relative imports.
+            ["^\\.\\.(?!/?$)", "^\\.\\./?$", "^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+          ],
+        },
+      ],
+      "simple-import-sort/exports": "error",
       "react-compiler/react-compiler": "error",
     },
   },
