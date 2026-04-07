@@ -40,6 +40,14 @@ textarea {
   @apply bg-blue-700 text-white p-2 rounded hover:bg-blue-800 cursor-pointer;
 }
 
+.button-secondary {
+  @apply bg-gray-200 text-gray-900 p-2 rounded hover:bg-gray-300 cursor-pointer;
+}
+
+.button-danger {
+  @apply bg-red-600 text-white p-2 rounded hover:bg-red-700 cursor-pointer;
+}
+
 button[disabled] {
   @apply cursor-not-allowed opacity-50;
 }

@@ -6,7 +6,7 @@ import { CloseIcon } from "@/components/icons/close-icon";
 type ModalSizes = "sm" | "md";
 
 interface ModalProps {
-  title: string;
+  title?: string;
   description?: string;
   size?: ModalSizes;
   onClose: () => void;
@@ -34,7 +34,7 @@ export function Modal({ title, description, size = "sm", onClose, children }: Mo
       >
         <div className="flex items-start justify-between p-4 gap-4">
           <div>
-            <h2 className="text-xl font-semibold">{title}</h2>
+            {title && <h2 className="text-xl font-semibold">{title}</h2>}
             {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
           </div>
           <button
