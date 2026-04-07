@@ -77,13 +77,15 @@ const AIInterviewPrep: React.FC<AIInterviewPrepProps> = ({ job, initialSavedResu
   };
 
   return (
-    <section className="rounded-lg border border-blue-100 bg-blue-50/40 p-4">
-      <h3 className="text-sm font-semibold text-blue-900">AI Interview Prep</h3>
-      <p className="mt-1 text-sm text-blue-800">
-        Get AI-generated interview questions and resume matching analysis for this specific role.
-      </p>
+    <section className="rounded-lg border border-blue-100 bg-blue-50/40 p-4 space-y-4">
+      <div className="space-y-1">
+        <h3 className="text-sm font-semibold text-blue-900">AI Interview Prep</h3>
+        <p className="text-sm text-blue-800">
+          Get AI-generated interview questions and resume matching analysis for this specific role.
+        </p>
+      </div>
 
-      <div className="mt-3">
+      <div>
         <ActionButtons
           items={
             [

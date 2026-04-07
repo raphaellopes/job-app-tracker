@@ -7,7 +7,9 @@ const ErrorBox: React.FC<ErrorBoxProps> = ({ children, ...props }) => {
   return (
     <Card variant="error" {...props}>
       <div className="flex items-center gap-2">
-        <WarningIcon />
+        <span>
+          <WarningIcon />
+        </span>
         {children}
       </div>
     </Card>
