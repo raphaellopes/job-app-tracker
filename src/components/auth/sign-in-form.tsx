@@ -27,7 +27,7 @@ function yupToFormErrors(error: unknown): Record<string, string> {
   return formErrors;
 }
 
-export function SignInForm() {
+const SignInForm: React.FC = () => {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -119,4 +119,6 @@ export function SignInForm() {
       </Button>
     </form>
   );
-}
+};
+
+export default SignInForm;

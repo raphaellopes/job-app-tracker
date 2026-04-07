@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { SignInForm } from "@/components/auth/sign-in-form";
+import SignInForm from "@/components/auth/sign-in-form";
 import CardWithLogoContainer from "@/components/cards/card-with-logo-container";
 
 export default function SignInPage() {

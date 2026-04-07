@@ -29,7 +29,7 @@ function yupToFormErrors(error: unknown): Record<string, string> {
   return formErrors;
 }
 
-export function CompleteSignUpForm() {
+const CompleteSignUpForm: React.FC = () => {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -162,4 +162,6 @@ export function CompleteSignUpForm() {
       </Button>
     </form>
   );
-}
+};
+
+export default CompleteSignUpForm;

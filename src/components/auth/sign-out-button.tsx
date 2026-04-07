@@ -9,7 +9,7 @@ interface SignOutButtonProps {
   className?: string;
 }
 
-export const SignOutButton: React.FC<SignOutButtonProps> = ({ className }) => {
+const SignOutButton: React.FC<SignOutButtonProps> = ({ className }) => {
   const router = useRouter();
 
   const handleSignOut = async () => {
@@ -32,3 +32,5 @@ export const SignOutButton: React.FC<SignOutButtonProps> = ({ className }) => {
     </button>
   );
 };
+
+export default SignOutButton;
