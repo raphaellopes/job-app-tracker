@@ -1,16 +1,18 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { onAuthStateChanged } from "firebase/auth";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+
+import Button from "@/components/buttons/button";
+import ErrorBox from "@/components/form/error-box";
+import Input from "@/components/form/input";
 
 import { registerUser } from "@/actions/sign-up";
-import Input from "@/components/form/input";
-import Button from "@/components/buttons/button";
+
 import { firebaseAuth } from "@/lib/firebase/client";
-import ErrorBox from "@/components/form/error-box";
 
 const schema = Yup.object({
   firstName: Yup.string().trim().required("First name is required"),

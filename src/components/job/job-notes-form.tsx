@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { updateJobNotes } from "@/actions/jobs";
+
 import Textarea from "@/components/form/textarea";
+
+import { updateJobNotes } from "@/actions/jobs";
 
 interface JobNotesFormProps {
   jobId: number;

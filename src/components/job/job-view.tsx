@@ -1,8 +1,10 @@
-import { Job } from "@/db/schema";
-import type { InterviewPrepResult } from "@/actions/gemini";
-import TagChipList from "@/components/tag/tag-chip-list";
-import JobNotesForm from "@/components/job/job-notes-form";
 import AIInterviewPrep from "@/components/ai-interview-prep/ai-interview-prep";
+import JobNotesForm from "@/components/job/job-notes-form";
+import TagChipList from "@/components/tag/tag-chip-list";
+
+import { Job } from "@/db/schema";
+
+import type { InterviewPrepResult } from "@/actions/gemini";
 
 interface JobViewProps {
   job: Job;

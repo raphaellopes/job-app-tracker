@@ -1,8 +1,8 @@
 "use client";
 
-import Modal from "@/components/modals/modal";
-import { IconProps } from "@/components/icons/icon-props";
 import ActionButtons from "@/components/buttons/action-buttons";
+import { IconProps } from "@/components/icons/icon-props";
+import Modal from "@/components/modals/modal";
 
 interface ConfirmModalProps {
   isOpen: boolean;

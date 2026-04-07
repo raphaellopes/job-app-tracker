@@ -1,17 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { FirebaseError } from "firebase/app";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useState } from "react";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { FirebaseError } from "firebase/app";
+
+import Button from "@/components/buttons/button";
+import ErrorBox from "@/components/form/error-box";
+import Input from "@/components/form/input";
 
 import { registerUser } from "@/actions/sign-up";
-import Input from "@/components/form/input";
-import Button from "@/components/buttons/button";
+
 import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
-import ErrorBox from "@/components/form/error-box";
 
 const signUpSchema = Yup.object({
   firstName: Yup.string().trim().required("First name is required"),

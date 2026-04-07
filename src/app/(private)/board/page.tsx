@@ -1,12 +1,14 @@
-import SearchInput from "@/components/search-input";
-import StatusFilter from "@/components/status-filter";
-import SortSelect from "@/components/sort-select";
-import KanbanBoard from "@/components/kanban/kanban-board";
 import Header from "@/components/header";
 import JobModal from "@/components/job/job-modal";
 import JobViewModal from "@/components/job/job-view-modal";
+import KanbanBoard from "@/components/kanban/kanban-board";
+import SearchInput from "@/components/search-input";
+import SortSelect from "@/components/sort-select";
+import StatusFilter from "@/components/status-filter";
+
 import { getJobs } from "@/actions/jobs";
-import { getFormState, type BoardPageSearchParams } from "@/utils/form-job-state";
+
+import { type BoardPageSearchParams,getFormState } from "@/utils/form-job-state";
 import { resolveJobViewState } from "@/utils/job-view-state";
 
 export default async function Board(props: { searchParams: Promise<BoardPageSearchParams> }) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { initializeApp, getApps, getApp, FirebaseError } from "firebase/app";
+import { FirebaseError,getApp, getApps, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {

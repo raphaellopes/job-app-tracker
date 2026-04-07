@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { FirebaseError } from "firebase/app";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { signInWithEmailAndPassword } from "firebase/auth";
 
-import Input from "@/components/form/input";
 import Button from "@/components/buttons/button";
-import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
 import ErrorBox from "@/components/form/error-box";
-import { FirebaseError } from "firebase/app";
+import Input from "@/components/form/input";
+
+import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
 
 const signInSchema = Yup.object({
   email: Yup.string().trim().email("Enter a valid email address").required("Email is required"),

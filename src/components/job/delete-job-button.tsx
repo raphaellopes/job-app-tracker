@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { deleteJob } from "@/actions/jobs";
 import { TrashIcon } from "@/components/icons/trash-icon";
 import ConfirmModal from "@/components/modals/confirm-modal";
+
+import { deleteJob } from "@/actions/jobs";
 
 interface DeleteJobButtonProps {
   id: number;

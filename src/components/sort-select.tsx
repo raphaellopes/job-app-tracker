@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter,useSearchParams } from "next/navigation";
 
 const SortSelect: React.FC = () => {
   const searchParams = useSearchParams();

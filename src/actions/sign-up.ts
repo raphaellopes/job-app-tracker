@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { db } from "@/db";
 import { users } from "@/db/schema";
+
 import { firebaseAdminAuth } from "@/lib/firebase/admin";
 
 const registerUserSchema = z.object({

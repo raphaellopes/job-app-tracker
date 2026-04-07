@@ -1,6 +1,7 @@
 "use server";
 
 import { GoogleGenAI, Type } from "@google/genai";
+
 import { Job } from "@/db/schema";
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;

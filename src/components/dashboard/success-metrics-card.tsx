@@ -48,8 +48,9 @@ const SuccessMetricsCard: React.FC<SuccessMetricsCardProps> = ({
       </div>
 
       <Card variant="primary">
-        <span className="font-semibold">Tip:</span> Roles in the "Interviewing" stage have the
-        highest priority for prep. Focus on these to increase your offer rate.
+        <span className="font-semibold">Tip:</span>{" "}
+        {`Roles in the "Interviewing" stage have the
+        highest priority for prep. Focus on these to increase your offer rate.`}
       </Card>
     </div>
   );

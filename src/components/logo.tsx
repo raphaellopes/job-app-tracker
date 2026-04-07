@@ -1,4 +1,5 @@
 import classNames from "classnames";
+
 import { BriefcaseIcon } from "@/components/icons/briefcase-icon";
 
 type LogoSize = "sm" | "md" | "lg";

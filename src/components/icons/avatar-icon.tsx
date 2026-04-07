@@ -1,4 +1,5 @@
 import classNames from "classnames";
+
 import { IconProps, sizeClasses } from "./icon-props";
 
 export function AvatarIcon(props: IconProps) {

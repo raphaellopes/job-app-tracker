@@ -1,10 +1,13 @@
 "use client";
 
 import { useDroppable } from "@dnd-kit/core";
-import { Job } from "@/db/schema";
-import { JobStatusType } from "@/actions/jobs";
-import JobCard from "@/components/job/job-card";
+
 import { AddJobButton } from "@/components/job/add-job-button";
+import JobCard from "@/components/job/job-card";
+
+import { Job } from "@/db/schema";
+
+import { JobStatusType } from "@/actions/jobs";
 
 interface KanbanColumnProps {
   status: JobStatusType;

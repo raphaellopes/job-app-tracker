@@ -1,9 +1,8 @@
 import { WarningIcon } from "@/components/icons/warning-icon";
+
 import Card from "../cards/card";
 
-interface ErrorBoxProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-const ErrorBox: React.FC<ErrorBoxProps> = ({ children, ...props }) => {
+const ErrorBox: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ children, ...props }) => {
   return (
     <Card variant="error" {...props}>
       <div className="flex items-center gap-2">

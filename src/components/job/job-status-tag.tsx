@@ -1,4 +1,5 @@
 import { JobStatusType } from "@/db/schema";
+
 import { getStatusColor } from "@/utils/status-colors";
 
 interface JobStatusTagProps extends React.HTMLAttributes<HTMLSpanElement> {

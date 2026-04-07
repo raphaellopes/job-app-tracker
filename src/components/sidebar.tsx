@@ -1,18 +1,18 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import classNames from "classnames";
-import { useEffect, useState } from "react";
-import { BriefcaseIcon } from "./icons/briefcase-icon";
-import { DashboardIcon } from "./icons/dashboard-icon";
-import { BoardIcon } from "./icons/board-icon";
-import { AnalyticsIcon } from "./icons/analytics-icon";
-import { AvatarIcon } from "./icons/avatar-icon";
-import { CloseIcon } from "./icons/close-icon";
-import { MenuIcon } from "./icons/menu-icon";
-import { SignOutButton } from "./auth/sign-out-button";
-import Logo from "./logo";
+
+import { SignOutButton } from "@/components/auth/sign-out-button";
+import { AnalyticsIcon } from "@/components/icons/analytics-icon";
+import { AvatarIcon } from "@/components/icons/avatar-icon";
+import { BoardIcon } from "@/components/icons/board-icon";
+import { CloseIcon } from "@/components/icons/close-icon";
+import { DashboardIcon } from "@/components/icons/dashboard-icon";
+import { MenuIcon } from "@/components/icons/menu-icon";
+import Logo from "@/components/logo";
 
 const menuItems = [
   {
@@ -58,10 +58,6 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isMobileMenuOpen]);
-
-  useEffect(() => {
-    closeMobileMenu();
-  }, [pathname]);
 
   const renderMobileMenu = () => (
     <header className="sm:hidden fixed inset-x-0 top-0 z-20 h-16 bg-white border-b border-gray-200 px-4">

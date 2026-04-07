@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { Sidebar } from "@/components/sidebar";
+
 import { getDbUserForSession } from "@/lib/auth/user";
 
 export default async function PrivateLayout({

@@ -1,9 +1,12 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import Modal from "@/components/modals/modal";
+
 import JobView from "@/components/job/job-view";
+import Modal from "@/components/modals/modal";
+
 import { Job } from "@/db/schema";
+
 import type { InterviewPrepResult } from "@/actions/gemini";
 
 interface JobViewModalProps {

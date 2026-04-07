@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import classNames from "classnames";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import classNames from "classnames";
+
+import { EditIcon } from "@/components/icons/edit-icon";
+import DeleteJobButton from "@/components/job/delete-job-button";
+import TagChipList from "@/components/tag/tag-chip-list";
 
 import { Job } from "@/db/schema";
-import DeleteJobButton from "@/components/job/delete-job-button";
-import { EditIcon } from "@/components/icons/edit-icon";
-import TagChipList from "@/components/tag/tag-chip-list";
 
 interface JobCardProps {
   job: Job;

@@ -1,8 +1,8 @@
-import "server-only";
-
 import { cookies } from "next/headers";
 
 import { firebaseAdminAuth } from "@/lib/firebase/admin";
+
+import "server-only";
 
 const SESSION_COOKIE_NAME = "firebase_session";
 

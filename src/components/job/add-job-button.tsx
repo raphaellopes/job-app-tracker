@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+
 import { PlusIcon } from "@/components/icons/plus-icon";
+
 import { JobStatusType } from "@/actions/jobs";
 
 interface AddJobButtonProps {

@@ -1,7 +1,8 @@
 "use client";
 
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useRef } from "react";
+import { usePathname, useRouter,useSearchParams } from "next/navigation";
+
 import { SearchIcon } from "@/components/icons/search-icon";
 
 const SearchInput: React.FC = () => {

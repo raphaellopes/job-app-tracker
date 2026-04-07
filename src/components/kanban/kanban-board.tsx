@@ -3,20 +3,23 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  closestCenter,
   DndContext,
+  DragEndEvent,
   DragOverlay,
+  DragStartEvent,
   PointerSensor,
   useSensor,
   useSensors,
-  DragStartEvent,
-  DragEndEvent,
-  closestCenter,
 } from "@dnd-kit/core";
-import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
-import { Job, JOB_STATUSES } from "@/db/schema";
-import { JobStatusType, updateJobStatus, updateJobPositions } from "@/actions/jobs";
-import KanbanColumn from "@/components/kanban/kanban-column";
+import { arrayMove,SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+
 import JobCard from "@/components/job/job-card";
+import KanbanColumn from "@/components/kanban/kanban-column";
+
+import { Job, JOB_STATUSES } from "@/db/schema";
+
+import { JobStatusType, updateJobPositions,updateJobStatus } from "@/actions/jobs";
 
 interface KanbanBoardProps {
   jobs: Job[];

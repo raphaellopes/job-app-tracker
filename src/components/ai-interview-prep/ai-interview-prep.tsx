@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
+
+import AIInterviewPrepResult from "@/components/ai-interview-prep/ai-interview-prep-result";
+import ActionButtons from "@/components/buttons/action-buttons";
+import type { ButtonProps } from "@/components/buttons/button";
+import ErrorBox from "@/components/form/error-box";
+
 import { Job } from "@/db/schema";
+
 import { analyzeJob, type InterviewPrepResult } from "@/actions/gemini";
 import { saveJobInterviewPrep } from "@/actions/jobs";
-import AIInterviewPrepResult from "@/components/ai-interview-prep/ai-interview-prep-result";
-import ErrorBox from "@/components/form/error-box";
-import type { ButtonProps } from "@/components/buttons/button";
-import ActionButtons from "@/components/buttons/action-buttons";
 
 interface AIInterviewPrepProps {
   job: Job;

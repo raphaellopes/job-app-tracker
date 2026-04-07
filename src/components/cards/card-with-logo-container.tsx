@@ -1,5 +1,5 @@
-import Logo from "@/components/logo";
 import Card from "@/components/cards/card";
+import Logo from "@/components/logo";
 
 interface CardWithLogoContainerProps {
   children: React.ReactNode;

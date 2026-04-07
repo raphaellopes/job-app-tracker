@@ -1,15 +1,16 @@
 "use client";
 
 import {
-  PieChart,
-  Pie,
-  ResponsiveContainer,
   Legend,
-  Tooltip,
-  PieSectorShapeProps,
-  Sector,
+  Pie,
+  PieChart,
   PieLabelRenderProps,
+  PieSectorShapeProps,
+  ResponsiveContainer,
+  Sector,
+  Tooltip,
 } from "recharts";
+
 import { getStatusColor } from "@/utils/status-colors";
 
 interface StatusDistributionChartProps {
@@ -78,7 +79,7 @@ const renderCustomLabel = ({
  */
 interface CustomTooltipProps {
   active?: boolean;
-  payload?: Array<any>;
+  payload?: Array<{ payload: { status: string; count: number } }>;
 }
 const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
   if (active && payload && payload.length) {
