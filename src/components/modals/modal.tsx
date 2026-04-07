@@ -18,7 +18,7 @@ const modalSizeClasses: Record<ModalSizes, string> = {
   md: "max-w-4xl",
 };
 
-export function Modal({ title, description, size = "sm", onClose, children }: ModalProps) {
+const Modal: React.FC<ModalProps> = ({ title, description, size = "sm", onClose, children }) => {
   const maxWidthClassName = modalSizeClasses[size];
   return (
     <div
@@ -49,4 +49,6 @@ export function Modal({ title, description, size = "sm", onClose, children }: Mo
       </div>
     </div>
   );
-}
+};
+
+export default Modal;

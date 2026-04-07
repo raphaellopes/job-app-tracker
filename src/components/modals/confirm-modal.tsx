@@ -1,11 +1,8 @@
 "use client";
 
-import { ReactNode } from "react";
-
-import Button from "@/components/buttons/button";
-import { Modal } from "@/components/modals/modal";
+import Modal from "@/components/modals/modal";
 import { IconProps } from "@/components/icons/icon-props";
-import ActionButtons from "../buttons/action-buttons";
+import ActionButtons from "@/components/buttons/action-buttons";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -54,6 +51,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
         <ActionButtons
           items={[
             {
+              id: "modal-action-cancel",
               children: cancelLabel,
               onClick: onClose,
               disabled: isSubmitting,
@@ -61,6 +59,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
               variant: "secondary",
             },
             {
+              id: "modal-action-confirm",
               children: isSubmitting ? confirmLoadingLabel : confirmLabel,
               onClick: onConfirm,
               disabled: isSubmitting,
