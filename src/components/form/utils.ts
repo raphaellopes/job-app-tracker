@@ -7,5 +7,9 @@ import classNames from "classnames";
  * @returns The class name
  */
 export const getFormFieldClassName = (className?: string, error?: boolean) => {
-  return classNames("border p-2 rounded", error && "input-error", className);
+  return classNames(
+    "border p-2 rounded disabled:opacity-50 disabled:cursor-not-allowed",
+    error && "input-error",
+    className,
+  );
 };

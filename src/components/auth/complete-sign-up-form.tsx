@@ -124,7 +124,7 @@ export function CompleteSignUpForm() {
   return (
     <form
       onSubmit={(event) => void handleSubmit(event)}
-      className="flex flex-col gap-8 w-full max-w-[400px] mx-auto"
+      className="flex flex-col gap-8 w-full mx-auto"
       noValidate
     >
       <div className="flex flex-col gap-8">
@@ -149,6 +149,7 @@ export function CompleteSignUpForm() {
             label="Email"
             autoComplete="email"
             error={getError("email")}
+            disabled
             {...getFieldProps("email")}
           />
         </div>

@@ -8,8 +8,9 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 
 import Input from "@/components/form/input";
 import Button from "@/components/buttons/button";
-import { firebaseAuth } from "@/lib/firebase/client";
+import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
 import ErrorBox from "@/components/form/error-box";
+import { FirebaseError } from "firebase/app";
 
 const signInSchema = Yup.object({
   email: Yup.string().trim().email("Enter a valid email address").required("Email is required"),
@@ -73,8 +74,8 @@ export function SignInForm() {
         router.push("/dashboard");
         router.refresh();
       } catch (error) {
-        if (error instanceof Error) {
-          setServerError(error.message);
+        if (error instanceof FirebaseError) {
+          setServerError(getFormattedFirebaseError(error));
           return;
         }
         setServerError("Invalid email or password.");

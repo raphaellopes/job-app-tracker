@@ -1,6 +1,6 @@
 "use client";
 
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp, FirebaseError } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
@@ -13,3 +13,23 @@ const firebaseConfig = {
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 export const firebaseAuth = getAuth(app);
+
+/**
+ * Formats a Firebase error into a human readable error message.
+ * @param error - The Firebase error to format.
+ * @returns The formatted error message.
+ */
+export const getFormattedFirebaseError = (error: FirebaseError) => {
+  switch (error.code) {
+    case "auth/email-already-in-use":
+      return "Email already in use. Please use a different email address.";
+    case "auth/invalid-email":
+      return "Invalid email address. Please enter a valid email address.";
+    case "auth/weak-password":
+      return "Password is too weak. Please enter a stronger password.";
+    case "auth/invalid-credential":
+      return "Invalid email or password.";
+    default:
+      return error.message;
+  }
+};
