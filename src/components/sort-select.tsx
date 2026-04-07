@@ -2,7 +2,7 @@
 
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
-export function SortSelect() {
+const SortSelect: React.FC = () => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -29,4 +29,6 @@ export function SortSelect() {
       <option value="salary-asc">Salary (Low to High)</option>
     </select>
   );
-}
+};
+
+export default SortSelect;

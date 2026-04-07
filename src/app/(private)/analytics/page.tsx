@@ -1,5 +1,5 @@
-import { JobModal } from "@/components/job/job-modal";
-import { Header } from "@/components/header";
+import JobModal from "@/components/job/job-modal";
+import Header from "@/components/header";
 import { getFormState, type JobViewSearchParams } from "@/utils/form-job-state";
 
 export default async function Analytics(props: { searchParams: Promise<JobViewSearchParams> }) {

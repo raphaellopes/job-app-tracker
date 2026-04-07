@@ -3,7 +3,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import { Job } from "@/db/schema";
 import { JobStatusType } from "@/actions/jobs";
-import { JobCard } from "@/components/job/job-card";
+import JobCard from "@/components/job/job-card";
 import { AddJobButton } from "@/components/job/add-job-button";
 
 interface KanbanColumnProps {
@@ -15,7 +15,7 @@ function formatStatusName(status: JobStatusType): string {
   return status.charAt(0) + status.slice(1).toLowerCase();
 }
 
-export function KanbanColumn({ status, jobs }: KanbanColumnProps) {
+const KanbanColumn: React.FC<KanbanColumnProps> = ({ status, jobs }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: status,
   });
@@ -60,4 +60,6 @@ export function KanbanColumn({ status, jobs }: KanbanColumnProps) {
       </div>
     </div>
   );
-}
+};
+
+export default KanbanColumn;

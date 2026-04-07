@@ -15,14 +15,14 @@ import {
 import { SortableContext, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 import { Job, JOB_STATUSES } from "@/db/schema";
 import { JobStatusType, updateJobStatus, updateJobPositions } from "@/actions/jobs";
-import { KanbanColumn } from "@/components/kanban/kanban-column";
-import { JobCard } from "@/components/job/job-card";
+import KanbanColumn from "@/components/kanban/kanban-column";
+import JobCard from "@/components/job/job-card";
 
 interface KanbanBoardProps {
   jobs: Job[];
 }
 
-export function KanbanBoard({ jobs }: KanbanBoardProps) {
+const KanbanBoard: React.FC<KanbanBoardProps> = ({ jobs }) => {
   const router = useRouter();
   const [activeJob, setActiveJob] = useState<Job | null>(null);
 
@@ -202,4 +202,6 @@ export function KanbanBoard({ jobs }: KanbanBoardProps) {
       </DragOverlay>
     </DndContext>
   );
-}
+};
+
+export default KanbanBoard;

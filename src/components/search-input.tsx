@@ -4,7 +4,7 @@ import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useRef } from "react";
 import { SearchIcon } from "@/components/icons/search-icon";
 
-export function SearchInput() {
+const SearchInput: React.FC = () => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -40,4 +40,6 @@ export function SearchInput() {
       />
     </div>
   );
-}
+};
+
+export default SearchInput;

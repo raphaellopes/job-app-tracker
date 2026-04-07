@@ -2,7 +2,7 @@
 
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
-export function StatusFilter() {
+const StatusFilter: React.FC = () => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
@@ -31,4 +31,6 @@ export function StatusFilter() {
       <option value="REJECTED">Rejected</option>
     </select>
   );
-}
+};
+
+export default StatusFilter;

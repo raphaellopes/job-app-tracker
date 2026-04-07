@@ -24,7 +24,7 @@ function isValidStatus(status: string | null): status is JobStatusType {
   return status !== null && VALID_STATUSES.includes(status as JobStatusType);
 }
 
-export function JobModal({ job }: JobModalProps) {
+const JobModal: React.FC<JobModalProps> = ({ job }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -53,4 +53,6 @@ export function JobModal({ job }: JobModalProps) {
       <JobForm job={job} initialStatus={validStatus} />
     </Modal>
   );
-}
+};
+
+export default JobModal;

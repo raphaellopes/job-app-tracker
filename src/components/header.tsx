@@ -7,12 +7,12 @@ interface HeaderProps {
   addButtonDisabled?: boolean;
 }
 
-export function Header({
+const Header: React.FC<HeaderProps> = ({
   title,
   subtitle,
   showAddButton = true,
   addButtonDisabled = false,
-}: HeaderProps) {
+}) => {
   return (
     <header className="flex items-center gap-3 mb-6">
       <div className="flex-1">
@@ -22,4 +22,6 @@ export function Header({
       {showAddButton && <AddJobButton isDisabled={addButtonDisabled} />}
     </header>
   );
-}
+};
+
+export default Header;

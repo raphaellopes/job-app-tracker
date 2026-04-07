@@ -15,7 +15,7 @@ interface JobCardProps {
   job: Job;
 }
 
-export function JobCard({ job }: JobCardProps) {
+const JobCard: React.FC<JobCardProps> = ({ job }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -79,4 +79,6 @@ export function JobCard({ job }: JobCardProps) {
       )}
     </div>
   );
-}
+};
+
+export default JobCard;

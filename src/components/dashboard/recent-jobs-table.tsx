@@ -24,7 +24,7 @@ function formatDate(date: string | null): string {
   }
 }
 
-export function RecentJobsTable({ jobs }: RecentJobsTableProps) {
+const RecentJobsTable: React.FC<RecentJobsTableProps> = ({ jobs }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -112,4 +112,6 @@ export function RecentJobsTable({ jobs }: RecentJobsTableProps) {
       </div>
     </div>
   );
-}
+};
+
+export default RecentJobsTable;
