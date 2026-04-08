@@ -13,10 +13,14 @@ const SignOutButton: React.FC<SignOutButtonProps> = ({ className }) => {
   const router = useRouter();
 
   const handleSignOut = async () => {
-    await signOut(firebaseAuth);
-    await fetch("/api/auth/sign-out", { method: "POST" });
-    router.push("/sign-in");
-    router.refresh();
+    try {
+      await signOut(firebaseAuth);
+      await fetch("/api/auth/sign-out", { method: "POST" });
+      router.push("/sign-in");
+      router.refresh();
+    } catch (err) {
+      console.error("Failed to sign out", err);
+    }
   };
 
   return (
