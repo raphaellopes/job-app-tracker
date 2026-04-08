@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { and, asc, count, desc, eq, ilike, inArray,isNotNull, max, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, isNotNull, max, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/db";
@@ -54,6 +54,8 @@ function parseTagsInput(tags?: string): string[] {
   ];
 }
 
+export type SaveJobResult = { success: true } | { error: string };
+
 function localDateStringForToday(): string {
   const d = new Date();
   const y = d.getFullYear();
@@ -79,7 +81,7 @@ function appliedDatePatchForStatusChange(
   return {};
 }
 
-export async function createJob(formData: FormData) {
+export async function createJob(formData: FormData): Promise<SaveJobResult> {
   const userId = await requireDbUserId();
 
   // 1. Validate the data
@@ -95,7 +97,7 @@ export async function createJob(formData: FormData) {
   // 2. Handle validation errors
   if (!validatedFields.success) {
     console.error("Validation Errors:", validatedFields.error.flatten().fieldErrors);
-    return;
+    return { error: "validation_failed" };
   }
 
   // 3. Find the maximum position value for jobs with the same status
@@ -122,15 +124,11 @@ export async function createJob(formData: FormData) {
     ...(status !== "WISHLIST" ? { appliedDate: localDateStringForToday() } : {}),
   });
 
-  // 5. Get return path or default to /board
-  const returnPath = formData.get("returnPath")?.toString() || "/board";
-
-  // 6. Revalidate the cache so the UI updates immediately
+  // 5. Revalidate the cache so the UI updates immediately
   revalidatePath("/");
   revalidatePath("/board");
 
-  // 7. Redirect to close the form
-  redirect(returnPath);
+  return { success: true };
 }
 
 export async function getJobs(search?: string, status?: string, sort?: string) {
@@ -164,25 +162,31 @@ export async function getJobs(search?: string, status?: string, sort?: string) {
     .orderBy(...orderBy);
 }
 
-export async function deleteJob(formData: FormData) {
+export async function deleteJob(formData: FormData): Promise<SaveJobResult> {
   const userId = await requireDbUserId();
 
   const id = Number(formData.get("id"));
 
-  if (!id) return;
+  if (!id) {
+    return { error: "invalid_id" };
+  }
 
   await db.delete(jobs).where(and(eq(jobs.id, id), eq(jobs.userId, userId)));
 
   revalidatePath("/");
   revalidatePath("/board");
+
+  return { success: true };
 }
 
-export async function updateJob(formData: FormData) {
+export async function updateJob(formData: FormData): Promise<SaveJobResult> {
   const userId = await requireDbUserId();
 
   const id = Number(formData.get("id"));
 
-  if (!id) return;
+  if (!id) {
+    return { error: "invalid_id" };
+  }
 
   const validatedFields = createJobSchema.safeParse({
     companyName: formData.get("companyName"),
@@ -195,7 +199,7 @@ export async function updateJob(formData: FormData) {
 
   if (!validatedFields.success) {
     console.error("Validation Errors:", validatedFields.error.flatten().fieldErrors);
-    return;
+    return { error: "validation_failed" };
   }
 
   const [existing] = await db
@@ -205,7 +209,7 @@ export async function updateJob(formData: FormData) {
     .limit(1);
 
   if (!existing) {
-    return;
+    return { error: "not_found" };
   }
 
   const appliedPatch = appliedDatePatchForStatusChange(
@@ -226,13 +230,10 @@ export async function updateJob(formData: FormData) {
     })
     .where(and(eq(jobs.id, id), eq(jobs.userId, userId)));
 
-  const returnPath = formData.get("returnPath")?.toString() || "/board";
-
   revalidatePath("/");
   revalidatePath("/board");
 
-  // Redirect to close the form
-  redirect(returnPath);
+  return { success: true };
 }
 
 export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
@@ -270,10 +271,7 @@ export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
     const maxPosition = maxPositionResult[0]?.maxPosition ?? null;
     const newPosition = maxPosition !== null ? maxPosition + 1 : 0;
 
-    const appliedPatch = appliedDatePatchForStatusChange(
-      existing.status,
-      validatedStatus.data,
-    );
+    const appliedPatch = appliedDatePatchForStatusChange(existing.status, validatedStatus.data);
 
     // Update both status and position in a single database operation
     await db

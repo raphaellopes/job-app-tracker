@@ -1,6 +1,8 @@
 "use client";
 
+import { unstable_rethrow, usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useFormik } from "formik";
+import { toast } from "sonner";
 import * as Yup from "yup";
 
 import Button from "@/components/buttons/button";
@@ -10,8 +12,7 @@ import Textarea from "@/components/form/textarea";
 
 import { Job } from "@/db/schema";
 
-import { createJob, updateJob } from "@/actions/jobs";
-import { JobStatusType } from "@/actions/jobs";
+import { createJob, JobStatusType, updateJob } from "@/actions/jobs";
 
 interface JobFormProps {
   job?: Job | null;
@@ -29,6 +30,9 @@ const schema = Yup.object().shape({
 });
 
 export function JobForm({ job, initialStatus }: JobFormProps) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const statusValue = initialStatus || job?.status || "WISHLIST";
   const formik = useFormik({
     initialValues: {
@@ -48,15 +52,28 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
       data.append("salaryRange", values.salaryRange);
       data.append("description", values.description);
       data.append("tags", values.tags);
+      if (job) {
+        data.append("id", job.id.toString());
+      }
+
+      const returnSearchParams = new URLSearchParams(searchParams.toString());
+      returnSearchParams.delete("add");
+      returnSearchParams.delete("edit");
+      returnSearchParams.delete("status");
+      const returnPath = returnSearchParams.toString()
+        ? `${pathname}?${returnSearchParams.toString()}`
+        : pathname;
 
       try {
-        if (job) {
-          data.append("id", job.id.toString());
-          await updateJob(data);
-        } else {
-          await createJob(data);
+        const result = job ? await updateJob(data) : await createJob(data);
+
+        if ("success" in result && result.success) {
+          toast.success(job ? "Job updated successfully." : "Job added successfully.");
+          router.replace(returnPath);
+          router.refresh();
         }
       } catch (error) {
+        unstable_rethrow(error);
         // @TODO: apply some logger here to trace the error
         console.error("Error submitting form:", error);
       }

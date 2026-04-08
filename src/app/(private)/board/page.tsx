@@ -8,7 +8,7 @@ import StatusFilter from "@/components/status-filter";
 
 import { getJobs } from "@/actions/jobs";
 
-import { type BoardPageSearchParams,getFormState } from "@/utils/form-job-state";
+import { type BoardPageSearchParams, getFormState } from "@/utils/form-job-state";
 import { resolveJobViewState } from "@/utils/job-view-state";
 
 export default async function Board(props: { searchParams: Promise<BoardPageSearchParams> }) {

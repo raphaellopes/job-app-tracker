@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { TrashIcon } from "@/components/icons/trash-icon";
 import ConfirmModal from "@/components/modals/confirm-modal";
@@ -28,8 +29,11 @@ const DeleteJobButton: React.FC<DeleteJobButtonProps> = ({ id }) => {
       setIsSubmitting(true);
       const formData = new FormData();
       formData.append("id", id.toString());
-      await deleteJob(formData);
+      const result = await deleteJob(formData);
       closeModal();
+      if ("success" in result && result.success) {
+        toast.success("Job removed successfully.");
+      }
       router.refresh();
     } catch (error) {
       console.error("Error deleting job:", error);
