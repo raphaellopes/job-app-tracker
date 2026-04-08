@@ -30,13 +30,20 @@ const DeleteJobButton: React.FC<DeleteJobButtonProps> = ({ id }) => {
       const formData = new FormData();
       formData.append("id", id.toString());
       const result = await deleteJob(formData);
-      closeModal();
+      setIsOpen(false);
       if ("success" in result && result.success) {
         toast.success("Job removed successfully.");
+      } else if ("error" in result) {
+        toast.error(
+          result.error === "invalid_id"
+            ? "This job could not be found or removed."
+            : "Could not delete this job.",
+        );
       }
       router.refresh();
     } catch (error) {
       console.error("Error deleting job:", error);
+      toast.error("Something went wrong while deleting the job.");
     } finally {
       setIsSubmitting(false);
     }
