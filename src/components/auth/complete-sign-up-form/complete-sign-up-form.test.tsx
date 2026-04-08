@@ -3,8 +3,9 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { onAuthStateChanged } from "firebase/auth";
 
-import { registerUser } from "@/actions/sign-up";
 import type { RegisterUserResult } from "@/actions/sign-up";
+import { registerUser } from "@/actions/sign-up";
+
 import { firebaseAuth } from "@/lib/firebase/client";
 
 import CompleteSignUpForm from "./index";

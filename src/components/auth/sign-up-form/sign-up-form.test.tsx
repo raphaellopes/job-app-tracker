@@ -5,6 +5,7 @@ import { FirebaseError } from "firebase/app";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
 import { registerUser } from "@/actions/sign-up";
+
 import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
