@@ -3,15 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import Button from "@/components/buttons/button";
 import ErrorBox from "@/components/form/error-box";
 import Input from "@/components/form/input";
+import DividerText from "@/components/divider-text";
 
-import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
+import { firebaseAuth, getFormattedFirebaseError, googleProvider } from "@/lib/firebase/client";
 
 const signInSchema = Yup.object({
   email: Yup.string().trim().email("Enter a valid email address").required("Email is required"),
@@ -31,6 +32,48 @@ const SignInForm: React.FC = () => {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+
+  const createSessionFromCurrentUser = async () => {
+    const idToken = await firebaseAuth.currentUser?.getIdToken();
+    if (!idToken) {
+      throw new Error("Unable to read your sign-in token.");
+    }
+
+    const response = await fetch("/api/auth/session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ idToken }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Unable to start your session. Please try again.");
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setServerError(null);
+    setIsGoogleSubmitting(true);
+
+    try {
+      await signInWithPopup(firebaseAuth, googleProvider);
+      await createSessionFromCurrentUser();
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        setServerError(getFormattedFirebaseError(error));
+      } else if (error instanceof Error) {
+        setServerError(error.message);
+      } else {
+        setServerError("Unable to sign in with Google.");
+      }
+    } finally {
+      setIsGoogleSubmitting(false);
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -52,25 +95,12 @@ const SignInForm: React.FC = () => {
       setIsSubmitting(true);
 
       try {
-        const credential = await signInWithEmailAndPassword(
+        await signInWithEmailAndPassword(
           firebaseAuth,
           values.email.trim().toLowerCase(),
           values.password,
         );
-        const idToken = await credential.user.getIdToken();
-
-        const response = await fetch("/api/auth/session", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ idToken }),
-        });
-
-        if (!response.ok) {
-          setServerError("Unable to start your session. Please try again.");
-          return;
-        }
+        await createSessionFromCurrentUser();
 
         router.push("/dashboard");
         router.refresh();
@@ -114,9 +144,20 @@ const SignInForm: React.FC = () => {
         {...getFieldProps("password")}
       />
       {serverError && <ErrorBox>{serverError}</ErrorBox>}
-      <Button type="submit" disabled={isSubmitting} className="sm:min-w-[120px] self-start">
-        {isSubmitting ? "Signing in..." : "Sign in"}
-      </Button>
+      <div className="flex flex-col gap-6 mt-4">
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Signing in..." : "Sign in"}
+        </Button>
+        <DividerText>Or</DividerText>
+        <Button
+          type="button"
+          variant="secondary"
+          disabled={isGoogleSubmitting}
+          onClick={() => void handleGoogleSignIn()}
+        >
+          {isGoogleSubmitting ? "Connecting..." : "Continue with Google"}
+        </Button>
+      </div>
     </form>
   );
 };

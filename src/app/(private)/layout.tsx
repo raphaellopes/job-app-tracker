@@ -20,7 +20,7 @@ export default async function PrivateLayout({
 
   return (
     <>
-      <Sidebar userName={dbUser.firstName} userEmail={dbUser.email} />
+      <Sidebar userName={dbUser.firstName} userEmail={dbUser.email} avatarUrl={session.photoUrl} />
       <div className="ml-0 sm:ml-[280px] pt-16 sm:pt-0 min-h-screen">{children}</div>
     </>
   );

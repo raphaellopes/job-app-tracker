@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import classNames from "classnames";
@@ -35,11 +36,13 @@ const menuItems = [
 type SidebarProps = {
   userName: string;
   userEmail?: string;
+  avatarUrl?: string;
 };
 
-export function Sidebar({ userName, userEmail }: SidebarProps) {
+export function Sidebar({ userName, userEmail, avatarUrl }: SidebarProps) {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [imageFailed, setImageFailed] = useState(false);
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
@@ -143,8 +146,19 @@ export function Sidebar({ userName, userEmail }: SidebarProps) {
     <div className="p-3 sm:p-4 border-t border-gray-200 space-y-2">
       <SignOutButton />
       <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg bg-gray-50">
-        <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-200 flex items-center justify-center">
-          <AvatarIcon className="w-4 h-4 sm:w-6 sm:h-6 text-gray-600" />
+        <div className="relative flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
+          {avatarUrl && !imageFailed ? (
+            <Image
+              src={avatarUrl}
+              alt={`${userName} avatar`}
+              fill
+              sizes="40px"
+              className="object-cover"
+              onError={() => setImageFailed(true)}
+            />
+          ) : (
+            <AvatarIcon className="w-4 h-4 sm:w-6 sm:h-6 text-gray-600" />
+          )}
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-xs sm:text-sm font-medium text-gray-900 truncate">{userName}</p>

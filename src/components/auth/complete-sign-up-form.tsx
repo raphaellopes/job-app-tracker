@@ -35,11 +35,13 @@ const CompleteSignUpForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authReady, setAuthReady] = useState(false);
   const [emailFromAuth, setEmailFromAuth] = useState("");
+  const [firstNameFromAuth, setFirstNameFromAuth] = useState("");
+  const [lastNameFromAuth, setLastNameFromAuth] = useState("");
 
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
+      firstName: firstNameFromAuth,
+      lastName: lastNameFromAuth,
       email: emailFromAuth,
     },
     enableReinitialize: true,
@@ -108,6 +110,11 @@ const CompleteSignUpForm: React.FC = () => {
       setAuthReady(true);
       if (user?.email) {
         setEmailFromAuth(user.email);
+      }
+      if (user?.displayName) {
+        const [firstName, ...lastNameParts] = user.displayName.trim().split(/\s+/);
+        setFirstNameFromAuth(firstName ?? "");
+        setLastNameFromAuth(lastNameParts.join(" "));
       }
     });
     return () => unsub();

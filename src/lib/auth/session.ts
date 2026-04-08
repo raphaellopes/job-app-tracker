@@ -9,6 +9,8 @@ const SESSION_COOKIE_NAME = "firebase_session";
 export type AuthUser = {
   uid: string;
   email?: string;
+  displayName?: string;
+  photoUrl?: string;
 };
 
 export async function getSessionCookieValue(): Promise<string | undefined> {
@@ -27,6 +29,8 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     return {
       uid: decoded.uid,
       email: decoded.email,
+      displayName: typeof decoded.name === "string" ? decoded.name : undefined,
+      photoUrl: typeof decoded.picture === "string" ? decoded.picture : undefined,
     };
   } catch {
     return null;

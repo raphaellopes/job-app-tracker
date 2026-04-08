@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -13,7 +13,8 @@ import Input from "@/components/form/input";
 
 import { registerUser } from "@/actions/sign-up";
 
-import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
+import { firebaseAuth, getFormattedFirebaseError, googleProvider } from "@/lib/firebase/client";
+import DividerText from "../divider-text";
 
 const signUpSchema = Yup.object({
   firstName: Yup.string().trim().required("First name is required"),
@@ -37,6 +38,48 @@ const SignUpForm: React.FC = () => {
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
+
+  const createSessionFromCurrentUser = async () => {
+    const idToken = await firebaseAuth.currentUser?.getIdToken();
+    if (!idToken) {
+      throw new Error("Unable to read your sign-in token.");
+    }
+
+    const response = await fetch("/api/auth/session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ idToken }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Unable to start your session. Please try again.");
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    setServerError(null);
+    setIsGoogleSubmitting(true);
+
+    try {
+      await signInWithPopup(firebaseAuth, googleProvider);
+      await createSessionFromCurrentUser();
+      router.push("/");
+      router.refresh();
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        setServerError(getFormattedFirebaseError(error));
+      } else if (error instanceof Error) {
+        setServerError(error.message);
+      } else {
+        setServerError("Unable to continue with Google.");
+      }
+    } finally {
+      setIsGoogleSubmitting(false);
+    }
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -116,6 +159,16 @@ const SignUpForm: React.FC = () => {
   return (
     <div className="w-full max-w-md">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <Button
+          type="button"
+          variant="secondary"
+          disabled={isGoogleSubmitting}
+          onClick={() => void handleGoogleSignUp()}
+          className="w-full sm:w-auto self-start"
+        >
+          {isGoogleSubmitting ? "Connecting..." : "Continue with Google"}
+        </Button>
+        <DividerText>Or sign up with email</DividerText>
         <Input
           id="firstName"
           label="First name"
