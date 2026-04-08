@@ -1,8 +1,8 @@
+import { useRouter } from "next/navigation";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FirebaseError } from "firebase/app";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { useRouter } from "next/navigation";
 
 import {
   createSessionFromCurrentUser,
