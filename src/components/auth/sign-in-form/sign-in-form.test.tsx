@@ -1,12 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { useRouter } from "next/navigation";
+import { FirebaseError } from "firebase/app";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
 } from "@/lib/auth/client-session";
+import { getFormattedFirebaseError } from "@/lib/firebase/client";
 
 import SignInForm from "./index";
 
@@ -32,6 +34,7 @@ const mockedUseRouter = jest.mocked(useRouter);
 const mockedSignInWithEmailAndPassword = jest.mocked(signInWithEmailAndPassword);
 const mockedCreateSession = jest.mocked(createSessionFromCurrentUser);
 const mockedGoogleSignIn = jest.mocked(signInWithGoogleAndCreateSession);
+const mockedGetFormattedFirebaseError = jest.mocked(getFormattedFirebaseError);
 
 describe("SignInForm", () => {
   const mockPush = jest.fn();
@@ -118,6 +121,41 @@ describe("SignInForm", () => {
       expect(mockPush).toHaveBeenCalledWith("/dashboard");
       expect(mockRefresh).toHaveBeenCalled();
     });
+
+    it("shows a formatted Firebase error when email/password sign-in throws FirebaseError", async () => {
+      const user = userEvent.setup();
+      const firebaseErr = new FirebaseError("auth/wrong-password", "Firebase auth failed");
+      mockedSignInWithEmailAndPassword.mockRejectedValueOnce(firebaseErr);
+      mockedGetFormattedFirebaseError.mockReturnValueOnce("Wrong password. Try again.");
+
+      render(<SignInForm />);
+
+      await user.type(screen.getByLabelText(/^email/i), "user@example.com");
+      await user.type(screen.getByLabelText(/^password/i), "bad");
+      await user.click(screen.getByRole("button", { name: /sign in$/i }));
+
+      expect(await screen.findByText("Wrong password. Try again.")).toBeInTheDocument();
+      expect(mockedGetFormattedFirebaseError).toHaveBeenCalledWith(firebaseErr);
+      expect(mockedCreateSession).not.toHaveBeenCalled();
+      expect(mockPush).not.toHaveBeenCalled();
+      expect(mockRefresh).not.toHaveBeenCalled();
+    });
+
+    it('shows the generic invalid-credentials message when sign-in fails with a non-Firebase error', async () => {
+      const user = userEvent.setup();
+      mockedSignInWithEmailAndPassword.mockRejectedValueOnce(new Error("unexpected"));
+
+      render(<SignInForm />);
+
+      await user.type(screen.getByLabelText(/^email/i), "user@example.com");
+      await user.type(screen.getByLabelText(/^password/i), "secret");
+      await user.click(screen.getByRole("button", { name: /sign in$/i }));
+
+      expect(await screen.findByText("Invalid email or password.")).toBeInTheDocument();
+      expect(mockedGetFormattedFirebaseError).not.toHaveBeenCalled();
+      expect(mockedCreateSession).not.toHaveBeenCalled();
+      expect(mockPush).not.toHaveBeenCalled();
+    });
   });
 
   describe("Google sign-in", () => {
@@ -133,6 +171,47 @@ describe("SignInForm", () => {
       expect(mockPush).toHaveBeenCalledWith("/");
       expect(mockRefresh).toHaveBeenCalled();
       expect(mockedSignInWithEmailAndPassword).not.toHaveBeenCalled();
+    });
+
+    it("shows a formatted message when Google sign-in throws FirebaseError", async () => {
+      const user = userEvent.setup();
+      const firebaseErr = new FirebaseError("auth/popup-closed-by-user", "Popup was closed");
+      mockedGoogleSignIn.mockRejectedValueOnce(firebaseErr);
+      mockedGetFormattedFirebaseError.mockReturnValueOnce("Could not complete Google sign-in");
+
+      render(<SignInForm />);
+
+      await user.click(screen.getByRole("button", { name: /continue with google/i }));
+
+      expect(await screen.findByText("Could not complete Google sign-in")).toBeInTheDocument();
+      expect(mockedGetFormattedFirebaseError).toHaveBeenCalledWith(firebaseErr);
+      expect(mockPush).not.toHaveBeenCalled();
+      expect(mockRefresh).not.toHaveBeenCalled();
+    });
+
+    it("shows the Error message when Google sign-in throws a generic Error", async () => {
+      const user = userEvent.setup();
+      mockedGoogleSignIn.mockRejectedValueOnce(new Error("Network request failed"));
+
+      render(<SignInForm />);
+
+      await user.click(screen.getByRole("button", { name: /continue with google/i }));
+
+      expect(await screen.findByText("Network request failed")).toBeInTheDocument();
+      expect(mockedGetFormattedFirebaseError).not.toHaveBeenCalled();
+      expect(mockPush).not.toHaveBeenCalled();
+    });
+
+    it('shows a fallback message when Google sign-in throws a non-Error value', async () => {
+      const user = userEvent.setup();
+      mockedGoogleSignIn.mockRejectedValueOnce("unexpected");
+
+      render(<SignInForm />);
+
+      await user.click(screen.getByRole("button", { name: /continue with google/i }));
+
+      expect(await screen.findByText("Unable to sign in with Google.")).toBeInTheDocument();
+      expect(mockPush).not.toHaveBeenCalled();
     });
   });
 });
