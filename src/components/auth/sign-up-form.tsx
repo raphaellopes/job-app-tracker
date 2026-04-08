@@ -8,6 +8,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import Button from "@/components/buttons/button";
+import DividerText from "@/components/divider-text";
 import ErrorBox from "@/components/form/error-box";
 import Input from "@/components/form/input";
 
@@ -18,8 +19,6 @@ import {
   signInWithGoogleAndCreateSession,
 } from "@/lib/auth/client-session";
 import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
-
-import DividerText from "../divider-text";
 
 const signUpSchema = Yup.object({
   firstName: Yup.string().trim().required("First name is required"),
