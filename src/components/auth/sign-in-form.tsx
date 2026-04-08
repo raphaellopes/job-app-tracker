@@ -3,16 +3,20 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import Button from "@/components/buttons/button";
+import DividerText from "@/components/divider-text";
 import ErrorBox from "@/components/form/error-box";
 import Input from "@/components/form/input";
-import DividerText from "@/components/divider-text";
 
-import { firebaseAuth, getFormattedFirebaseError, googleProvider } from "@/lib/firebase/client";
+import {
+  createSessionFromCurrentUser,
+  signInWithGoogleAndCreateSession,
+} from "@/lib/auth/client-session";
+import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
 
 const signInSchema = Yup.object({
   email: Yup.string().trim().email("Enter a valid email address").required("Email is required"),
@@ -34,32 +38,12 @@ const SignInForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
 
-  const createSessionFromCurrentUser = async () => {
-    const idToken = await firebaseAuth.currentUser?.getIdToken();
-    if (!idToken) {
-      throw new Error("Unable to read your sign-in token.");
-    }
-
-    const response = await fetch("/api/auth/session", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ idToken }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Unable to start your session. Please try again.");
-    }
-  };
-
   const handleGoogleSignIn = async () => {
     setServerError(null);
     setIsGoogleSubmitting(true);
 
     try {
-      await signInWithPopup(firebaseAuth, googleProvider);
-      await createSessionFromCurrentUser();
+      await signInWithGoogleAndCreateSession();
       router.push("/");
       router.refresh();
     } catch (error) {

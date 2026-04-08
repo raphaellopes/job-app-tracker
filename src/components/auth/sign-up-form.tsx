@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FirebaseError } from "firebase/app";
-import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -13,7 +13,12 @@ import Input from "@/components/form/input";
 
 import { registerUser } from "@/actions/sign-up";
 
-import { firebaseAuth, getFormattedFirebaseError, googleProvider } from "@/lib/firebase/client";
+import {
+  createSessionFromCurrentUser,
+  signInWithGoogleAndCreateSession,
+} from "@/lib/auth/client-session";
+import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
+
 import DividerText from "../divider-text";
 
 const signUpSchema = Yup.object({
@@ -40,32 +45,12 @@ const SignUpForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
 
-  const createSessionFromCurrentUser = async () => {
-    const idToken = await firebaseAuth.currentUser?.getIdToken();
-    if (!idToken) {
-      throw new Error("Unable to read your sign-in token.");
-    }
-
-    const response = await fetch("/api/auth/session", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ idToken }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Unable to start your session. Please try again.");
-    }
-  };
-
   const handleGoogleSignUp = async () => {
     setServerError(null);
     setIsGoogleSubmitting(true);
 
     try {
-      await signInWithPopup(firebaseAuth, googleProvider);
-      await createSessionFromCurrentUser();
+      await signInWithGoogleAndCreateSession();
       router.push("/");
       router.refresh();
     } catch (error) {
@@ -121,18 +106,7 @@ const SignUpForm: React.FC = () => {
           return;
         }
 
-        const response = await fetch("/api/auth/session", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ idToken }),
-        });
-
-        if (!response.ok) {
-          setServerError("Unable to start your session. Please sign in.");
-          return;
-        }
+        await createSessionFromCurrentUser(idToken);
 
         router.push("/dashboard");
         router.refresh();
