@@ -1,5 +1,6 @@
 import { JobStatusType } from "@/db/schema";
 
+import { formatStatusName } from "@/utils/format-status-name";
 import { getStatusColor } from "@/utils/status-colors";
 
 interface JobStatusTagProps extends React.HTMLAttributes<HTMLSpanElement> {
@@ -13,7 +14,7 @@ const JobStatusTag: React.FC<JobStatusTagProps> = ({ status, ...props }) => {
       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor.bg} ${statusColor.text} bg-opacity-10`}
       {...props}
     >
-      {status.charAt(0) + status.slice(1).toLowerCase()}
+      {formatStatusName(status)}
     </span>
   );
 };

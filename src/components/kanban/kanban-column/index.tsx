@@ -9,13 +9,11 @@ import { Job } from "@/db/schema";
 
 import { JobStatusType } from "@/actions/jobs";
 
+import { formatStatusName } from "@/utils/format-status-name";
+
 interface KanbanColumnProps {
   status: JobStatusType;
   jobs: Job[];
-}
-
-function formatStatusName(status: JobStatusType): string {
-  return status.charAt(0) + status.slice(1).toLowerCase();
 }
 
 const KanbanColumn: React.FC<KanbanColumnProps> = ({ status, jobs }) => {

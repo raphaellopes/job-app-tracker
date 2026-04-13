@@ -11,6 +11,7 @@ import {
   Tooltip,
 } from "recharts";
 
+import { formatStatusName } from "@/utils/format-status-name";
 import { getStatusColor } from "@/utils/status-colors";
 
 interface StatusDistributionChartProps {
@@ -32,13 +33,6 @@ const TAILWIND_COLORS: Record<string, string> = {
 function getColorHex(status: string): string {
   const colorMapping = getStatusColor(status);
   return TAILWIND_COLORS[colorMapping.bg] || TAILWIND_COLORS["bg-gray-500"];
-}
-
-/**
- * Formats status name for display (capitalizes first letter, rest lowercase)
- */
-function formatStatusName(status: string): string {
-  return status.charAt(0) + status.slice(1).toLowerCase();
 }
 
 /**
