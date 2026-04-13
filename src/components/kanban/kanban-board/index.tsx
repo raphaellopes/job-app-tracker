@@ -12,14 +12,14 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { arrayMove,SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 import JobCard from "@/components/job/job-card";
 import KanbanColumn from "@/components/kanban/kanban-column";
 
 import { Job, JOB_STATUSES } from "@/db/schema";
 
-import { JobStatusType, updateJobPositions,updateJobStatus } from "@/actions/jobs";
+import { JobStatusType, updateJobPositions, updateJobStatus } from "@/actions/jobs";
 
 interface KanbanBoardProps {
   jobs: Job[];
