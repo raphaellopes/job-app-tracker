@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 
 import type { Job } from "@/db/schema";
+import { createMockJob } from "@/test-utils/factories";
 
 jest.mock("@/components/tag/tag-chip-list", () => ({
   __esModule: true,
@@ -30,26 +31,6 @@ jest.mock("@/components/ai-interview-prep/ai-interview-prep", () => ({
 }));
 
 import JobView from "./index";
-
-function createMockJob(overrides: Partial<Job> = {}): Job {
-  const now = new Date();
-  return {
-    id: 5,
-    userId: 1,
-    companyName: "Acme",
-    jobTitle: "Engineer",
-    tags: [],
-    status: "WISHLIST",
-    position: 0,
-    salaryRange: null,
-    appliedDate: null,
-    description: null,
-    notes: null,
-    createdAt: now,
-    updatedAt: now,
-    ...overrides,
-  };
-}
 
 describe("JobView", () => {
   it("shows tag chips when the job has tags", () => {

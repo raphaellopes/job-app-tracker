@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import type { Job } from "@/db/schema";
+import { createMockJob } from "@/test-utils/factories";
 
 jest.mock("@/components/job/job-view", () => ({
   __esModule: true,
@@ -46,26 +47,6 @@ jest.mock("next/navigation", () => ({
 const mockedUseRouter = jest.mocked(useRouter);
 const mockedUsePathname = jest.mocked(usePathname);
 const mockedUseSearchParams = jest.mocked(useSearchParams);
-
-function createMockJob(overrides: Partial<Job> = {}): Job {
-  const now = new Date();
-  return {
-    id: 12,
-    userId: 3,
-    companyName: "Globex",
-    jobTitle: "Analyst",
-    tags: [],
-    status: "APPLIED",
-    position: 0,
-    salaryRange: null,
-    appliedDate: null,
-    description: null,
-    notes: null,
-    createdAt: now,
-    updatedAt: now,
-    ...overrides,
-  };
-}
 
 function mockSearchParams(query: string) {
   mockedUseSearchParams.mockReturnValue(
@@ -122,7 +103,7 @@ describe("JobViewModal", () => {
   it("navigates to the pathname alone when view was the only query param", async () => {
     const user = userEvent.setup();
     mockSearchParams("view=12");
-    render(<JobViewModal job={createMockJob()} />);
+    render(<JobViewModal job={createMockJob({ id: 12 })} />);
 
     await user.click(screen.getByRole("button", { name: /close modal/i }));
 

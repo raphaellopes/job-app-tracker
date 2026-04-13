@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 
 import { analyzeJob, type InterviewPrepResult } from "@/actions/gemini";
 import { saveJobInterviewPrep } from "@/actions/jobs";
-import type { Job } from "@/db/schema";
+import { createMockInterviewPrepResult, createMockJob } from "@/test-utils/factories";
 
 import AIInterviewPrep from "./index";
 
@@ -24,36 +24,6 @@ jest.mock("@/components/ai-interview-prep/ai-interview-prep-result", () => ({
 
 const mockedAnalyzeJob = jest.mocked(analyzeJob);
 const mockedSaveJobInterviewPrep = jest.mocked(saveJobInterviewPrep);
-
-function createMockJob(overrides: Partial<Job> = {}): Job {
-  const now = new Date();
-  return {
-    id: 10,
-    userId: 1,
-    companyName: "Acme",
-    jobTitle: "Engineer",
-    tags: [],
-    status: "WISHLIST",
-    position: 0,
-    salaryRange: null,
-    appliedDate: null,
-    description: "Build things",
-    notes: null,
-    createdAt: now,
-    updatedAt: now,
-    ...overrides,
-  };
-}
-
-function createPrepResult(overrides: Partial<InterviewPrepResult> = {}): InterviewPrepResult {
-  return {
-    suggestedSkills: ["a"],
-    mockQuestions: ["b"],
-    resumeMatchScore: 50,
-    tips: "c",
-    ...overrides,
-  };
-}
 
 describe("AIInterviewPrep", () => {
   beforeEach(() => {
@@ -78,7 +48,7 @@ describe("AIInterviewPrep", () => {
     });
 
     it("renders saved prep from props and shows Regenerate and Saved", () => {
-      const prep = createPrepResult({ resumeMatchScore: 88 });
+      const prep = createMockInterviewPrepResult({ resumeMatchScore: 88 });
       render(<AIInterviewPrep job={createMockJob()} initialSavedResult={prep} />);
 
       expect(screen.getByTestId("ai-interview-prep-result")).toHaveTextContent("score:88");
@@ -90,7 +60,7 @@ describe("AIInterviewPrep", () => {
   describe("generate flow", () => {
     it("calls analyzeJob and shows the result when generation succeeds", async () => {
       const user = userEvent.setup();
-      const prep = createPrepResult({ resumeMatchScore: 61 });
+      const prep = createMockInterviewPrepResult({ resumeMatchScore: 61 });
       mockedAnalyzeJob.mockResolvedValueOnce(prep);
       render(<AIInterviewPrep job={createMockJob({ id: 3 })} />);
 
@@ -135,7 +105,7 @@ describe("AIInterviewPrep", () => {
   describe("save flow", () => {
     it("calls saveJobInterviewPrep and marks the prep as saved", async () => {
       const user = userEvent.setup();
-      const prep = createPrepResult();
+      const prep = createMockInterviewPrepResult();
       mockedAnalyzeJob.mockResolvedValueOnce(prep);
       mockedSaveJobInterviewPrep.mockResolvedValueOnce({ success: true });
       render(<AIInterviewPrep job={createMockJob({ id: 7 })} />);
@@ -157,7 +127,7 @@ describe("AIInterviewPrep", () => {
 
     it("shows save errors returned by the action", async () => {
       const user = userEvent.setup();
-      const prep = createPrepResult();
+      const prep = createMockInterviewPrepResult();
       mockedAnalyzeJob.mockResolvedValueOnce(prep);
       mockedSaveJobInterviewPrep.mockResolvedValueOnce({ error: "Job not found" });
       render(<AIInterviewPrep job={createMockJob()} />);
@@ -175,7 +145,7 @@ describe("AIInterviewPrep", () => {
 
     it("shows a message when saveJobInterviewPrep rejects", async () => {
       const user = userEvent.setup();
-      const prep = createPrepResult();
+      const prep = createMockInterviewPrepResult();
       mockedAnalyzeJob.mockResolvedValueOnce(prep);
       mockedSaveJobInterviewPrep.mockRejectedValueOnce(new Error("network"));
       render(<AIInterviewPrep job={createMockJob()} />);

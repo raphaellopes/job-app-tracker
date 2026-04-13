@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { useDroppable } from "@dnd-kit/core";
 
 import type { Job } from "@/db/schema";
+import { createMockJob } from "@/test-utils/factories";
 
 import KanbanColumn from "./index";
 
@@ -28,26 +29,6 @@ jest.mock("@/components/job/job-card", () => ({
 
 const mockedUseDroppable = jest.mocked(useDroppable);
 
-function createJob(overrides: Partial<Job> = {}): Job {
-  const now = new Date();
-  return {
-    id: 1,
-    userId: 10,
-    companyName: "Acme Corp",
-    jobTitle: "Software Engineer",
-    tags: ["remote"],
-    status: "WISHLIST",
-    position: 0,
-    salaryRange: null,
-    appliedDate: null,
-    description: null,
-    notes: null,
-    createdAt: now,
-    updatedAt: now,
-    ...overrides,
-  };
-}
-
 describe("KanbanColumn", () => {
   beforeEach(() => {
     jest.clearAllMocks();
@@ -67,7 +48,7 @@ describe("KanbanColumn", () => {
     render(
       <KanbanColumn
         status="APPLIED"
-        jobs={[createJob({ id: 1, status: "APPLIED" }), createJob({ id: 2, status: "APPLIED" })]}
+        jobs={[createMockJob({ id: 1, status: "APPLIED" }), createMockJob({ id: 2, status: "APPLIED" })]}
       />,
     );
 
@@ -87,8 +68,8 @@ describe("KanbanColumn", () => {
       <KanbanColumn
         status="WISHLIST"
         jobs={[
-          createJob({ id: 5, companyName: "Beta", status: "WISHLIST" }),
-          createJob({ id: 6, companyName: "Gamma", status: "WISHLIST" }),
+          createMockJob({ id: 5, companyName: "Beta", status: "WISHLIST" }),
+          createMockJob({ id: 6, companyName: "Gamma", status: "WISHLIST" }),
         ]}
       />,
     );

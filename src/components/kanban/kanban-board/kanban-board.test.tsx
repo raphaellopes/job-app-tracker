@@ -4,9 +4,9 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import type { DragEndEvent } from "@dnd-kit/core";
 import { useRouter } from "next/navigation";
 
-import type { Job } from "@/db/schema";
-
 import { updateJobPositions, updateJobStatus } from "@/actions/jobs";
+import type { Job } from "@/db/schema";
+import { createMockJob } from "@/test-utils/factories";
 
 import KanbanBoard from "./index";
 
@@ -65,26 +65,6 @@ const mockedUseRouter = jest.mocked(useRouter);
 const mockedUpdateJobPositions = jest.mocked(updateJobPositions);
 const mockedUpdateJobStatus = jest.mocked(updateJobStatus);
 
-function createJob(overrides: Partial<Job> = {}): Job {
-  const now = new Date();
-  return {
-    id: 1,
-    userId: 10,
-    companyName: "Acme Corp",
-    jobTitle: "Software Engineer",
-    tags: ["remote"],
-    status: "WISHLIST",
-    position: 0,
-    salaryRange: null,
-    appliedDate: null,
-    description: null,
-    notes: null,
-    createdAt: now,
-    updatedAt: now,
-    ...overrides,
-  };
-}
-
 describe("KanbanBoard", () => {
   const mockRefresh = jest.fn();
 
@@ -110,8 +90,8 @@ describe("KanbanBoard", () => {
   describe("drag end", () => {
     it("calls updateJobPositions with reordered ids when a job is moved within the same column", async () => {
       const jobs = [
-        createJob({ id: 10, status: "WISHLIST", position: 0 }),
-        createJob({ id: 20, status: "WISHLIST", position: 1 }),
+        createMockJob({ id: 10, status: "WISHLIST", position: 0 }),
+        createMockJob({ id: 20, status: "WISHLIST", position: 1 }),
       ];
       render(<KanbanBoard jobs={jobs} />);
 
@@ -131,8 +111,8 @@ describe("KanbanBoard", () => {
 
     it("calls updateJobStatus when a job is dropped into a different status column", async () => {
       const jobs = [
-        createJob({ id: 10, status: "WISHLIST" }),
-        createJob({ id: 20, status: "APPLIED" }),
+        createMockJob({ id: 10, status: "WISHLIST" }),
+        createMockJob({ id: 20, status: "APPLIED" }),
       ];
       render(<KanbanBoard jobs={jobs} />);
 
@@ -152,7 +132,7 @@ describe("KanbanBoard", () => {
 
     it("does not call updateJobPositions when there is no drop target", async () => {
       render(
-        <KanbanBoard jobs={[createJob({ id: 10, status: "WISHLIST" }), createJob({ id: 20, status: "WISHLIST" })]} />,
+        <KanbanBoard jobs={[createMockJob({ id: 10, status: "WISHLIST" }), createMockJob({ id: 20, status: "WISHLIST" })]} />,
       );
 
       await act(async () => {
@@ -167,7 +147,7 @@ describe("KanbanBoard", () => {
     });
 
     it("does not call updateJobPositions when the job is dropped on itself", async () => {
-      render(<KanbanBoard jobs={[createJob({ id: 10, status: "WISHLIST" })]} />);
+      render(<KanbanBoard jobs={[createMockJob({ id: 10, status: "WISHLIST" })]} />);
 
       await act(async () => {
         await lastOnDragEnd?.({
@@ -185,8 +165,8 @@ describe("KanbanBoard", () => {
       const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
       const jobs = [
-        createJob({ id: 10, status: "WISHLIST" }),
-        createJob({ id: 20, status: "WISHLIST" }),
+        createMockJob({ id: 10, status: "WISHLIST" }),
+        createMockJob({ id: 20, status: "WISHLIST" }),
       ];
       render(<KanbanBoard jobs={jobs} />);
 

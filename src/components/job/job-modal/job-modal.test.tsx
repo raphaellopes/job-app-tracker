@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import type { Job } from "@/db/schema";
+import { createMockJob } from "@/test-utils/factories";
 
 jest.mock("@/components/job/job-form", () => ({
   JobForm: ({
@@ -30,26 +31,6 @@ jest.mock("next/navigation", () => ({
 const mockedUseRouter = jest.mocked(useRouter);
 const mockedUsePathname = jest.mocked(usePathname);
 const mockedUseSearchParams = jest.mocked(useSearchParams);
-
-function createMockJob(overrides: Partial<Job> = {}): Job {
-  const now = new Date();
-  return {
-    id: 7,
-    userId: 10,
-    companyName: "Acme Corp",
-    jobTitle: "Software Engineer",
-    tags: [],
-    status: "WISHLIST",
-    position: 0,
-    salaryRange: null,
-    appliedDate: null,
-    description: null,
-    notes: null,
-    createdAt: now,
-    updatedAt: now,
-    ...overrides,
-  };
-}
 
 function mockSearchParams(query: string) {
   mockedUseSearchParams.mockReturnValue(

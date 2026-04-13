@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { toast } from "sonner";
 
 import { createJob, updateJob } from "@/actions/jobs";
-import type { Job } from "@/db/schema";
+import { createMockJob } from "@/test-utils/factories";
 
 import { JobForm } from "./index";
 
@@ -32,26 +32,6 @@ const mockedUseSearchParams = jest.mocked(useSearchParams);
 const mockedCreateJob = jest.mocked(createJob);
 const mockedUpdateJob = jest.mocked(updateJob);
 const mockedToast = jest.mocked(toast);
-
-function createMockJob(overrides: Partial<Job> = {}): Job {
-  const now = new Date();
-  return {
-    id: 42,
-    userId: 10,
-    companyName: "Acme Corp",
-    jobTitle: "Software Engineer",
-    tags: ["remote"],
-    status: "WISHLIST",
-    position: 0,
-    salaryRange: null,
-    appliedDate: null,
-    description: null,
-    notes: null,
-    createdAt: now,
-    updatedAt: now,
-    ...overrides,
-  };
-}
 
 describe("JobForm", () => {
   const mockReplace = jest.fn();
@@ -161,7 +141,14 @@ describe("JobForm", () => {
 
     it("does not call updateJob when validation fails in edit mode", async () => {
       const user = userEvent.setup();
-      render(<JobForm job={createMockJob()} />);
+      render(
+        <JobForm
+          job={createMockJob({
+            id: 42,
+            tags: ["remote"],
+          })}
+        />,
+      );
 
       await user.clear(screen.getByLabelText(/company name/i));
       await user.clear(screen.getByLabelText(/^position/i));

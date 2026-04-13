@@ -3,7 +3,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import type { Job } from "@/db/schema";
+import { createMockJob } from "@/test-utils/factories";
 
 jest.mock("@/components/job/delete-job-button", () => ({
   __esModule: true,
@@ -39,26 +39,6 @@ const mockedUsePathname = jest.mocked(usePathname);
 const mockedUseSearchParams = jest.mocked(useSearchParams);
 const mockedUseSortable = jest.mocked(useSortable);
 
-function createJob(overrides: Partial<Job> = {}): Job {
-  const now = new Date();
-  return {
-    id: 1,
-    userId: 10,
-    companyName: "Acme Corp",
-    jobTitle: "Software Engineer",
-    tags: ["remote"],
-    status: "WISHLIST",
-    position: 0,
-    salaryRange: null,
-    appliedDate: null,
-    description: null,
-    notes: null,
-    createdAt: now,
-    updatedAt: now,
-    ...overrides,
-  };
-}
-
 describe("JobCard", () => {
   const mockPush = jest.fn();
 
@@ -85,7 +65,7 @@ describe("JobCard", () => {
 
   describe("rendering", () => {
     it("renders company name, job title, and tags", () => {
-      render(<JobCard job={createJob()} />);
+      render(<JobCard job={createMockJob({ tags: ["remote"] })} />);
 
       expect(screen.getByRole("heading", { name: "Acme Corp" })).toBeInTheDocument();
       expect(screen.getByText("Software Engineer")).toBeInTheDocument();
@@ -95,7 +75,7 @@ describe("JobCard", () => {
     it("renders salary and description when present", () => {
       render(
         <JobCard
-          job={createJob({
+          job={createMockJob({
             salaryRange: "$120k–$150k",
             description: "Build great things",
           })}
@@ -107,14 +87,14 @@ describe("JobCard", () => {
     });
 
     it("does not render salary or description when absent", () => {
-      render(<JobCard job={createJob({ salaryRange: null, description: null })} />);
+      render(<JobCard job={createMockJob({ salaryRange: null, description: null })} />);
 
       expect(screen.queryByText(/💰/)).not.toBeInTheDocument();
       expect(screen.queryByText("Build great things")).not.toBeInTheDocument();
     });
 
     it("renders the edit link with the job id", () => {
-      render(<JobCard job={createJob({ id: 42 })} />);
+      render(<JobCard job={createMockJob({ id: 42, tags: ["remote"] })} />);
 
       const editLink = document.querySelector('a[href="/board?edit=42"]');
       expect(editLink).toBeInTheDocument();
@@ -125,7 +105,7 @@ describe("JobCard", () => {
     it("pushes the board URL with view set and add/edit cleared", async () => {
       const user = userEvent.setup();
       navigationState.searchParams = new URLSearchParams("add=1&edit=99&foo=bar");
-      render(<JobCard job={createJob({ id: 7 })} />);
+      render(<JobCard job={createMockJob({ id: 7, tags: ["remote"] })} />);
 
       await user.click(screen.getByRole("heading", { name: "Acme Corp" }));
 
@@ -135,7 +115,7 @@ describe("JobCard", () => {
     it("pushes only view when there were no other params", async () => {
       const user = userEvent.setup();
       navigationState.searchParams = new URLSearchParams();
-      render(<JobCard job={createJob({ id: 3 })} />);
+      render(<JobCard job={createMockJob({ id: 3, tags: ["remote"] })} />);
 
       await user.click(screen.getByRole("heading", { name: "Acme Corp" }));
 
@@ -154,7 +134,7 @@ describe("JobCard", () => {
         isDragging: true,
       } as unknown as ReturnType<typeof useSortable>);
 
-      render(<JobCard job={createJob()} />);
+      render(<JobCard job={createMockJob({ tags: ["remote"] })} />);
 
       expect(screen.getByRole("heading", { name: "Acme Corp" }).closest("div.group")).toHaveClass(
         "cursor-grabbing",
