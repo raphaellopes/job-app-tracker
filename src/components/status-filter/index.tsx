@@ -1,8 +1,10 @@
 "use client";
 
-import { JOB_STATUSES } from "@/db/schema";
-import { formatStatusName } from "@/utils/format-status-name";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+import { JOB_STATUSES } from "@/db/schema";
+
+import { formatStatusName } from "@/utils/format-status-name";
 
 const StatusFilter: React.FC = () => {
   const searchParams = useSearchParams();

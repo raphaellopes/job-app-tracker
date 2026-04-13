@@ -4,9 +4,10 @@ import userEvent from "@testing-library/user-event";
 import { toast } from "sonner";
 
 import { createJob, updateJob } from "@/actions/jobs";
-import { createMockJob } from "@/test-utils/factories";
 
 import { JobForm } from "./index";
+
+import { createMockJob } from "@/test-utils/factories";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),

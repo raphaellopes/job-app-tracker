@@ -3,9 +3,10 @@ import userEvent from "@testing-library/user-event";
 
 import { analyzeJob, type InterviewPrepResult } from "@/actions/gemini";
 import { saveJobInterviewPrep } from "@/actions/jobs";
-import { createMockInterviewPrepResult, createMockJob } from "@/test-utils/factories";
 
 import AIInterviewPrep from "./index";
+
+import { createMockInterviewPrepResult, createMockJob } from "@/test-utils/factories";
 
 jest.mock("@/actions/gemini", () => ({
   analyzeJob: jest.fn(),

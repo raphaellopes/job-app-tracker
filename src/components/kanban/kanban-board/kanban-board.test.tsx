@@ -1,14 +1,15 @@
 import React from "react";
+import { useRouter } from "next/navigation";
+import type { DragEndEvent } from "@dnd-kit/core";
 import { act, render, screen, waitFor } from "@testing-library/react";
 
-import type { DragEndEvent } from "@dnd-kit/core";
-import { useRouter } from "next/navigation";
+import type { Job } from "@/db/schema";
 
 import { updateJobPositions, updateJobStatus } from "@/actions/jobs";
-import type { Job } from "@/db/schema";
-import { createMockJob } from "@/test-utils/factories";
 
 import KanbanBoard from "./index";
+
+import { createMockJob } from "@/test-utils/factories";
 
 let lastOnDragEnd: ((e: DragEndEvent) => void | Promise<void>) | undefined;
 

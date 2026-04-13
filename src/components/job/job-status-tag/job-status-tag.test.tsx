@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 
-import { getStatusColor } from "@/utils/status-colors";
-
 import JobStatusTag from "./index";
+
+import { getStatusColor } from "@/utils/status-colors";
 
 jest.mock("@/utils/status-colors", () => ({
   getStatusColor: jest.fn(() => ({

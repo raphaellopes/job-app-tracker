@@ -3,9 +3,10 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { JOB_STATUSES } from "@/db/schema";
-import { formatStatusName } from "@/utils/format-status-name";
 
 import StatusFilter from "./index";
+
+import { formatStatusName } from "@/utils/format-status-name";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),

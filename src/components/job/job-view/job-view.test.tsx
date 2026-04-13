@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 
 import type { Job } from "@/db/schema";
+
 import { createMockJob } from "@/test-utils/factories";
 
 jest.mock("@/components/tag/tag-chip-list", () => ({
