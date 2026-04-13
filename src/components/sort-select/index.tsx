@@ -1,6 +1,13 @@
 "use client";
 
-import { usePathname, useRouter,useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+const SORT_OPTIONS = [
+  { value: "date-desc", label: "Newest First" },
+  { value: "date-asc", label: "Oldest First" },
+  { value: "salary-desc", label: "Salary (High to Low)" },
+  { value: "salary-asc", label: "Salary (Low to High)" },
+];
 
 const SortSelect: React.FC = () => {
   const searchParams = useSearchParams();
@@ -9,11 +16,7 @@ const SortSelect: React.FC = () => {
 
   const handleSort = (sort: string) => {
     const params = new URLSearchParams(searchParams);
-    if (sort) {
-      params.set("sort", sort);
-    } else {
-      params.delete("sort");
-    }
+    params.set("sort", sort);
     replace(`${pathname}?${params.toString()}`);
   };
 
@@ -23,10 +26,11 @@ const SortSelect: React.FC = () => {
       onChange={(e) => handleSort(e.target.value)}
       value={searchParams.get("sort") || "date-desc"}
     >
-      <option value="date-desc">Newest First</option>
-      <option value="date-asc">Oldest First</option>
-      <option value="salary-desc">Salary (High to Low)</option>
-      <option value="salary-asc">Salary (Low to High)</option>
+      {SORT_OPTIONS.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
     </select>
   );
 };
