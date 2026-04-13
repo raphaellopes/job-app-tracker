@@ -1,6 +1,8 @@
 "use client";
 
-import { usePathname, useRouter,useSearchParams } from "next/navigation";
+import { JOB_STATUSES } from "@/db/schema";
+import { formatStatusName } from "@/utils/format-status-name";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const StatusFilter: React.FC = () => {
   const searchParams = useSearchParams();
@@ -24,11 +26,11 @@ const StatusFilter: React.FC = () => {
       value={searchParams.get("status") || ""}
     >
       <option value="">All Statuses</option>
-      <option value="WISHLIST">Wishlist</option>
-      <option value="APPLIED">Applied</option>
-      <option value="INTERVIEWING">Interviewing</option>
-      <option value="OFFER">Offer</option>
-      <option value="REJECTED">Rejected</option>
+      {JOB_STATUSES.map((status) => (
+        <option key={status} value={status}>
+          {formatStatusName(status)}
+        </option>
+      ))}
     </select>
   );
 };
