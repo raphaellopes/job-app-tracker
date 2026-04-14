@@ -4,12 +4,11 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import Button from "@/components/buttons/button";
-import Modal from "@/components/modals/modal";
-import Input from "@/components/form/input";
 import ErrorBox from "@/components/form/error-box";
+import Input from "@/components/form/input";
+import Modal from "@/components/modals/modal";
 
 import { saveFoundJob } from "@/actions/jobs";
-import Image from "next/image";
 
 type JobFinderItem = {
   externalJobId: string;
