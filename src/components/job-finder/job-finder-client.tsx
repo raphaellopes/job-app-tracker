@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 
-import Button from "@/components/buttons/button";
 import JobFinderJobModal from "@/components/job-finder/job-finder-job-modal";
+import JobFinderPaginationControls from "@/components/job-finder/job-finder-pagination-controls";
 import JobFinderResultsTable from "@/components/job-finder/job-finder-results-table";
 import JobFinderSearchForm from "@/components/job-finder/job-finder-search-form";
 import { JobFinderItem, SearchResponse } from "@/components/job-finder/types";
@@ -80,25 +80,14 @@ const JobFinderClient: React.FC = () => {
         onSelectJob={setSelectedJob}
       />
 
-      <div className="flex items-center justify-between">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => runSearch(page - 1)}
-          disabled={page <= 1 || isLoading}
-        >
-          Previous
-        </Button>
-        <p className="text-sm text-gray-600">{paginationLabel}</p>
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => runSearch(page + 1)}
-          disabled={!hasNextPage || isLoading}
-        >
-          Next
-        </Button>
-      </div>
+      <JobFinderPaginationControls
+        page={page}
+        hasNextPage={hasNextPage}
+        isLoading={isLoading}
+        paginationLabel={paginationLabel}
+        onPrevious={() => runSearch(page - 1)}
+        onNext={() => runSearch(page + 1)}
+      />
 
       <JobFinderJobModal job={selectedJob} onClose={() => setSelectedJob(null)} />
     </div>
