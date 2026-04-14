@@ -50,6 +50,13 @@
       "when": 1775497924781,
       "tag": "0006_jobs_user_id",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1775600000000,
+      "tag": "0007_job_finder_source",
+      "breakpoints": true
     }
   ]
 }

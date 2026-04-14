@@ -45,6 +45,8 @@ Create `.env.local` in the project root (Drizzle Kit also loads it via `drizzle.
 | `FIREBASE_CLIENT_EMAIL` | Admin SDK. |
 | `FIREBASE_PRIVATE_KEY` | Admin SDK (escape newlines as `\n` in the env file if needed). |
 | `GEMINI_API_KEY` | Optional; AI interview prep in `src/actions/gemini.ts`. |
+| `RAPIDAPI_KEY` | Required for Job Finder JSearch API calls. |
+| `JSEARCH_HOST` | RapidAPI host for JSearch (for example `jsearch.p.rapidapi.com`). |
 
 ## Run locally
 

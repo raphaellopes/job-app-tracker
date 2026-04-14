@@ -10,6 +10,7 @@ import SignOutButton from "@/components/auth/sign-out-button";
 import { AnalyticsIcon } from "@/components/icons/analytics-icon";
 import { AvatarIcon } from "@/components/icons/avatar-icon";
 import { BoardIcon } from "@/components/icons/board-icon";
+import { BriefcaseIcon } from "@/components/icons/briefcase-icon";
 import { CloseIcon } from "@/components/icons/close-icon";
 import { DashboardIcon } from "@/components/icons/dashboard-icon";
 import { MenuIcon } from "@/components/icons/menu-icon";
@@ -30,6 +31,11 @@ const menuItems = [
     label: "Analytics",
     href: "/analytics",
     icon: AnalyticsIcon,
+  },
+  {
+    label: "Job Finder",
+    href: "/job-finder",
+    icon: BriefcaseIcon,
   },
 ];
 

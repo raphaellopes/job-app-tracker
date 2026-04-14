@@ -58,6 +58,15 @@ export const jobs = pgTable("jobs", {
   appliedDate: date("applied_date"),
   description: text("description"),
   notes: text("notes"),
+  externalSource: text("external_source"),
+  externalJobId: text("external_job_id"),
+  externalApplyLink: text("external_apply_link"),
+  employerLogo: text("employer_logo"),
+  jobPublisher: text("job_publisher"),
+  employmentTypes: text("employment_types")
+    .array()
+    .default(sql`'{}'::text[]`)
+    .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

@@ -42,6 +42,18 @@ const interviewPrepSchema = z.object({
   tips: z.string().min(1),
 });
 
+const saveFoundJobSchema = z.object({
+  jobTitle: z.string().min(1, "Job title is required"),
+  companyName: z.string().min(1, "Employer name is required"),
+  description: z.string().optional(),
+  salaryRange: z.string().optional(),
+  externalJobId: z.string().min(1),
+  externalApplyLink: z.string().url().optional(),
+  employerLogo: z.string().url().optional(),
+  jobPublisher: z.string().min(1).optional(),
+  employmentTypes: z.array(z.string().min(1)).max(10).optional(),
+});
+
 function parseTagsInput(tags?: string): string[] {
   if (!tags) return [];
   return [
@@ -160,6 +172,65 @@ export async function getJobs(search?: string, status?: string, sort?: string) {
     .from(jobs)
     .where(and(...filters))
     .orderBy(...orderBy);
+}
+
+export async function saveFoundJob(
+  payload: z.infer<typeof saveFoundJobSchema>,
+): Promise<{ success: true } | { error: string }> {
+  const userId = await requireDbUserId();
+
+  const validatedPayload = saveFoundJobSchema.safeParse(payload);
+  if (!validatedPayload.success) {
+    return { error: "validation_failed" };
+  }
+
+  const data = validatedPayload.data;
+  const [existingJob] = await db
+    .select({ id: jobs.id })
+    .from(jobs)
+    .where(
+      and(
+        eq(jobs.userId, userId),
+        eq(jobs.externalSource, "JSEARCH"),
+        eq(jobs.externalJobId, data.externalJobId),
+      ),
+    )
+    .limit(1);
+
+  if (existingJob) {
+    return { error: "already_saved" };
+  }
+
+  const maxPositionResult = await db
+    .select({ maxPosition: max(jobs.position) })
+    .from(jobs)
+    .where(and(eq(jobs.userId, userId), eq(jobs.status, "WISHLIST")));
+
+  const maxPosition = maxPositionResult[0]?.maxPosition ?? null;
+  const newPosition = maxPosition !== null ? maxPosition + 1 : 0;
+
+  await db.insert(jobs).values({
+    userId,
+    companyName: data.companyName,
+    jobTitle: data.jobTitle,
+    description: data.description,
+    salaryRange: data.salaryRange,
+    status: "WISHLIST",
+    position: newPosition,
+    tags: [],
+    externalSource: "JSEARCH",
+    externalJobId: data.externalJobId,
+    externalApplyLink: data.externalApplyLink,
+    employerLogo: data.employerLogo,
+    jobPublisher: data.jobPublisher,
+    employmentTypes: data.employmentTypes ?? [],
+  });
+
+  revalidatePath("/");
+  revalidatePath("/board");
+  revalidatePath("/job-finder");
+
+  return { success: true };
 }
 
 export async function deleteJob(formData: FormData): Promise<SaveJobResult> {
