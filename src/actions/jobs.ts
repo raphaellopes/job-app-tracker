@@ -52,7 +52,17 @@ const saveFoundJobSchema = z.object({
   employerLogo: z.string().url().optional(),
   jobPublisher: z.string().min(1).optional(),
   employmentTypes: z.array(z.string().min(1)).max(10).optional(),
+  isRemote: z.boolean().optional(),
+  employerCompanyType: z.string().min(1).optional(),
+  naicsName: z.string().min(1).optional(),
+  locationTag: z.string().min(1).optional(),
+  requiredSkills: z.array(z.string().min(1)).max(20).optional(),
+  highlightQualifications: z.array(z.string().min(1)).max(20).optional(),
+  highlightResponsibilities: z.array(z.string().min(1)).max(20).optional(),
 });
+
+const MAX_SAVED_TAGS = 10;
+const MAX_HIGHLIGHT_TAG_LENGTH = 60;
 
 function parseTagsInput(tags?: string): string[] {
   if (!tags) return [];
@@ -64,6 +74,73 @@ function parseTagsInput(tags?: string): string[] {
         .filter(Boolean),
     ),
   ];
+}
+
+function normalizeTag(tag: string): string {
+  return tag.trim().replace(/\s+/g, " ");
+}
+
+function appendTag(tags: string[], seen: Set<string>, value?: string) {
+  if (!value || tags.length >= MAX_SAVED_TAGS) {
+    return;
+  }
+
+  const normalized = normalizeTag(value);
+  if (!normalized) {
+    return;
+  }
+
+  const key = normalized.toLowerCase();
+  if (seen.has(key)) {
+    return;
+  }
+
+  tags.push(normalized);
+  seen.add(key);
+}
+
+function buildFoundJobTags(payload: z.infer<typeof saveFoundJobSchema>): string[] {
+  const tags: string[] = [];
+  const seen = new Set<string>();
+
+  for (const employmentType of payload.employmentTypes ?? []) {
+    appendTag(tags, seen, employmentType);
+    if (tags.length >= MAX_SAVED_TAGS) {
+      return tags;
+    }
+  }
+
+  if (payload.isRemote) {
+    appendTag(tags, seen, "Remote");
+  }
+  appendTag(tags, seen, payload.jobPublisher);
+  appendTag(tags, seen, payload.employerCompanyType);
+  appendTag(tags, seen, payload.naicsName);
+  appendTag(tags, seen, payload.locationTag);
+
+  for (const skill of payload.requiredSkills ?? []) {
+    appendTag(tags, seen, skill);
+    if (tags.length >= MAX_SAVED_TAGS) {
+      return tags;
+    }
+  }
+
+  const highlights = [
+    ...(payload.highlightQualifications ?? []),
+    ...(payload.highlightResponsibilities ?? []),
+  ];
+  for (const highlight of highlights) {
+    const normalizedHighlight = normalizeTag(highlight);
+    if (!normalizedHighlight || normalizedHighlight.length > MAX_HIGHLIGHT_TAG_LENGTH) {
+      continue;
+    }
+    appendTag(tags, seen, normalizedHighlight);
+    if (tags.length >= MAX_SAVED_TAGS) {
+      return tags;
+    }
+  }
+
+  return tags;
 }
 
 export type SaveJobResult = { success: true } | { error: string };
@@ -217,7 +294,7 @@ export async function saveFoundJob(
     salaryRange: data.salaryRange,
     status: "WISHLIST",
     position: newPosition,
-    tags: [],
+    tags: buildFoundJobTags(data),
     externalSource: "JSEARCH",
     externalJobId: data.externalJobId,
     externalApplyLink: data.externalApplyLink,

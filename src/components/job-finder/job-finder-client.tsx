@@ -20,6 +20,13 @@ type JobFinderItem = {
   applyLink: string;
   description: string;
   salary?: string;
+  isRemote: boolean;
+  employerCompanyType?: string;
+  naicsName?: string;
+  locationTag?: string;
+  requiredSkills: string[];
+  highlightQualifications: string[];
+  highlightResponsibilities: string[];
 };
 
 type SearchResponse = {
@@ -100,6 +107,13 @@ const JobFinderClient: React.FC = () => {
         externalApplyLink: selectedJob.applyLink || undefined,
         employerLogo: selectedJob.employerLogo || undefined,
         employmentTypes: selectedJob.employmentTypes,
+        isRemote: selectedJob.isRemote,
+        employerCompanyType: selectedJob.employerCompanyType,
+        naicsName: selectedJob.naicsName,
+        locationTag: selectedJob.locationTag,
+        requiredSkills: selectedJob.requiredSkills,
+        highlightQualifications: selectedJob.highlightQualifications,
+        highlightResponsibilities: selectedJob.highlightResponsibilities,
       });
 
       if ("success" in result && result.success) {
@@ -170,6 +184,8 @@ const JobFinderClient: React.FC = () => {
             <span className="col-span-7 font-medium text-gray-900">{job.title}</span>
             <span className="col-span-3 text-gray-700 flex items-center gap-2">
               {job.employerLogo && (
+                // JSearch logo hosts vary and are not preconfigured for next/image allowlists.
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={job.employerLogo}
                   alt={`${job.employerName} logo`}

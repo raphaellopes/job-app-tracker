@@ -23,6 +23,17 @@ type JSearchJob = {
   job_max_salary?: number | null;
   job_salary_currency?: string | null;
   job_salary_period?: string | null;
+  job_is_remote?: boolean;
+  employer_company_type?: string | null;
+  job_naics_name?: string | null;
+  job_city?: string | null;
+  job_state?: string | null;
+  job_country?: string | null;
+  job_required_skills?: string[] | null;
+  job_highlights?: {
+    Qualifications?: string[];
+    Responsibilities?: string[];
+  } | null;
 };
 
 type JSearchResponse = {
@@ -43,6 +54,18 @@ function formatSalary(job: JSearchJob): string | undefined {
   }
   const value = (min ?? max) as number;
   return `${currency} ${value.toLocaleString()}${period}`;
+}
+
+function buildLocationTag(job: JSearchJob): string | undefined {
+  const parts = [job.job_city, job.job_state, job.job_country]
+    .map((part) => part?.trim())
+    .filter(Boolean);
+
+  if (parts.length === 0) {
+    return undefined;
+  }
+
+  return parts.join(", ");
 }
 
 export async function GET(request: Request) {
@@ -112,6 +135,13 @@ export async function GET(request: Request) {
         applyLink: job.job_apply_link ?? "",
         description: job.job_description ?? "",
         salary: formatSalary(job),
+        isRemote: job.job_is_remote ?? false,
+        employerCompanyType: job.employer_company_type ?? undefined,
+        naicsName: job.job_naics_name ?? undefined,
+        locationTag: buildLocationTag(job),
+        requiredSkills: job.job_required_skills?.filter(Boolean) ?? [],
+        highlightQualifications: job.job_highlights?.Qualifications?.filter(Boolean) ?? [],
+        highlightResponsibilities: job.job_highlights?.Responsibilities?.filter(Boolean) ?? [],
       };
     });
 
