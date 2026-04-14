@@ -19,11 +19,11 @@ const JobFinderPaginationControls: React.FC<JobFinderPaginationControlsProps> = 
 }) => {
   return (
     <div className="flex items-center justify-between">
-      <Button type="button" variant="secondary" onClick={onPrevious} disabled={page <= 1 || isLoading}>
+      <Button type="button" onClick={onPrevious} disabled={page <= 1 || isLoading}>
         Previous
       </Button>
       <p className="text-sm text-gray-600">{paginationLabel}</p>
-      <Button type="button" variant="secondary" onClick={onNext} disabled={!hasNextPage || isLoading}>
+      <Button type="button" onClick={onNext} disabled={!hasNextPage || isLoading}>
         Next
       </Button>
     </div>
