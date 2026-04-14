@@ -66,7 +66,7 @@ const JobFinderJobModal: React.FC<JobFinderJobModalProps> = ({ job, onClose }) =
 
   return (
     <Modal title={job.title} description={job.employerName} size="md" onClose={onClose}>
-      <div className="space-y-3 text-sm text-gray-700">
+      <div className="space-y-3 text-sm text-gray-700 border-t border-gray-200 pt-4">
         <p>
           <span className="font-semibold">Employer:</span> {job.employerName}
         </p>
@@ -83,7 +83,12 @@ const JobFinderJobModal: React.FC<JobFinderJobModalProps> = ({ job, onClose }) =
         <p>
           <span className="font-semibold">Apply link:</span>{" "}
           {job.applyLink ? (
-            <a href={job.applyLink} target="_blank" rel="noreferrer" className="text-blue-600 underline">
+            <a
+              href={job.applyLink}
+              target="_blank"
+              rel="noreferrer"
+              className="text-blue-600 underline"
+            >
               Open job post
             </a>
           ) : (
@@ -92,10 +97,12 @@ const JobFinderJobModal: React.FC<JobFinderJobModalProps> = ({ job, onClose }) =
         </p>
         <div>
           <p className="font-semibold">Description</p>
-          <p className="mt-1 whitespace-pre-wrap">{job.description || "No description available."}</p>
+          <p className="mt-1 whitespace-pre-wrap">
+            {job.description || "No description available."}
+          </p>
         </div>
 
-        <div className="pt-2">
+        <div className="py-4 sticky bottom-0 bg-white border-t border-gray-200">
           <Button type="button" onClick={handleSaveJob} disabled={isSaving}>
             {isSaving ? "Saving..." : "Save to wishlist"}
           </Button>

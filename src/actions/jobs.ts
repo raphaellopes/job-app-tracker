@@ -42,6 +42,9 @@ const interviewPrepSchema = z.object({
   tips: z.string().min(1),
 });
 
+const MAX_SAVE_FOUND_JOB_EMPLOYMENT_TYPES = 10;
+const MAX_SAVE_FOUND_JOB_LIST_ITEMS = 20;
+
 const saveFoundJobSchema = z.object({
   jobTitle: z.string().min(1, "Job title is required"),
   companyName: z.string().min(1, "Employer name is required"),
@@ -51,15 +54,42 @@ const saveFoundJobSchema = z.object({
   externalApplyLink: z.string().url().optional(),
   employerLogo: z.string().url().optional(),
   jobPublisher: z.string().min(1).optional(),
-  employmentTypes: z.array(z.string().min(1)).max(10).optional(),
+  employmentTypes: z
+    .array(z.string().min(1))
+    .max(MAX_SAVE_FOUND_JOB_EMPLOYMENT_TYPES)
+    .optional(),
   isRemote: z.boolean().optional(),
   employerCompanyType: z.string().min(1).optional(),
   naicsName: z.string().min(1).optional(),
   locationTag: z.string().min(1).optional(),
-  requiredSkills: z.array(z.string().min(1)).max(20).optional(),
-  highlightQualifications: z.array(z.string().min(1)).max(20).optional(),
-  highlightResponsibilities: z.array(z.string().min(1)).max(20).optional(),
+  requiredSkills: z.array(z.string().min(1)).max(MAX_SAVE_FOUND_JOB_LIST_ITEMS).optional(),
+  highlightQualifications: z
+    .array(z.string().min(1))
+    .max(MAX_SAVE_FOUND_JOB_LIST_ITEMS)
+    .optional(),
+  highlightResponsibilities: z
+    .array(z.string().min(1))
+    .max(MAX_SAVE_FOUND_JOB_LIST_ITEMS)
+    .optional(),
 });
+
+type SaveFoundJobPayload = z.infer<typeof saveFoundJobSchema>;
+
+function normalizeSaveFoundJobPayload(payload: SaveFoundJobPayload): SaveFoundJobPayload {
+  return {
+    ...payload,
+    employmentTypes: payload.employmentTypes?.slice(0, MAX_SAVE_FOUND_JOB_EMPLOYMENT_TYPES),
+    requiredSkills: payload.requiredSkills?.slice(0, MAX_SAVE_FOUND_JOB_LIST_ITEMS),
+    highlightQualifications: payload.highlightQualifications?.slice(
+      0,
+      MAX_SAVE_FOUND_JOB_LIST_ITEMS,
+    ),
+    highlightResponsibilities: payload.highlightResponsibilities?.slice(
+      0,
+      MAX_SAVE_FOUND_JOB_LIST_ITEMS,
+    ),
+  };
+}
 
 const MAX_SAVED_TAGS = 10;
 const MAX_HIGHLIGHT_TAG_LENGTH = 60;
@@ -256,7 +286,7 @@ export async function saveFoundJob(
 ): Promise<{ success: true } | { error: string }> {
   const userId = await requireDbUserId();
 
-  const validatedPayload = saveFoundJobSchema.safeParse(payload);
+  const validatedPayload = saveFoundJobSchema.safeParse(normalizeSaveFoundJobPayload(payload));
   if (!validatedPayload.success) {
     return { error: "validation_failed" };
   }
