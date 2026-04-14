@@ -1,41 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
 
 import Button from "@/components/buttons/button";
-import ErrorBox from "@/components/form/error-box";
-import Input from "@/components/form/input";
-import Modal from "@/components/modals/modal";
-
-import { saveFoundJob } from "@/actions/jobs";
-
-type JobFinderItem = {
-  externalJobId: string;
-  title: string;
-  employerName: string;
-  employerLogo: string | null;
-  jobPublisher: string;
-  employmentTypes: string[];
-  applyLink: string;
-  description: string;
-  salary?: string;
-  isRemote: boolean;
-  employerCompanyType?: string;
-  naicsName?: string;
-  locationTag?: string;
-  requiredSkills: string[];
-  highlightQualifications: string[];
-  highlightResponsibilities: string[];
-};
-
-type SearchResponse = {
-  items: JobFinderItem[];
-  pagination: {
-    page: number;
-    hasNextPage: boolean;
-  };
-};
+import JobFinderJobModal from "@/components/job-finder/job-finder-job-modal";
+import JobFinderResultsTable from "@/components/job-finder/job-finder-results-table";
+import JobFinderSearchForm from "@/components/job-finder/job-finder-search-form";
+import { JobFinderItem, SearchResponse } from "@/components/job-finder/types";
 
 const JobFinderClient: React.FC = () => {
   const [query, setQuery] = useState("");
@@ -45,7 +16,6 @@ const JobFinderClient: React.FC = () => {
   const [page, setPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const canSearch = query.trim().length > 0;
@@ -90,115 +60,25 @@ const JobFinderClient: React.FC = () => {
     await runSearch(1);
   };
 
-  const handleSaveJob = async () => {
-    if (!selectedJob || isSaving) {
-      return;
-    }
-
-    setIsSaving(true);
-    try {
-      const result = await saveFoundJob({
-        externalJobId: selectedJob.externalJobId,
-        companyName: selectedJob.employerName,
-        jobTitle: selectedJob.title,
-        jobPublisher: selectedJob.jobPublisher,
-        description: selectedJob.description,
-        salaryRange: selectedJob.salary,
-        externalApplyLink: selectedJob.applyLink || undefined,
-        employerLogo: selectedJob.employerLogo || undefined,
-        employmentTypes: selectedJob.employmentTypes,
-        isRemote: selectedJob.isRemote,
-        employerCompanyType: selectedJob.employerCompanyType,
-        naicsName: selectedJob.naicsName,
-        locationTag: selectedJob.locationTag,
-        requiredSkills: selectedJob.requiredSkills,
-        highlightQualifications: selectedJob.highlightQualifications,
-        highlightResponsibilities: selectedJob.highlightResponsibilities,
-      });
-
-      if ("success" in result && result.success) {
-        toast.success("Job saved to your wishlist.");
-        return;
-      }
-
-      if ("error" in result && result.error === "already_saved") {
-        toast.info("This job is already saved in your board.");
-        return;
-      }
-
-      toast.error("Could not save this job.");
-    } catch (error) {
-      console.error("Failed saving found job:", error);
-      toast.error("Something went wrong while saving the job.");
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSubmit} className="bg-white border border-gray-200 rounded-lg p-4">
-        <div className="flex flex-col gap-4 sm:flex-row">
-          <Input
-            containerClassName="flex-1"
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search by role, company, or keywords..."
-          />
-          <Button type="submit" disabled={!canSearch || isLoading}>
-            {isLoading ? "Searching..." : "Search"}
-          </Button>
-        </div>
-        <label className="mt-3 inline-flex items-center gap-2 text-sm text-gray-700">
-          <input
-            type="checkbox"
-            checked={remoteOnly}
-            onChange={(event) => setRemoteOnly(event.target.checked)}
-            className="rounded border-gray-300"
-          />
-          Remote only
-        </label>
-      </form>
+      <JobFinderSearchForm
+        query={query}
+        remoteOnly={remoteOnly}
+        isLoading={isLoading}
+        canSearch={canSearch}
+        errorMessage={errorMessage}
+        onQueryChange={setQuery}
+        onRemoteOnlyChange={setRemoteOnly}
+        onSubmit={handleSubmit}
+      />
 
-      {errorMessage && <ErrorBox>{errorMessage}</ErrorBox>}
-
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-        <div className="grid grid-cols-12 gap-3 px-4 py-3 text-xs font-semibold uppercase text-gray-500 border-b border-gray-200">
-          <span className="col-span-7">Title</span>
-          <span className="col-span-3">Employer</span>
-          <span className="col-span-2">Publisher</span>
-        </div>
-
-        {!isLoading && !hasResults && (
-          <div className="p-6 text-sm text-gray-500">Search for jobs to see results here.</div>
-        )}
-
-        {results.map((job) => (
-          <button
-            type="button"
-            key={job.externalJobId}
-            onClick={() => setSelectedJob(job)}
-            className="grid w-full grid-cols-12 gap-3 px-4 py-3 text-left text-sm border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
-          >
-            <span className="col-span-7 font-medium text-gray-900">{job.title}</span>
-            <span className="col-span-3 text-gray-700 flex items-center gap-2">
-              {job.employerLogo && (
-                // JSearch logo hosts vary and are not preconfigured for next/image allowlists.
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={job.employerLogo}
-                  alt={`${job.employerName} logo`}
-                  width={32}
-                  height={32}
-                />
-              )}
-              {job.employerName}
-            </span>
-            <span className="col-span-2 text-gray-700">{job.jobPublisher}</span>
-          </button>
-        ))}
-      </div>
+      <JobFinderResultsTable
+        results={results}
+        isLoading={isLoading}
+        hasResults={hasResults}
+        onSelectJob={setSelectedJob}
+      />
 
       <div className="flex items-center justify-between">
         <Button
@@ -220,59 +100,7 @@ const JobFinderClient: React.FC = () => {
         </Button>
       </div>
 
-      {selectedJob && (
-        <Modal
-          title={selectedJob.title}
-          description={selectedJob.employerName}
-          size="md"
-          onClose={() => setSelectedJob(null)}
-        >
-          <div className="space-y-3 text-sm text-gray-700">
-            <p>
-              <span className="font-semibold">Employer:</span> {selectedJob.employerName}
-            </p>
-            <p>
-              <span className="font-semibold">Job publisher:</span> {selectedJob.jobPublisher}
-            </p>
-            <p>
-              <span className="font-semibold">Employment types:</span>{" "}
-              {selectedJob.employmentTypes.length > 0
-                ? selectedJob.employmentTypes.join(", ")
-                : "Not provided"}
-            </p>
-            <p>
-              <span className="font-semibold">Salary:</span> {selectedJob.salary ?? "Not provided"}
-            </p>
-            <p>
-              <span className="font-semibold">Apply link:</span>{" "}
-              {selectedJob.applyLink ? (
-                <a
-                  href={selectedJob.applyLink}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-blue-600 underline"
-                >
-                  Open job post
-                </a>
-              ) : (
-                "Not provided"
-              )}
-            </p>
-            <div>
-              <p className="font-semibold">Description</p>
-              <p className="mt-1 whitespace-pre-wrap">
-                {selectedJob.description || "No description available."}
-              </p>
-            </div>
-
-            <div className="pt-2">
-              <Button type="button" onClick={handleSaveJob} disabled={isSaving}>
-                {isSaving ? "Saving..." : "Save to wishlist"}
-              </Button>
-            </div>
-          </div>
-        </Modal>
-      )}
+      <JobFinderJobModal job={selectedJob} onClose={() => setSelectedJob(null)} />
     </div>
   );
 };
