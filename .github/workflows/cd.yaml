@@ -1,7 +1,9 @@
 name: CD
 
 on:
-  push:
+  # TODO: uncomment when ready to deploy to main
+  # push:
+  pull_request:
     branches:
       # TODO: change to main
       - test/cd
