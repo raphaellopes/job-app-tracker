@@ -1,4 +1,5 @@
 import Button from "@/components/buttons/button";
+import Checkbox from "@/components/form/checkbox";
 import ErrorBox from "@/components/form/error-box";
 import Input from "@/components/form/input";
 
@@ -25,7 +26,10 @@ const JobFinderSearchForm: React.FC<JobFinderSearchFormProps> = ({
 }) => {
   return (
     <div className="space-y-4">
-      <form onSubmit={onSubmit} className="bg-white border border-gray-200 rounded-lg p-4">
+      <form
+        onSubmit={onSubmit}
+        className="bg-white border border-gray-200 rounded-lg p-4 space-y-4"
+      >
         <div className="flex flex-col gap-4 sm:flex-row">
           <Input
             containerClassName="flex-1"
@@ -38,15 +42,12 @@ const JobFinderSearchForm: React.FC<JobFinderSearchFormProps> = ({
             {isLoading ? "Searching..." : "Search"}
           </Button>
         </div>
-        <label className="mt-3 inline-flex items-center gap-2 text-sm text-gray-700">
-          <input
-            type="checkbox"
-            checked={remoteOnly}
-            onChange={(event) => onRemoteOnlyChange(event.target.checked)}
-            className="rounded border-gray-300"
-          />
-          Remote only
-        </label>
+        <Checkbox
+          id="remote-only"
+          checked={remoteOnly}
+          onChange={(event) => onRemoteOnlyChange(event.target.checked)}
+          label="Remote only"
+        />
       </form>
 
       {errorMessage && <ErrorBox>{errorMessage}</ErrorBox>}
