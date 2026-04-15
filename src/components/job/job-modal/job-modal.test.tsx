@@ -7,13 +7,7 @@ import type { Job } from "@/db/schema";
 import { createMockJob } from "@/test-utils/factories";
 
 jest.mock("@/components/job/job-form", () => ({
-  JobForm: ({
-    job,
-    initialStatus,
-  }: {
-    job?: Job | null;
-    initialStatus?: string;
-  }) => (
+  JobForm: ({ job, initialStatus }: { job?: Job | null; initialStatus?: string }) => (
     <div data-testid="job-form-mock">
       <span data-testid="job-form-job-id">{job?.id ?? "none"}</span>
       <span data-testid="job-form-initial-status">{initialStatus ?? "none"}</span>

@@ -19,7 +19,9 @@ describe("AddJobButton", () => {
     it("renders a disabled button with an explanatory label", () => {
       render(<AddJobButton isDisabled />);
 
-      const button = screen.getByRole("button", { name: /add new job \(disabled while editing\)/i });
+      const button = screen.getByRole("button", {
+        name: /add new job \(disabled while editing\)/i,
+      });
       expect(button).toBeDisabled();
     });
 

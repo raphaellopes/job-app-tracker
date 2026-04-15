@@ -177,6 +177,5 @@ describe("JobForm", () => {
       expect(mockReplace).not.toHaveBeenCalled();
       expect(mockRefresh).not.toHaveBeenCalled();
     });
-
   });
 });

@@ -35,9 +35,7 @@ const mockedUseRouter = jest.mocked(useRouter);
 const mockedOnAuthStateChanged = jest.mocked(onAuthStateChanged);
 const mockedRegisterUser = jest.mocked(registerUser);
 
-function setFirebaseCurrentUser(
-  user: { email?: string; getIdToken?: jest.Mock } | null,
-) {
+function setFirebaseCurrentUser(user: { email?: string; getIdToken?: jest.Mock } | null) {
   Object.assign(firebaseAuth, {
     currentUser: user,
   });
@@ -46,10 +44,12 @@ function setFirebaseCurrentUser(
 describe("CompleteSignUpForm", () => {
   const mockPush = jest.fn();
   const mockRefresh = jest.fn();
-  let authCallback: (user: {
-    email?: string | null;
-    displayName?: string | null;
-  } | null) => void;
+  let authCallback: (
+    user: {
+      email?: string | null;
+      displayName?: string | null;
+    } | null,
+  ) => void;
 
   const mockedFetch = jest.fn();
 
@@ -57,10 +57,12 @@ describe("CompleteSignUpForm", () => {
     jest.clearAllMocks();
     authCallback = () => {};
     mockedOnAuthStateChanged.mockImplementation((_auth, callback) => {
-      const cb = callback as (user: {
-        email?: string | null;
-        displayName?: string | null;
-      } | null) => void;
+      const cb = callback as (
+        user: {
+          email?: string | null;
+          displayName?: string | null;
+        } | null,
+      ) => void;
       authCallback = cb;
       cb({
         email: "user@example.com",
@@ -140,10 +142,12 @@ describe("CompleteSignUpForm", () => {
     it("shows invalid email when the session email is not valid", async () => {
       const user = userEvent.setup();
       mockedOnAuthStateChanged.mockImplementation((_auth, callback) => {
-        const cb = callback as (u: {
-          email?: string | null;
-          displayName?: string | null;
-        } | null) => void;
+        const cb = callback as (
+          u: {
+            email?: string | null;
+            displayName?: string | null;
+          } | null,
+        ) => void;
         cb({
           email: "not-an-email",
           displayName: "Jane Doe",
@@ -217,10 +221,12 @@ describe("CompleteSignUpForm", () => {
     it("submits trimmed values from displayName prefill", async () => {
       const user = userEvent.setup();
       mockedOnAuthStateChanged.mockImplementation((_auth, callback) => {
-        const cb = callback as (u: {
-          email?: string | null;
-          displayName?: string | null;
-        } | null) => void;
+        const cb = callback as (
+          u: {
+            email?: string | null;
+            displayName?: string | null;
+          } | null,
+        ) => void;
         cb({
           email: "user@example.com",
           displayName: "Jane Doe",

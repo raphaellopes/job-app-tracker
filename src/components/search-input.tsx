@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { usePathname, useRouter,useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { SearchIcon } from "@/components/icons/search-icon";
 

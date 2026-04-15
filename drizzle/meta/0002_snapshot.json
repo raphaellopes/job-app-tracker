@@ -100,13 +100,7 @@
     "public.job_status": {
       "name": "job_status",
       "schema": "public",
-      "values": [
-        "WISHLIST",
-        "APPLIED",
-        "INTERVIEWING",
-        "OFFER",
-        "REJECTED"
-      ]
+      "values": ["WISHLIST", "APPLIED", "INTERVIEWING", "OFFER", "REJECTED"]
     }
   },
   "schemas": {},

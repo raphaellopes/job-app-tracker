@@ -48,7 +48,10 @@ describe("KanbanColumn", () => {
     render(
       <KanbanColumn
         status="APPLIED"
-        jobs={[createMockJob({ id: 1, status: "APPLIED" }), createMockJob({ id: 2, status: "APPLIED" })]}
+        jobs={[
+          createMockJob({ id: 1, status: "APPLIED" }),
+          createMockJob({ id: 2, status: "APPLIED" }),
+        ]}
       />,
     );
 

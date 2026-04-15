@@ -133,7 +133,12 @@ describe("KanbanBoard", () => {
 
     it("does not call updateJobPositions when there is no drop target", async () => {
       render(
-        <KanbanBoard jobs={[createMockJob({ id: 10, status: "WISHLIST" }), createMockJob({ id: 20, status: "WISHLIST" })]} />,
+        <KanbanBoard
+          jobs={[
+            createMockJob({ id: 10, status: "WISHLIST" }),
+            createMockJob({ id: 20, status: "WISHLIST" }),
+          ]}
+        />,
       );
 
       await act(async () => {
