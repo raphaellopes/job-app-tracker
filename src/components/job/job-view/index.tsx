@@ -37,6 +37,21 @@ const JobView: React.FC<JobViewProps> = ({ job, initialInterviewPrep = null }) =
           )}
         </Section>
 
+        <Section title="Link to apply">
+          {job.externalApplyLink ? (
+            <a
+              href={job.externalApplyLink}
+              target="_blank"
+              rel="noreferrer"
+              className="text-blue-600 underline"
+            >
+              Open job post
+            </a>
+          ) : (
+            <p className="text-sm text-gray-600">No link to apply added yet.</p>
+          )}
+        </Section>
+
         <Section title="Description">
           <p className="text-sm text-gray-600 whitespace-pre-wrap">
             {job.description || "No description added yet."}
