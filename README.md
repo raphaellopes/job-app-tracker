@@ -14,13 +14,13 @@ A full-stack web app for tracking job applications through a simple pipeline: wi
 
 ## Architecture (at a glance)
 
-| Layer | Role |
-| --- | --- |
-| **Next.js App Router** | Route groups: `(public)` for auth flows, `(private)` for the app shell. Server Components load data; mutations go through **Server Actions** (`"use server"`) in `src/actions/`. |
-| **PostgreSQL + Drizzle** | Typed schema and queries in `src/db/`; enums for job status; migrations live under `drizzle/`. |
-| **Firebase** | Client SDK in `src/lib/firebase/client.ts`; Admin SDK for session cookies and verification in `src/lib/firebase/admin.ts`. Session API: `src/app/api/auth/session/route.ts`. |
-| **Forms & validation** | Mix of Formik/Yup in some UI flows and **Zod** on the server for job payloads and interview-prep payloads. |
-| **UI** | React 19, Tailwind CSS v4, Sonner toasts, and a small set of shared components under `src/components/`. |
+| Layer                    | Role                                                                                                                                                                             |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Next.js App Router**   | Route groups: `(public)` for auth flows, `(private)` for the app shell. Server Components load data; mutations go through **Server Actions** (`"use server"`) in `src/actions/`. |
+| **PostgreSQL + Drizzle** | Typed schema and queries in `src/db/`; enums for job status; migrations live under `drizzle/`.                                                                                   |
+| **Firebase**             | Client SDK in `src/lib/firebase/client.ts`; Admin SDK for session cookies and verification in `src/lib/firebase/admin.ts`. Session API: `src/app/api/auth/session/route.ts`.     |
+| **Forms & validation**   | Mix of Formik/Yup in some UI flows and **Zod** on the server for job payloads and interview-prep payloads.                                                                       |
+| **UI**                   | React 19, Tailwind CSS v4, Sonner toasts, and a small set of shared components under `src/components/`.                                                                          |
 
 The private layout gates routes: no session → sign-in; session but no DB user → complete sign-up; otherwise render the sidebar and children.
 
@@ -35,19 +35,19 @@ The private layout gates routes: no session → sign-in; session but no DB user 
 
 Create `.env.local` in the project root (Drizzle Kit also loads it via `drizzle.config.ts`).
 
-| Variable | Used for |
-| --- | --- |
-| `DATABASE_URL` | Postgres connection string for the app and Drizzle CLI. |
-| `NEXT_PUBLIC_FIREBASE_API_KEY` | Client Firebase config. |
-| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Client Firebase config. |
-| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | Client Firebase config. |
-| `NEXT_PUBLIC_FIREBASE_APP_ID` | Client Firebase config. |
-| `FIREBASE_PROJECT_ID` | Admin SDK. |
-| `FIREBASE_CLIENT_EMAIL` | Admin SDK. |
-| `FIREBASE_PRIVATE_KEY` | Admin SDK (escape newlines as `\n` in the env file if needed). |
-| `GEMINI_API_KEY` | Optional; AI interview prep in `src/actions/gemini.ts`. |
-| `RAPIDAPI_KEY` | Required for Job Finder JSearch API calls. |
-| `JSEARCH_HOST` | RapidAPI host for JSearch (for example `jsearch.p.rapidapi.com`). |
+| Variable                           | Used for                                                          |
+| ---------------------------------- | ----------------------------------------------------------------- |
+| `DATABASE_URL`                     | Postgres connection string for the app and Drizzle CLI.           |
+| `NEXT_PUBLIC_FIREBASE_API_KEY`     | Client Firebase config.                                           |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | Client Firebase config.                                           |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID`  | Client Firebase config.                                           |
+| `NEXT_PUBLIC_FIREBASE_APP_ID`      | Client Firebase config.                                           |
+| `FIREBASE_PROJECT_ID`              | Admin SDK.                                                        |
+| `FIREBASE_CLIENT_EMAIL`            | Admin SDK.                                                        |
+| `FIREBASE_PRIVATE_KEY`             | Admin SDK (escape newlines as `\n` in the env file if needed).    |
+| `GEMINI_API_KEY`                   | Optional; AI interview prep in `src/actions/gemini.ts`.           |
+| `RAPIDAPI_KEY`                     | Required for Job Finder JSearch API calls.                        |
+| `JSEARCH_HOST`                     | RapidAPI host for JSearch (for example `jsearch.p.rapidapi.com`). |
 
 ## Run locally
 
@@ -77,16 +77,16 @@ Create `.env.local` in the project root (Drizzle Kit also loads it via `drizzle.
 
 ## npm scripts
 
-| Command | Description |
-| --- | --- |
-| `npm run dev` | Next.js development server with hot reload. |
-| `npm run build` | Production build. |
-| `npm run start` | Serve the production build (run `build` first). |
-| `npm run lint` | ESLint over the project. |
-| `npm run lint:fix` | ESLint with `--fix`. |
-| `npm run format` | Prettier, write mode. |
-| `npm run format:check` | Prettier, check only (useful in CI). |
-| `npm run test` | Jest with jsdom and Testing Library (`jest.config.ts`, `jest.setup.ts`). |
+| Command                | Description                                                              |
+| ---------------------- | ------------------------------------------------------------------------ |
+| `npm run dev`          | Next.js development server with hot reload.                              |
+| `npm run build`        | Production build.                                                        |
+| `npm run start`        | Serve the production build (run `build` first).                          |
+| `npm run lint`         | ESLint over the project.                                                 |
+| `npm run lint:fix`     | ESLint with `--fix`.                                                     |
+| `npm run format`       | Prettier, write mode.                                                    |
+| `npm run format:check` | Prettier, check only (useful in CI).                                     |
+| `npm run test`         | Jest with jsdom and Testing Library (`jest.config.ts`, `jest.setup.ts`). |
 
 Drizzle Kit is available via `npx` (for example `npx drizzle-kit push`, `npx drizzle-kit studio`) using `drizzle.config.ts` and `DATABASE_URL`; there is no dedicated `db:*` script in `package.json`.
 
@@ -97,3 +97,5 @@ Component and action-adjacent tests live next to features under `*.test.tsx`. Ru
 ## Tech stack summary
 
 Next.js 16, React 19, TypeScript, Tailwind CSS 4, PostgreSQL, Drizzle ORM, Firebase Authentication (session cookie pattern), Google GenAI (`@google/genai`), Formik, Yup, Zod, `@dnd-kit`, Recharts, Sonner, Jest, and Testing Library.
+
+> > > testing CI
