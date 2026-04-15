@@ -7,6 +7,7 @@ A full-stack web app for tracking job applications through a simple pipeline: wi
 - **Authentication** — Firebase Auth on the client; the server exchanges the Firebase ID token for an HTTP-only session cookie and verifies it with the Firebase Admin SDK on each request.
 - **User profile** — After sign-in, users who are not yet in PostgreSQL are sent through profile completion so every row in `jobs` ties back to a stable `users.id`.
 - **Jobs** — Create, edit, delete, search, filter by status, and sort applications. Status changes can drive fields like applied date (handled in server actions).
+- **Job finder** — Search external listings through the JSearch API (RapidAPI), review details in-app, and add promising roles directly into your tracker pipeline.
 - **Board** — Drag-and-drop columns (`@dnd-kit`) with ordering persisted per user.
 - **Dashboard & analytics** — Summary cards, status distribution, and charts (`recharts`) over the same Postgres data.
 - **Interview prep (optional)** — Server action calls Gemini with a structured JSON schema; results are stored in `job_interview_prep` and shown in the UI.
