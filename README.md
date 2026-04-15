@@ -97,5 +97,3 @@ Component and action-adjacent tests live next to features under `*.test.tsx`. Ru
 ## Tech stack summary
 
 Next.js 16, React 19, TypeScript, Tailwind CSS 4, PostgreSQL, Drizzle ORM, Firebase Authentication (session cookie pattern), Google GenAI (`@google/genai`), Formik, Yup, Zod, `@dnd-kit`, Recharts, Sonner, Jest, and Testing Library.
-
-> > > testing CI
