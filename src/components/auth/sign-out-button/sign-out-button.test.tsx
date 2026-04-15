@@ -83,10 +83,7 @@ describe("SignOutButton", () => {
       expect(mockFetch).not.toHaveBeenCalled();
       expect(mockPush).not.toHaveBeenCalled();
       expect(mockRefresh).not.toHaveBeenCalled();
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Failed to sign out",
-        expect.any(Error),
-      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to sign out", expect.any(Error));
     });
 
     it("does not navigate when the sign-out API request fails", async () => {
@@ -104,10 +101,7 @@ describe("SignOutButton", () => {
       });
       expect(mockPush).not.toHaveBeenCalled();
       expect(mockRefresh).not.toHaveBeenCalled();
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Failed to sign out",
-        expect.any(Error),
-      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to sign out", expect.any(Error));
     });
   });
 });

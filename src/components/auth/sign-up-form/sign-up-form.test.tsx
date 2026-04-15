@@ -137,11 +137,7 @@ describe("SignUpForm", () => {
       await user.click(screen.getByRole("button", { name: /create account$/i }));
 
       await waitFor(() => {
-        expect(mockedCreateUser).toHaveBeenCalledWith(
-          {},
-          "user@example.com",
-          "secret-pass",
-        );
+        expect(mockedCreateUser).toHaveBeenCalledWith({}, "user@example.com", "secret-pass");
       });
       expect(mockedRegisterUser).toHaveBeenCalled();
       const formData = mockedRegisterUser.mock.calls[0][0] as FormData;

@@ -54,19 +54,13 @@ const saveFoundJobSchema = z.object({
   externalApplyLink: z.string().url().optional(),
   employerLogo: z.string().url().optional(),
   jobPublisher: z.string().min(1).optional(),
-  employmentTypes: z
-    .array(z.string().min(1))
-    .max(MAX_SAVE_FOUND_JOB_EMPLOYMENT_TYPES)
-    .optional(),
+  employmentTypes: z.array(z.string().min(1)).max(MAX_SAVE_FOUND_JOB_EMPLOYMENT_TYPES).optional(),
   isRemote: z.boolean().optional(),
   employerCompanyType: z.string().min(1).optional(),
   naicsName: z.string().min(1).optional(),
   locationTag: z.string().min(1).optional(),
   requiredSkills: z.array(z.string().min(1)).max(MAX_SAVE_FOUND_JOB_LIST_ITEMS).optional(),
-  highlightQualifications: z
-    .array(z.string().min(1))
-    .max(MAX_SAVE_FOUND_JOB_LIST_ITEMS)
-    .optional(),
+  highlightQualifications: z.array(z.string().min(1)).max(MAX_SAVE_FOUND_JOB_LIST_ITEMS).optional(),
   highlightResponsibilities: z
     .array(z.string().min(1))
     .max(MAX_SAVE_FOUND_JOB_LIST_ITEMS)

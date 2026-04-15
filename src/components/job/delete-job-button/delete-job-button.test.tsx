@@ -85,7 +85,9 @@ describe("DeleteJobButton", () => {
       await user.click(screen.getByRole("button", { name: /^cancel$/i }));
 
       await waitFor(() => {
-        expect(screen.queryByRole("heading", { name: /delete this job\?/i })).not.toBeInTheDocument();
+        expect(
+          screen.queryByRole("heading", { name: /delete this job\?/i }),
+        ).not.toBeInTheDocument();
       });
       expect(mockedDeleteJob).not.toHaveBeenCalled();
     });
@@ -152,9 +154,7 @@ describe("DeleteJobButton", () => {
       await user.click(screen.getByRole("button", { name: /^delete$/i }));
 
       await waitFor(() => {
-        expect(mockedToast.error).toHaveBeenCalledWith(
-          "This job could not be found or removed.",
-        );
+        expect(mockedToast.error).toHaveBeenCalledWith("This job could not be found or removed.");
       });
       expect(mockedToast.success).not.toHaveBeenCalled();
       expect(mockRefresh).toHaveBeenCalled();

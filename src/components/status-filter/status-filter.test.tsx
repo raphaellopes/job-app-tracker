@@ -43,9 +43,9 @@ describe("StatusFilter", () => {
       const select = screen.getByRole("combobox");
       expect(within(select).getByRole("option", { name: "All Statuses" })).toHaveValue("");
       for (const status of JOB_STATUSES) {
-        expect(
-          within(select).getByRole("option", { name: formatStatusName(status) }),
-        ).toHaveValue(status);
+        expect(within(select).getByRole("option", { name: formatStatusName(status) })).toHaveValue(
+          status,
+        );
       }
     });
 

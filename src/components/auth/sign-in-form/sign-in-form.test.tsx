@@ -141,7 +141,7 @@ describe("SignInForm", () => {
       expect(mockRefresh).not.toHaveBeenCalled();
     });
 
-    it('shows the generic invalid-credentials message when sign-in fails with a non-Firebase error', async () => {
+    it("shows the generic invalid-credentials message when sign-in fails with a non-Firebase error", async () => {
       const user = userEvent.setup();
       mockedSignInWithEmailAndPassword.mockRejectedValueOnce(new Error("unexpected"));
 
@@ -202,7 +202,7 @@ describe("SignInForm", () => {
       expect(mockPush).not.toHaveBeenCalled();
     });
 
-    it('shows a fallback message when Google sign-in throws a non-Error value', async () => {
+    it("shows a fallback message when Google sign-in throws a non-Error value", async () => {
       const user = userEvent.setup();
       mockedGoogleSignIn.mockRejectedValueOnce("unexpected");
 

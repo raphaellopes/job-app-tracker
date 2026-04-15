@@ -10,11 +10,7 @@ export async function resolveJobViewState(
   jobToView: Job | undefined;
   initialInterviewPrep: InterviewPrepResult | null;
 }> {
-  const jobToView = viewParam
-    ? candidateJobs.find((j) => j.id === Number(viewParam))
-    : undefined;
-  const initialInterviewPrep = jobToView
-    ? await getJobInterviewPrepByJobId(jobToView.id)
-    : null;
+  const jobToView = viewParam ? candidateJobs.find((j) => j.id === Number(viewParam)) : undefined;
+  const initialInterviewPrep = jobToView ? await getJobInterviewPrepByJobId(jobToView.id) : null;
   return { jobToView, initialInterviewPrep };
 }

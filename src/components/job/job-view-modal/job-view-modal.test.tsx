@@ -8,9 +8,7 @@ import { createMockJob } from "@/test-utils/factories";
 
 jest.mock("@/components/job/job-view", () => ({
   __esModule: true,
-  default: ({ job }: { job: Job }) => (
-    <div data-testid="job-view-mock">job-view:{job.id}</div>
-  ),
+  default: ({ job }: { job: Job }) => <div data-testid="job-view-mock">job-view:{job.id}</div>,
 }));
 
 jest.mock("@/components/modals/modal", () => ({
