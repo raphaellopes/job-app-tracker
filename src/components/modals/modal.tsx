@@ -29,12 +29,19 @@ const Modal: React.FC<ModalProps> = ({ title, description, size = "sm", onClose,
     >
       <div
         className={classNames(
-          "bg-white rounded-2xl shadow-xl w-full mx-4 max-h-[90vh] overflow-y-auto",
+          "bg-white shadow-xl w-full overflow-y-auto",
           maxWidthClassName,
+          !isSmallSize && "sm:mx-4 max-h-[100vh] sm:max-h-[90vh] sm:rounded-2xl",
+          isSmallSize && "rounded-2xl mx-4",
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        <ModalHeader title={title ?? ""} description={description} onClose={onClose} />
+        <ModalHeader
+          className="bg-white sticky top-0"
+          title={title ?? ""}
+          description={description}
+          onClose={onClose}
+        />
         <div className="p-4">{children}</div>
       </div>
     </div>
