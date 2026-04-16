@@ -34,7 +34,7 @@ const SectionContent: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({
 }) => <p className={classNames("text-sm text-gray-600", className)}>{children}</p>;
 
 const JobView: React.FC<JobViewProps> = ({ job, initialInterviewPrep = null }) => {
-  const jobInformationContent = (
+  const renderJobContent = (
     <div className="space-y-5">
       <Section title="Job publisher">
         <SectionContent>{job.jobPublisher ?? "Not provided"}</SectionContent>
@@ -75,20 +75,27 @@ const JobView: React.FC<JobViewProps> = ({ job, initialInterviewPrep = null }) =
     </div>
   );
 
+  const renderAIInterviewPrepContent = (
+    <div className="min-h-[70vh]">
+      <AIInterviewPrep job={job} initialSavedResult={initialInterviewPrep} />
+    </div>
+  );
+
   return (
     <div className="w-full sm:min-w-[36rem]">
       <Tabs
         defaultTabId="job-information"
+        tabsListClassName="sticky top-12 bg-white"
         items={[
           {
             id: "job-information",
             label: "Job information",
-            content: jobInformationContent,
+            content: renderJobContent,
           },
           {
             id: "ai-interview-prep",
             label: "AI interview prep",
-            content: <AIInterviewPrep job={job} initialSavedResult={initialInterviewPrep} />,
+            content: renderAIInterviewPrepContent,
           },
         ]}
       />

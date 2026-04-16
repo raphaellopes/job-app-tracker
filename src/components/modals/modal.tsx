@@ -31,7 +31,7 @@ const Modal: React.FC<ModalProps> = ({ title, description, size = "sm", onClose,
         className={classNames(
           "bg-white shadow-xl w-full overflow-y-auto",
           maxWidthClassName,
-          !isSmallSize && "sm:mx-4 max-h-[100vh] sm:max-h-[90vh] sm:rounded-2xl",
+          !isSmallSize && "sm:mx-4 h-[100vh] sm:h-auto sm:max-h-[90vh] sm:rounded-2xl",
           isSmallSize && "rounded-2xl mx-4",
         )}
         onClick={(e) => e.stopPropagation()}

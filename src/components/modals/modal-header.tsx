@@ -12,8 +12,8 @@ interface ModalHeaderProps {
 const ModalHeader: React.FC<ModalHeaderProps> = ({ title, description, onClose, className }) => {
   return (
     <div className={classNames("flex items-start justify-between p-4 gap-4", className)}>
-      <div>
-        <h2 className="text-xl font-semibold">{title}</h2>
+      <div className="truncate overflow-hidden text-ellipsis whitespace-nowrap">
+        <h2 className="text-xl font-semibold text-ellipsis truncate">{title}</h2>
         {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
       </div>
       {onClose && (
