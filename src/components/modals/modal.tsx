@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import classNames from "classnames";
 
-import { CloseIcon } from "@/components/icons/close-icon";
+import ModalHeader from "./modal-header";
 
 type ModalSizes = "sm" | "md";
 
@@ -20,6 +20,8 @@ const modalSizeClasses: Record<ModalSizes, string> = {
 
 const Modal: React.FC<ModalProps> = ({ title, description, size = "sm", onClose, children }) => {
   const maxWidthClassName = modalSizeClasses[size];
+  const isSmallSize = size === "sm";
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm"
@@ -32,19 +34,7 @@ const Modal: React.FC<ModalProps> = ({ title, description, size = "sm", onClose,
         )}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-start justify-between p-4 gap-4">
-          <div>
-            {title && <h2 className="text-xl font-semibold">{title}</h2>}
-            {description && <p className="text-sm text-gray-500 mt-1">{description}</p>}
-          </div>
-          <button
-            onClick={onClose}
-            className="p-1 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
-            aria-label="Close modal"
-          >
-            <CloseIcon />
-          </button>
-        </div>
+        <ModalHeader title={title ?? ""} description={description} onClose={onClose} />
         <div className="p-4">{children}</div>
       </div>
     </div>
