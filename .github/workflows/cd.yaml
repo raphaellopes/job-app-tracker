@@ -3,8 +3,7 @@ name: CD
 on:
   push:
     branches:
-      # TODO: change to main
-      - test/cd
+      - main
 
 jobs:
   deploy:
