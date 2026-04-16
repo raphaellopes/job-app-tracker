@@ -1,3 +1,5 @@
+import classNames from "classnames";
+
 import AIInterviewPrep from "@/components/ai-interview-prep/ai-interview-prep";
 import JobNotesForm from "@/components/job/job-notes-form";
 import TagChipList from "@/components/tag/tag-chip-list";
@@ -25,15 +27,24 @@ const Section: React.FC<SectionProps> = ({ title, children }) => {
   );
 };
 
+const SectionContent: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({
+  className,
+  children,
+}) => <p className={classNames("text-sm text-gray-600", className)}>{children}</p>;
+
 const JobView: React.FC<JobViewProps> = ({ job, initialInterviewPrep = null }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:min-w-[36rem]">
       <div className="space-y-5">
+        <Section title="Job publisher">
+          <SectionContent>{job.jobPublisher ?? "Not provided"}</SectionContent>
+        </Section>
+
         <Section title="Tags">
           {job.tags.length > 0 ? (
             <TagChipList tags={job.tags} />
           ) : (
-            <p className="text-sm text-gray-600">No tags added yet.</p>
+            <SectionContent>No tags added yet.</SectionContent>
           )}
         </Section>
 
@@ -48,14 +59,14 @@ const JobView: React.FC<JobViewProps> = ({ job, initialInterviewPrep = null }) =
               Open job post
             </a>
           ) : (
-            <p className="text-sm text-gray-600">No link to apply added yet.</p>
+            <SectionContent>No link to apply added yet.</SectionContent>
           )}
         </Section>
 
         <Section title="Description">
-          <p className="text-sm text-gray-600 whitespace-pre-wrap">
+          <SectionContent className="whitespace-pre-wrap">
             {job.description || "No description added yet."}
-          </p>
+          </SectionContent>
         </Section>
 
         <Section title="Notes">
