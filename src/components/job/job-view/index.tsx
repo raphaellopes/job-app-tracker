@@ -2,8 +2,8 @@ import classNames from "classnames";
 
 import AIInterviewPrep from "@/components/ai-interview-prep/ai-interview-prep";
 import JobNotesForm from "@/components/job/job-notes-form";
-import TagChipList from "@/components/tag/tag-chip-list";
 import Tabs from "@/components/tabs";
+import TagChipList from "@/components/tag/tag-chip-list";
 
 import { Job } from "@/db/schema";
 
