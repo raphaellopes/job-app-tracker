@@ -11,6 +11,20 @@ BEGIN
     END IF;
 END $$;
 
+-- Bootstrap for fresh databases: create jobs table if missing.
+CREATE TABLE IF NOT EXISTS "jobs" (
+    "id" serial PRIMARY KEY NOT NULL,
+    "company_name" text NOT NULL,
+    "job_title" text NOT NULL,
+    "status" "job_status" DEFAULT 'WISHLIST' NOT NULL,
+    "position" integer DEFAULT 0 NOT NULL,
+    "salary_range" text,
+    "applied_date" date,
+    "notes" text,
+    "created_at" timestamp DEFAULT now() NOT NULL,
+    "updated_at" timestamp DEFAULT now() NOT NULL
+);
+
 -- Step 1: Rename existing text 'position' column to 'job_title' if it exists
 DO $$ 
 BEGIN
