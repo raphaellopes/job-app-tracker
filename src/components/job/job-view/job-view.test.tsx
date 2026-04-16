@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import type { Job } from "@/db/schema";
 
@@ -34,6 +35,21 @@ jest.mock("@/components/ai-interview-prep/ai-interview-prep", () => ({
 import JobView from "./index";
 
 describe("JobView", () => {
+  it("defaults to the job information tab when opened", () => {
+    render(<JobView job={createMockJob()} />);
+
+    expect(screen.getByRole("tab", { name: "Job information" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(screen.getByRole("tab", { name: "AI interview prep" })).toHaveAttribute(
+      "aria-selected",
+      "false",
+    );
+    expect(screen.getByText("Job publisher")).toBeVisible();
+    expect(screen.getByTestId("ai-interview-prep")).not.toBeVisible();
+  });
+
   it("shows tag chips when the job has tags", () => {
     render(<JobView job={createMockJob({ tags: ["remote", "typescript"] })} />);
 
@@ -77,5 +93,20 @@ describe("JobView", () => {
     render(<JobView job={createMockJob()} />);
 
     expect(screen.getByTestId("prep-initial")).toHaveTextContent("null");
+  });
+
+  it("switches to the AI interview prep tab", async () => {
+    const user = userEvent.setup();
+    render(<JobView job={createMockJob({ id: 7 })} />);
+
+    await user.click(screen.getByRole("tab", { name: "AI interview prep" }));
+
+    expect(screen.getByRole("tab", { name: "AI interview prep" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(screen.getByTestId("ai-interview-prep")).toBeVisible();
+    expect(screen.getByText("Job publisher")).not.toBeVisible();
+    expect(screen.getByTestId("prep-job-id")).toHaveTextContent("7");
   });
 });
