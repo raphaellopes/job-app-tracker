@@ -27,7 +27,7 @@ const Section: React.FC<SectionProps> = ({ title, children }) => {
 
 const JobView: React.FC<JobViewProps> = ({ job, initialInterviewPrep = null }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 min-w-[36rem]">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:min-w-[36rem]">
       <div className="space-y-5">
         <Section title="Tags">
           {job.tags.length > 0 ? (
