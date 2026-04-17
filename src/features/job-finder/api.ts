@@ -1,4 +1,4 @@
-import type { JobFinderSearchResult } from "@/features/jobs/types";
+import type { JobFinderSearchResult } from "@/features/job-finder/types";
 
 export async function fetchJobFinderResults(params: {
   query: string;
@@ -21,4 +21,3 @@ export async function fetchJobFinderResults(params: {
 
   return (await response.json()) as JobFinderSearchResult;
 }
-

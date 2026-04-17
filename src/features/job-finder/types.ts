@@ -17,10 +17,18 @@ export type JobFinderItem = {
   highlightResponsibilities: string[];
 };
 
-export type SearchResponse = {
+export type JobFinderSearchResponse = {
   items: JobFinderItem[];
   pagination: {
     page: number;
     hasNextPage: boolean;
   };
 };
+
+export type JobFinderSearchFilters = {
+  query: string;
+  remoteOnly: boolean;
+  page: number;
+};
+
+export type JobFinderSearchResult = JobFinderSearchResponse;

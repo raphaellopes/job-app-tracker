@@ -1,16 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { fetchJobFinderResults } from "@/features/jobs/api";
-import { jobsKeys } from "@/features/jobs/query-keys";
-import type { JobFinderSearchFilters } from "@/features/jobs/types";
+import { fetchJobFinderResults } from "@/features/job-finder/api";
+import { jobFinderKeys } from "@/features/job-finder/query-keys";
+import type { JobFinderSearchFilters } from "@/features/job-finder/types";
 
 export function useJobFinderSearch(filters: JobFinderSearchFilters, enabled: boolean) {
   return useQuery({
-    queryKey: jobsKeys.finder.search(filters),
+    queryKey: jobFinderKeys.search(filters),
     queryFn: () => fetchJobFinderResults(filters),
     enabled,
     staleTime: 30_000,
     gcTime: 5 * 60_000,
   });
 }
-

@@ -2,10 +2,11 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import Button from "@/components/buttons/button";
-import { JobFinderItem } from "@/components/job-finder/types";
 import Modal from "@/components/modals/modal";
 
 import { saveFoundJob } from "@/actions/jobs";
+
+import { JobFinderItem } from "@/features/job-finder/types";
 
 interface JobFinderJobModalProps {
   job: JobFinderItem | null;

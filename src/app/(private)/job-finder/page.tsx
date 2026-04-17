@@ -1,5 +1,6 @@
 import Header from "@/components/header";
-import JobFinderClient from "@/components/job-finder/job-finder-client";
+
+import { JobFinderClient } from "@/features/job-finder";
 
 export default function JobFinderPage() {
   return (

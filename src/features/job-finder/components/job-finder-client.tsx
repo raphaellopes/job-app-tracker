@@ -3,12 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import JobFinderJobModal from "@/components/job-finder/job-finder-job-modal";
-import JobFinderPaginationControls from "@/components/job-finder/job-finder-pagination-controls";
-import JobFinderResultsTable from "@/components/job-finder/job-finder-results-table";
-import JobFinderSearchForm from "@/components/job-finder/job-finder-search-form";
-import { JobFinderItem } from "@/components/job-finder/types";
-import { useJobFinderSearch } from "@/features/jobs/queries";
+import JobFinderJobModal from "@/features/job-finder/components/job-finder-job-modal";
+import JobFinderPaginationControls from "@/features/job-finder/components/job-finder-pagination-controls";
+import JobFinderResultsTable from "@/features/job-finder/components/job-finder-results-table";
+import JobFinderSearchForm from "@/features/job-finder/components/job-finder-search-form";
+import { useJobFinderSearch } from "@/features/job-finder/queries";
+import { JobFinderItem } from "@/features/job-finder/types";
 
 const JobFinderClient: React.FC = () => {
   const searchParams = useSearchParams();

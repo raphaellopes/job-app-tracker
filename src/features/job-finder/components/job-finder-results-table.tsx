@@ -1,4 +1,4 @@
-import { JobFinderItem } from "@/components/job-finder/types";
+import { JobFinderItem } from "@/features/job-finder/types";
 
 interface JobFinderResultsTableProps {
   results: JobFinderItem[];
