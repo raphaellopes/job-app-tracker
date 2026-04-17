@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import JobStatusTag from "@/components/job/job-status-tag";
+import { JobStatusTag } from "@/features/jobs";
 
 import { Job } from "@/db/schema";
 
