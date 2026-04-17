@@ -1,75 +1,107 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import JobFinderJobModal from "@/components/job-finder/job-finder-job-modal";
 import JobFinderPaginationControls from "@/components/job-finder/job-finder-pagination-controls";
 import JobFinderResultsTable from "@/components/job-finder/job-finder-results-table";
 import JobFinderSearchForm from "@/components/job-finder/job-finder-search-form";
-import { JobFinderItem, SearchResponse } from "@/components/job-finder/types";
+import { JobFinderItem } from "@/components/job-finder/types";
+import { useJobFinderSearch } from "@/features/jobs/queries";
 
 const JobFinderClient: React.FC = () => {
-  const [query, setQuery] = useState("");
-  const [remoteOnly, setRemoteOnly] = useState(false);
-  const [results, setResults] = useState<JobFinderItem[]>([]);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const [selectedJob, setSelectedJob] = useState<JobFinderItem | null>(null);
-  const [page, setPage] = useState(1);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const canSearch = query.trim().length > 0;
+  const query = searchParams.get("q") ?? "";
+  const [draftQuery, setDraftQuery] = useState(query);
+  const remoteOnly = searchParams.get("remoteOnly") === "true";
+  const page = Number(searchParams.get("page") ?? "1");
+
+  useEffect(() => {
+    setDraftQuery(query);
+  }, [query]);
+
+  const filters = {
+    query,
+    remoteOnly,
+    page: Number.isNaN(page) || page < 1 ? 1 : page,
+  } as const;
+
+  const canSearch = filters.query.trim().length > 0;
+  const canSubmitSearch = draftQuery.trim().length > 0;
+
+  const { data, isLoading, isError } = useJobFinderSearch(filters, canSearch);
+
+  const results = data?.items ?? [];
   const hasResults = results.length > 0;
+  const hasNextPage = data?.pagination.hasNextPage ?? false;
 
-  const paginationLabel = useMemo(() => `Page ${page}`, [page]);
+  const paginationLabel = useMemo(() => `Page ${filters.page}`, [filters.page]);
 
-  const runSearch = async (nextPage: number) => {
-    if (!query.trim()) {
-      setErrorMessage("Enter a search query to find jobs.");
+  const updateSearchParams = (next: { query?: string; remoteOnly?: boolean; page?: number }) => {
+    const newParams = new URLSearchParams(searchParams.toString());
+
+    if (next.query !== undefined) {
+      if (next.query.length > 0) {
+        newParams.set("q", next.query);
+      } else {
+        newParams.delete("q");
+      }
+    }
+
+    if (next.remoteOnly !== undefined) {
+      if (next.remoteOnly) {
+        newParams.set("remoteOnly", "true");
+      } else {
+        newParams.delete("remoteOnly");
+      }
+    }
+
+    if (next.page !== undefined) {
+      if (next.page > 1) {
+        newParams.set("page", String(next.page));
+      } else {
+        newParams.delete("page");
+      }
+    }
+
+    const queryString = newParams.toString();
+    const href = queryString ? `${pathname}?${queryString}` : pathname;
+    router.push(href);
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!canSubmitSearch) {
       return;
     }
 
-    setIsLoading(true);
-    setErrorMessage(null);
-    try {
-      const params = new URLSearchParams({
-        q: query.trim(),
-        page: String(nextPage),
-        remoteOnly: String(remoteOnly),
-      });
-      const response = await fetch(`/api/job-finder/search?${params.toString()}`);
-      if (!response.ok) {
-        setErrorMessage("Could not load jobs right now. Please try again.");
-        return;
-      }
-
-      const payload = (await response.json()) as SearchResponse;
-      setResults(payload.items);
-      setPage(payload.pagination.page);
-      setHasNextPage(payload.pagination.hasNextPage);
-    } catch (error) {
-      console.error("Job finder search failed:", error);
-      setErrorMessage("Something went wrong while searching jobs.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    await runSearch(1);
+    updateSearchParams({ query: draftQuery, page: 1 });
   };
 
   return (
     <div className="space-y-6">
       <JobFinderSearchForm
-        query={query}
-        remoteOnly={remoteOnly}
+        query={draftQuery}
+        remoteOnly={filters.remoteOnly}
         isLoading={isLoading}
-        canSearch={canSearch}
-        errorMessage={errorMessage}
-        onQueryChange={setQuery}
-        onRemoteOnlyChange={setRemoteOnly}
+        canSearch={canSubmitSearch}
+        errorMessage={
+          !canSubmitSearch && draftQuery
+            ? "Enter a search query to find jobs."
+            : isError
+              ? "Could not load jobs right now. Please try again."
+              : null
+        }
+        onQueryChange={setDraftQuery}
+        onRemoteOnlyChange={(nextRemoteOnly) =>
+          updateSearchParams({ remoteOnly: nextRemoteOnly, page: 1 })
+        }
         onSubmit={handleSubmit}
       />
 
@@ -81,12 +113,12 @@ const JobFinderClient: React.FC = () => {
       />
 
       <JobFinderPaginationControls
-        page={page}
+        page={filters.page}
         hasNextPage={hasNextPage}
         isLoading={isLoading}
         paginationLabel={paginationLabel}
-        onPrevious={() => runSearch(page - 1)}
-        onNext={() => runSearch(page + 1)}
+        onPrevious={() => updateSearchParams({ page: Math.max(1, filters.page - 1) })}
+        onNext={() => updateSearchParams({ page: filters.page + 1 })}
       />
 
       <JobFinderJobModal job={selectedJob} onClose={() => setSelectedJob(null)} />
