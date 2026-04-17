@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { deleteJob } from "@/actions/jobs";
 import { TrashIcon } from "@/components/icons/trash-icon";
 import ConfirmModal from "@/components/modals/confirm-modal";
+
+import { deleteJob } from "@/actions/jobs";
+
 import { jobsKeys } from "@/features/jobs/query-keys";
 
 interface DeleteJobButtonProps {

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { patchJobNotes, patchJobPositions, patchJobStatus } from "@/features/jobs/api";
 import { jobsKeys } from "@/features/jobs/query-keys";
-import type { Job, JobStatusType, JobsBoardFilters } from "@/features/jobs/types";
+import type { Job, JobsBoardFilters, JobStatusType } from "@/features/jobs/types";
 
 function withBoardListPatch(
   prevList: Job[] | undefined,
@@ -69,9 +69,11 @@ export function useUpdateJobStatus(filters: JobsBoardFilters) {
       queryClient.setQueryData<Job[] | undefined>(queryKey, (current) =>
         withBoardListPatch(current, (jobs) => {
           const nextPosition =
-            jobs.filter((job) => job.status === status).reduce((maxPos, job) => {
-              return Math.max(maxPos, job.position ?? 0);
-            }, -1) + 1;
+            jobs
+              .filter((job) => job.status === status)
+              .reduce((maxPos, job) => {
+                return Math.max(maxPos, job.position ?? 0);
+              }, -1) + 1;
 
           return jobs.map((job) =>
             job.id === jobId ? { ...job, status, position: nextPosition } : job,

@@ -3,6 +3,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import Modal from "@/components/modals/modal";
+
 import { JobForm } from "@/features/jobs/components/job-form";
 import type { Job, JobStatusType } from "@/features/jobs/types";
 
@@ -10,7 +11,13 @@ interface JobModalProps {
   job?: Job;
 }
 
-const VALID_STATUSES: JobStatusType[] = ["WISHLIST", "APPLIED", "INTERVIEWING", "OFFER", "REJECTED"];
+const VALID_STATUSES: JobStatusType[] = [
+  "WISHLIST",
+  "APPLIED",
+  "INTERVIEWING",
+  "OFFER",
+  "REJECTED",
+];
 
 function isValidStatus(status: string | null): status is JobStatusType {
   return status !== null && VALID_STATUSES.includes(status as JobStatusType);

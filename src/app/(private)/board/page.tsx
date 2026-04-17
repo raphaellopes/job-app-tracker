@@ -2,9 +2,10 @@ import Header from "@/components/header";
 import SearchInput from "@/components/search-input";
 import SortSelect from "@/components/sort-select";
 import StatusFilter from "@/components/status-filter";
-import { JobModal, JobsBoardClient, JobViewModal } from "@/features/jobs";
 
 import { getJobs } from "@/actions/jobs";
+
+import { JobModal, JobsBoardClient, JobViewModal } from "@/features/jobs";
 import { type BoardPageSearchParams, getFormState, resolveJobViewState } from "@/features/jobs";
 
 export default async function Board(props: { searchParams: Promise<BoardPageSearchParams> }) {

@@ -2,8 +2,10 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import type { InterviewPrepResult } from "@/actions/gemini";
 import Modal from "@/components/modals/modal";
+
+import type { InterviewPrepResult } from "@/actions/gemini";
+
 import JobView from "@/features/jobs/components/job-view";
 import type { Job, JobsBoardFilters } from "@/features/jobs/types";
 
@@ -13,7 +15,11 @@ interface JobViewModalProps {
   filters?: JobsBoardFilters;
 }
 
-const JobViewModal: React.FC<JobViewModalProps> = ({ job, initialInterviewPrep = null, filters = {} }) => {
+const JobViewModal: React.FC<JobViewModalProps> = ({
+  job,
+  initialInterviewPrep = null,
+  filters = {},
+}) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();

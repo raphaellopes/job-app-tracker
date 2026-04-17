@@ -2,22 +2,23 @@
 
 import { useState } from "react";
 import {
-  DndContext,
-  DragOverlay,
-  PointerSensor,
   closestCenter,
+  DndContext,
   type DragEndEvent,
+  DragOverlay,
   type DragStartEvent,
+  PointerSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import { SortableContext, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
 import { JOB_STATUSES } from "@/db/schema";
-import { useUpdateJobPositions, useUpdateJobStatus } from "@/features/jobs/mutations";
+
 import JobCard from "@/features/jobs/components/job-card";
 import KanbanColumn from "@/features/jobs/components/kanban-column";
-import type { Job, JobStatusType, JobsBoardFilters } from "@/features/jobs/types";
+import { useUpdateJobPositions, useUpdateJobStatus } from "@/features/jobs/mutations";
+import type { Job, JobsBoardFilters, JobStatusType } from "@/features/jobs/types";
 
 interface KanbanBoardProps {
   jobs: Job[];
@@ -80,7 +81,10 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ jobs, filters = {} }) => {
       if (newIndex === -1 || oldIndex === newIndex) return;
 
       const newJobIds = arrayMove(columnJobs, oldIndex, newIndex).map((job) => job.id);
-      const result = await updatePositionsMutation.mutateAsync({ jobIds: newJobIds, status: newStatus });
+      const result = await updatePositionsMutation.mutateAsync({
+        jobIds: newJobIds,
+        status: newStatus,
+      });
       if ("error" in result) {
         console.error("Failed to update job positions:", result.error);
       }

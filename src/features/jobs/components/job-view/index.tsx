@@ -1,9 +1,11 @@
 import classNames from "classnames";
 
-import type { InterviewPrepResult } from "@/actions/gemini";
 import AIInterviewPrep from "@/components/ai-interview-prep/ai-interview-prep";
 import Tabs from "@/components/tabs";
 import TagChipList from "@/components/tag/tag-chip-list";
+
+import type { InterviewPrepResult } from "@/actions/gemini";
+
 import JobNotesForm from "@/features/jobs/components/job-notes-form";
 import type { Job, JobsBoardFilters } from "@/features/jobs/types";
 
@@ -37,11 +39,20 @@ const JobView: React.FC<JobViewProps> = ({ job, initialInterviewPrep = null, fil
         <SectionContent>{job.jobPublisher ?? "Not provided"}</SectionContent>
       </Section>
       <Section title="Tags">
-        {job.tags.length > 0 ? <TagChipList tags={job.tags} /> : <SectionContent>No tags added yet.</SectionContent>}
+        {job.tags.length > 0 ? (
+          <TagChipList tags={job.tags} />
+        ) : (
+          <SectionContent>No tags added yet.</SectionContent>
+        )}
       </Section>
       <Section title="Link to apply">
         {job.externalApplyLink ? (
-          <a href={job.externalApplyLink} target="_blank" rel="noreferrer" className="text-blue-600 underline">
+          <a
+            href={job.externalApplyLink}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-600 underline"
+          >
             Open job post
           </a>
         ) : (

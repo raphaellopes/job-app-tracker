@@ -2,6 +2,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { render, screen } from "@testing-library/react";
 
 import type { Job } from "@/db/schema";
+
 import KanbanColumn from "@/features/jobs/components/kanban-column";
 import { createMockJob } from "@/test-utils/factories";
 

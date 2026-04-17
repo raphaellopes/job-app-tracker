@@ -8,6 +8,7 @@ import classNames from "classnames";
 
 import { EditIcon } from "@/components/icons/edit-icon";
 import TagChipList from "@/components/tag/tag-chip-list";
+
 import DeleteJobButton from "@/features/jobs/components/delete-job-button";
 import type { Job } from "@/features/jobs/types";
 
@@ -74,7 +75,9 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
         {job.salaryRange && <p className="text-sm text-gray-500">💰 {job.salaryRange}</p>}
       </div>
       <TagChipList tags={job.tags ?? []} />
-      {job.description && <p className="text-sm text-gray-500 italic truncate">{job.description}</p>}
+      {job.description && (
+        <p className="text-sm text-gray-500 italic truncate">{job.description}</p>
+      )}
     </div>
   );
 };

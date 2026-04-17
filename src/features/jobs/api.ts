@@ -1,10 +1,11 @@
 import {
   getJobs,
+  type JobStatusType,
   updateJobNotes,
   updateJobPositions,
   updateJobStatus,
-  type JobStatusType,
 } from "@/actions/jobs";
+
 import type { Job, JobsBoardFilters } from "@/features/jobs/types";
 
 export async function fetchJobsBoard(filters: JobsBoardFilters): Promise<Job[]> {

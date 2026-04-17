@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 
 import { updateJobNotes } from "@/actions/jobs";
+
 import JobNotesForm from "@/features/jobs/components/job-notes-form";
 import { useUpdateJobNotes } from "@/features/jobs/mutations";
 
@@ -26,7 +27,8 @@ describe("JobNotesForm", () => {
     jest.clearAllMocks();
     mockedUpdateJobNotes.mockResolvedValue({ success: true });
     mockedUseUpdateJobNotes.mockReturnValue({
-      mutateAsync: ({ jobId, notes }: { jobId: number; notes: string }) => updateJobNotes(jobId, notes),
+      mutateAsync: ({ jobId, notes }: { jobId: number; notes: string }) =>
+        updateJobNotes(jobId, notes),
       isPending: false,
     } as unknown as ReturnType<typeof useUpdateJobNotes>);
   });

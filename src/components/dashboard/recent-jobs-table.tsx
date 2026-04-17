@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import { JobStatusTag } from "@/features/jobs";
-
 import { Job } from "@/db/schema";
+
+import { JobStatusTag } from "@/features/jobs";
 
 interface RecentJobsTableProps {
   jobs: Array<Job>;

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import Textarea from "@/components/form/textarea";
+
 import { useUpdateJobNotes } from "@/features/jobs/mutations";
 import type { JobsBoardFilters } from "@/features/jobs/types";
 
