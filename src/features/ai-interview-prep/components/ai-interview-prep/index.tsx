@@ -2,15 +2,12 @@
 
 import { useState } from "react";
 
-import AIInterviewPrepResult from "@/components/ai-interview-prep/ai-interview-prep-result";
+import { analyzeJob, type InterviewPrepResult } from "@/actions/gemini";
 import ActionButtons from "@/components/buttons/action-buttons";
 import type { ButtonProps } from "@/components/buttons/button";
 import ErrorBox from "@/components/form/error-box";
-
-import { Job } from "@/db/schema";
-
-import { analyzeJob, type InterviewPrepResult } from "@/actions/gemini";
-
+import AIInterviewPrepResult from "@/features/ai-interview-prep/components/ai-interview-prep-result";
+import type { Job } from "@/features/jobs/types";
 import { saveJobInterviewPrep } from "@/features/jobs/server/actions";
 
 interface AIInterviewPrepProps {

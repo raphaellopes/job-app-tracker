@@ -1,8 +1,7 @@
-import InterviewPrepMatchScore from "@/components/ai-interview-prep/interview-prep-match-score";
+import type { InterviewPrepResult } from "@/actions/gemini";
 import Card from "@/components/cards/card";
 import TagChipList from "@/components/tag/tag-chip-list";
-
-import type { InterviewPrepResult } from "@/actions/gemini";
+import InterviewPrepMatchScore from "@/features/ai-interview-prep/components/interview-prep-match-score";
 
 interface AIInterviewPrepResultProps {
   result: InterviewPrepResult;

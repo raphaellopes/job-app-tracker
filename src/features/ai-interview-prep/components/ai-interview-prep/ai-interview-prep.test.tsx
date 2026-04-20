@@ -2,11 +2,10 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { analyzeJob, type InterviewPrepResult } from "@/actions/gemini";
-
-import AIInterviewPrep from "./index";
-
 import { saveJobInterviewPrep } from "@/features/jobs/server/actions";
 import { createMockInterviewPrepResult, createMockJob } from "@/test-utils/factories";
+
+import AIInterviewPrep from "./index";
 
 jest.mock("@/actions/gemini", () => ({
   analyzeJob: jest.fn(),
@@ -16,7 +15,7 @@ jest.mock("@/features/jobs/server/actions", () => ({
   saveJobInterviewPrep: jest.fn(),
 }));
 
-jest.mock("@/components/ai-interview-prep/ai-interview-prep-result", () => ({
+jest.mock("@/features/ai-interview-prep/components/ai-interview-prep-result", () => ({
   __esModule: true,
   default: ({ result }: { result: InterviewPrepResult }) => (
     <div data-testid="ai-interview-prep-result">score:{result.resumeMatchScore}</div>

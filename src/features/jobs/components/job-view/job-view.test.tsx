@@ -24,9 +24,9 @@ jest.mock("@/features/jobs/components/job-notes-form", () => ({
   ),
 }));
 
-jest.mock("@/components/ai-interview-prep/ai-interview-prep", () => ({
+jest.mock("@/features/ai-interview-prep", () => ({
   __esModule: true,
-  default: ({ job, initialSavedResult }: { job: Job; initialSavedResult: unknown }) => (
+  AIInterviewPrep: ({ job, initialSavedResult }: { job: Job; initialSavedResult: unknown }) => (
     <div data-testid="ai-interview-prep">
       <span data-testid="prep-job-id">{job.id}</span>
       <span data-testid="prep-initial">{initialSavedResult === null ? "null" : "set"}</span>
