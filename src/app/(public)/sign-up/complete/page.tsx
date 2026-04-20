@@ -1,6 +1,6 @@
-import CompleteSignUpForm from "@/components/auth/complete-sign-up-form";
-import SignOutButton from "@/components/auth/sign-out-button";
 import CardWithLogoContainer from "@/components/cards/card-with-logo-container";
+
+import { CompleteSignUpForm, SignOutButton } from "@/features/auth";
 
 export default function SignUpCompletePage() {
   return (

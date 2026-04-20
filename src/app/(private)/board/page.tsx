@@ -1,20 +1,27 @@
 import Header from "@/components/header";
-import JobModal from "@/components/job/job-modal";
-import JobViewModal from "@/components/job/job-view-modal";
-import KanbanBoard from "@/components/kanban/kanban-board";
-import SearchInput from "@/components/search-input";
-import SortSelect from "@/components/sort-select";
-import StatusFilter from "@/components/status-filter";
 
-import { getJobs } from "@/actions/jobs";
-
-import { type BoardPageSearchParams, getFormState } from "@/utils/form-job-state";
-import { resolveJobViewState } from "@/utils/job-view-state";
+import {
+  type BoardPageSearchParams,
+  getFormState,
+  JobModal,
+  JobsBoardClient,
+  JobViewModal,
+  resolveJobViewState,
+  SearchInput,
+  SortSelect,
+  StatusFilter,
+} from "@/features/jobs";
+import { getJobs } from "@/features/jobs/server/actions";
 
 export default async function Board(props: { searchParams: Promise<BoardPageSearchParams> }) {
   const searchParams = await props.searchParams;
   const { isAdding, isEditing } = getFormState(searchParams);
-  const jobs = await getJobs(searchParams.search, searchParams.status, searchParams.sort);
+  const filters = {
+    search: searchParams.search,
+    status: searchParams.status,
+    sort: searchParams.sort,
+  };
+  const jobs = await getJobs(filters.search, filters.status, filters.sort);
   const jobToEdit = searchParams.edit
     ? jobs.find((j) => j.id === Number(searchParams.edit))
     : undefined;
@@ -38,7 +45,7 @@ export default async function Board(props: { searchParams: Promise<BoardPageSear
           <SortSelect />
         </div>
         <div className="w-full flex flex-1">
-          <KanbanBoard jobs={jobs} />
+          <JobsBoardClient initialJobs={jobs} filters={filters} />
         </div>
       </div>
     </main>

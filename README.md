@@ -14,15 +14,22 @@ A full-stack web app for tracking job applications through a simple pipeline: wi
 
 ## Architecture (at a glance)
 
-| Layer                    | Role                                                                                                                                                                             |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Next.js App Router**   | Route groups: `(public)` for auth flows, `(private)` for the app shell. Server Components load data; mutations go through **Server Actions** (`"use server"`) in `src/actions/`. |
-| **PostgreSQL + Drizzle** | Typed schema and queries in `src/db/`; enums for job status; migrations live under `drizzle/`.                                                                                   |
-| **Firebase**             | Client SDK in `src/lib/firebase/client.ts`; Admin SDK for session cookies and verification in `src/lib/firebase/admin.ts`. Session API: `src/app/api/auth/session/route.ts`.     |
-| **Forms & validation**   | Mix of Formik/Yup in some UI flows and **Zod** on the server for job payloads and interview-prep payloads.                                                                       |
-| **UI**                   | React 19, Tailwind CSS v4, Sonner toasts, and a small set of shared components under `src/components/`.                                                                          |
+| Layer                    | Role                                                                                                                                                                                                                               |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Next.js App Router**   | Route groups: `(public)` for auth flows, `(private)` for the app shell. Server Components load data; feature mutations go through feature-local **Server Actions** (`"use server"`) such as `src/features/jobs/server/actions.ts`. |
+| **PostgreSQL + Drizzle** | Typed schema and queries in `src/db/`; enums for job status; migrations live under `drizzle/`.                                                                                                                                     |
+| **Firebase**             | Client SDK in `src/lib/firebase/client.ts`; Admin SDK for session cookies and verification in `src/lib/firebase/admin.ts`. Session API: `src/app/api/auth/session/route.ts`.                                                       |
+| **Forms & validation**   | Mix of Formik/Yup in some UI flows and **Zod** on the server for job payloads and interview-prep payloads.                                                                                                                         |
+| **UI**                   | React 19, Tailwind CSS v4, Sonner toasts, and a small set of shared components under `src/components/`.                                                                                                                            |
 
 The private layout gates routes: no session → sign-in; session but no DB user → complete sign-up; otherwise render the sidebar and children.
+
+### Feature boundaries convention
+
+- Keep feature-specific server actions in the feature folder (for example `src/features/jobs/server/actions.ts`).
+- Keep `api.ts` in the feature as the stable adapter consumed by hooks and components.
+- Keep root `src/actions/*` only for temporary compatibility bridges or truly cross-feature shared actions.
+- Use `src/app/api/*` route handlers for HTTP endpoints/webhooks/public integrations, not for internal feature boundaries by default.
 
 ## Prerequisites
 

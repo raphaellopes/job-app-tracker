@@ -4,16 +4,11 @@ import { GoogleGenAI, Type } from "@google/genai";
 
 import { Job } from "@/db/schema";
 
+import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
+
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 const gemini = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-
-export interface InterviewPrepResult {
-  suggestedSkills: string[];
-  mockQuestions: string[];
-  resumeMatchScore: number;
-  tips: string;
-}
 
 export const analyzeJob = async (job: Job): Promise<InterviewPrepResult | null> => {
   const { jobTitle, description } = job;

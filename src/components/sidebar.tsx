@@ -6,7 +6,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import classNames from "classnames";
 
-import SignOutButton from "@/components/auth/sign-out-button";
 import { AvatarIcon } from "@/components/icons/avatar-icon";
 import { BoardIcon } from "@/components/icons/board-icon";
 import { CloseIcon } from "@/components/icons/close-icon";
@@ -14,6 +13,8 @@ import { DashboardIcon } from "@/components/icons/dashboard-icon";
 import { MenuIcon } from "@/components/icons/menu-icon";
 import { SearchIcon } from "@/components/icons/search-icon";
 import Logo from "@/components/logo";
+
+import { SignOutButton } from "@/features/auth";
 
 const menuItems = [
   {

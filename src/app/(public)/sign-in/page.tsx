@@ -1,7 +1,8 @@
 import Link from "next/link";
 
-import SignInForm from "@/components/auth/sign-in-form";
 import CardWithLogoContainer from "@/components/cards/card-with-logo-container";
+
+import { SignInForm } from "@/features/auth";
 
 export default function SignInPage() {
   return (
