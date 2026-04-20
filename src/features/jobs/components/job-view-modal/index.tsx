@@ -4,8 +4,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import Modal from "@/components/modals/modal";
 
-import type { InterviewPrepResult } from "@/actions/gemini";
-
+import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
 import JobView from "@/features/jobs/components/job-view";
 import type { Job, JobsBoardFilters } from "@/features/jobs/types";
 

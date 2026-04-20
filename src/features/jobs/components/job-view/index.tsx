@@ -3,9 +3,8 @@ import classNames from "classnames";
 import Tabs from "@/components/tabs";
 import TagChipList from "@/components/tag/tag-chip-list";
 
-import type { InterviewPrepResult } from "@/actions/gemini";
 import { AIInterviewPrep } from "@/features/ai-interview-prep";
-
+import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
 import JobNotesForm from "@/features/jobs/components/job-notes-form";
 import type { Job, JobsBoardFilters } from "@/features/jobs/types";
 

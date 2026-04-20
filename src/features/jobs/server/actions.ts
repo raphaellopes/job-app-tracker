@@ -8,9 +8,9 @@ import { z } from "zod";
 import { db } from "@/db";
 import { jobInterviewPrep, jobs } from "@/db/schema";
 
-import type { InterviewPrepResult } from "@/actions/gemini";
-
 import { getDbUserForSession } from "@/lib/auth/user";
+
+import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
 
 async function requireDbUserId(): Promise<number> {
   const { session, dbUser } = await getDbUserForSession();

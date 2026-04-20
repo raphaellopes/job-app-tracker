@@ -1,8 +1,8 @@
 import { render, screen, within } from "@testing-library/react";
 
-import type { InterviewPrepResult } from "@/actions/gemini";
-
 import AIInterviewPrepResult from "./index";
+
+import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
 
 function createPrepResult(overrides: Partial<InterviewPrepResult> = {}): InterviewPrepResult {
   return {

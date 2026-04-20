@@ -1,4 +1,4 @@
-import type { InterviewPrepResult } from "@/actions/gemini";
+import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
 
 export function createMockInterviewPrepResult(
   overrides: Partial<InterviewPrepResult> = {},
