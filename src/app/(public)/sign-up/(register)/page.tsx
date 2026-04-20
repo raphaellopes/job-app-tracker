@@ -1,7 +1,8 @@
 import Link from "next/link";
 
-import SignUpForm from "@/components/auth/sign-up-form";
 import CardWithLogoContainer from "@/components/cards/card-with-logo-container";
+
+import { SignUpForm } from "@/features/auth";
 
 export default function SignUpPage() {
   return (

@@ -1,6 +1,3 @@
-import RecentJobsTable from "@/components/dashboard/recent-jobs-table";
-import StatusDistributionCard from "@/components/dashboard/status-distribution-card";
-import SuccessMetricsCard from "@/components/dashboard/success-metrics-card";
 import Header from "@/components/header";
 
 import {
@@ -8,7 +5,10 @@ import {
   JobModal,
   JobViewModal,
   type JobViewSearchParams,
+  RecentJobsTable,
   resolveJobViewState,
+  StatusDistributionCard,
+  SuccessMetricsCard,
 } from "@/features/jobs";
 import { getDashboardStats, getRecentJobs } from "@/features/jobs/server/actions";
 

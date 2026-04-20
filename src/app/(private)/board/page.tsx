@@ -1,7 +1,4 @@
 import Header from "@/components/header";
-import SearchInput from "@/components/search-input";
-import SortSelect from "@/components/sort-select";
-import StatusFilter from "@/components/status-filter";
 
 import {
   type BoardPageSearchParams,
@@ -10,6 +7,9 @@ import {
   JobsBoardClient,
   JobViewModal,
   resolveJobViewState,
+  SearchInput,
+  SortSelect,
+  StatusFilter,
 } from "@/features/jobs";
 import { getJobs } from "@/features/jobs/server/actions";
 
