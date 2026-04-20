@@ -17,7 +17,7 @@ import { registerUser } from "@/actions/sign-up";
 import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
-} from "@/lib/auth/client-session";
+} from "@/features/auth/client";
 import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
 
 const signUpSchema = Yup.object({

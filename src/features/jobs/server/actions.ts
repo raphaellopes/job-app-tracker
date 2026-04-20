@@ -8,7 +8,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { jobInterviewPrep, jobs } from "@/db/schema";
 
-import { getDbUserForSession } from "@/lib/auth/user";
+import { getDbUserForSession } from "@/features/auth/server";
 
 import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
 

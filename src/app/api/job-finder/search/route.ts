@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { getDbUserForSession } from "@/lib/auth/user";
+import { getDbUserForSession } from "@/features/auth/server";
 
 const searchParamsSchema = z.object({
   q: z.string().trim().min(1).max(120),

@@ -15,7 +15,7 @@ import Input from "@/components/form/input";
 import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
-} from "@/lib/auth/client-session";
+} from "@/features/auth/client";
 import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
 
 const signInSchema = Yup.object({

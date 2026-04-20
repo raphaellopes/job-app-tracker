@@ -7,7 +7,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
-} from "@/lib/auth/client-session";
+} from "@/features/auth/client";
 import { getFormattedFirebaseError } from "@/lib/firebase/client";
 
 import SignInForm from "./index";
@@ -25,7 +25,7 @@ jest.mock("@/lib/firebase/client", () => ({
   getFormattedFirebaseError: jest.fn((e: { message: string }) => e.message),
 }));
 
-jest.mock("@/lib/auth/client-session", () => ({
+jest.mock("@/features/auth/client", () => ({
   createSessionFromCurrentUser: jest.fn(() => Promise.resolve()),
   signInWithGoogleAndCreateSession: jest.fn(() => Promise.resolve()),
 }));

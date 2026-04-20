@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 
-import { getCurrentUser } from "./session";
+import { getCurrentUser } from "@/features/auth/server/session";
 
 import "server-only";
 
