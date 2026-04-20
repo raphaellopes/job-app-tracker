@@ -9,8 +9,8 @@ import ErrorBox from "@/components/form/error-box";
 import { analyzeJob } from "@/actions/gemini";
 
 import AIInterviewPrepResult from "@/features/ai-interview-prep/components/ai-interview-prep-result";
+import { saveJobInterviewPrep } from "@/features/ai-interview-prep/server/actions";
 import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
-import { saveJobInterviewPrep } from "@/features/jobs/server/actions";
 import type { Job } from "@/features/jobs/types";
 
 interface AIInterviewPrepProps {

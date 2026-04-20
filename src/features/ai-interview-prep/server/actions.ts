@@ -6,8 +6,8 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { jobInterviewPrep, jobs } from "@/db/schema";
 
+import { interviewPrepSchema } from "@/features/ai-interview-prep/server/schemas";
 import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
-import { interviewPrepSchema } from "@/features/jobs/server/schemas";
 import { requireDbUserId } from "@/features/jobs/server/shared";
 
 export async function getJobInterviewPrepByJobId(
