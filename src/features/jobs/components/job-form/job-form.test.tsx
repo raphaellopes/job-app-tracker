@@ -4,10 +4,9 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { toast } from "sonner";
 
-import { createJob, updateJob } from "@/actions/jobs";
-
 import { JobForm } from "./index";
 
+import { createJob, updateJob } from "@/features/jobs/server/actions";
 import { createMockJob } from "@/test-utils/factories";
 
 jest.mock("next/navigation", () => ({
@@ -21,7 +20,7 @@ jest.mock("@tanstack/react-query", () => ({
   useQueryClient: jest.fn(),
 }));
 
-jest.mock("@/actions/jobs", () => ({
+jest.mock("@/features/jobs/server/actions", () => ({
   createJob: jest.fn(),
   updateJob: jest.fn(),
 }));

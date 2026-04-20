@@ -4,9 +4,9 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { toast } from "sonner";
 
-import { deleteJob } from "@/actions/jobs";
-
 import DeleteJobButton from "./index";
+
+import { deleteJob } from "@/features/jobs/server/actions";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -16,7 +16,7 @@ jest.mock("@tanstack/react-query", () => ({
   useQueryClient: jest.fn(),
 }));
 
-jest.mock("@/actions/jobs", () => ({
+jest.mock("@/features/jobs/server/actions", () => ({
   deleteJob: jest.fn(),
 }));
 

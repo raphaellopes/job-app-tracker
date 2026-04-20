@@ -4,8 +4,7 @@ import {
   updateJobNotes,
   updateJobPositions,
   updateJobStatus,
-} from "@/actions/jobs";
-
+} from "@/features/jobs/server/actions";
 import type { Job, JobsBoardFilters } from "@/features/jobs/types";
 
 export async function fetchJobsBoard(filters: JobsBoardFilters): Promise<Job[]> {

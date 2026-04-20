@@ -1,12 +1,11 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 
-import { updateJobNotes } from "@/actions/jobs";
-
 import JobNotesForm from "./index";
 
 import { useUpdateJobNotes } from "@/features/jobs/mutations";
+import { updateJobNotes } from "@/features/jobs/server/actions";
 
-jest.mock("@/actions/jobs", () => ({
+jest.mock("@/features/jobs/server/actions", () => ({
   updateJobNotes: jest.fn(),
 }));
 jest.mock("@/features/jobs/mutations", () => ({

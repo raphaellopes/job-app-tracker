@@ -3,8 +3,6 @@ import SearchInput from "@/components/search-input";
 import SortSelect from "@/components/sort-select";
 import StatusFilter from "@/components/status-filter";
 
-import { getJobs } from "@/actions/jobs";
-
 import {
   type BoardPageSearchParams,
   getFormState,
@@ -13,6 +11,7 @@ import {
   JobViewModal,
   resolveJobViewState,
 } from "@/features/jobs";
+import { getJobs } from "@/features/jobs/server/actions";
 
 export default async function Board(props: { searchParams: Promise<BoardPageSearchParams> }) {
   const searchParams = await props.searchParams;

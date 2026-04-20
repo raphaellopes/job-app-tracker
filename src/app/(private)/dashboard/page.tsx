@@ -3,8 +3,6 @@ import StatusDistributionCard from "@/components/dashboard/status-distribution-c
 import SuccessMetricsCard from "@/components/dashboard/success-metrics-card";
 import Header from "@/components/header";
 
-import { getDashboardStats, getRecentJobs } from "@/actions/jobs";
-
 import {
   getFormState,
   JobModal,
@@ -12,6 +10,7 @@ import {
   type JobViewSearchParams,
   resolveJobViewState,
 } from "@/features/jobs";
+import { getDashboardStats, getRecentJobs } from "@/features/jobs/server/actions";
 
 export default async function Dashboard(props: { searchParams: Promise<JobViewSearchParams> }) {
   const searchParams = await props.searchParams;

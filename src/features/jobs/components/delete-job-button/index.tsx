@@ -8,9 +8,8 @@ import { toast } from "sonner";
 import { TrashIcon } from "@/components/icons/trash-icon";
 import ConfirmModal from "@/components/modals/confirm-modal";
 
-import { deleteJob } from "@/actions/jobs";
-
 import { jobsKeys } from "@/features/jobs/query-keys";
+import { deleteJob } from "@/features/jobs/server/actions";
 
 interface DeleteJobButtonProps {
   id: number;

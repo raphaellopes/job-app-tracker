@@ -10,7 +10,8 @@ import ErrorBox from "@/components/form/error-box";
 import { Job } from "@/db/schema";
 
 import { analyzeJob, type InterviewPrepResult } from "@/actions/gemini";
-import { saveJobInterviewPrep } from "@/actions/jobs";
+
+import { saveJobInterviewPrep } from "@/features/jobs/server/actions";
 
 interface AIInterviewPrepProps {
   job: Job;

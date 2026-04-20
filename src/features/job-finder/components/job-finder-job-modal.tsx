@@ -4,9 +4,8 @@ import { toast } from "sonner";
 import Button from "@/components/buttons/button";
 import Modal from "@/components/modals/modal";
 
-import { saveFoundJob } from "@/actions/jobs";
-
 import { JobFinderItem } from "@/features/job-finder/types";
+import { saveFoundJob } from "@/features/jobs/server/actions";
 
 interface JobFinderJobModalProps {
   job: JobFinderItem | null;

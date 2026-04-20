@@ -11,9 +11,8 @@ import Input from "@/components/form/input";
 import Select from "@/components/form/select";
 import Textarea from "@/components/form/textarea";
 
-import { createJob, updateJob } from "@/actions/jobs";
-
 import { jobsKeys } from "@/features/jobs/query-keys";
+import { createJob, updateJob } from "@/features/jobs/server/actions";
 import type { Job, JobStatusType } from "@/features/jobs/types";
 
 interface JobFormProps {
