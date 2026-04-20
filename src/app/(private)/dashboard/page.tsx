@@ -1,27 +1,22 @@
+import { Suspense } from "react";
+
 import Header from "@/components/header";
 
 import {
   getFormState,
   JobModal,
-  JobViewModal,
   type JobViewSearchParams,
   RecentJobsTable,
-  resolveJobViewState,
   StatusDistributionCard,
   SuccessMetricsCard,
 } from "@/features/jobs";
+import JobViewModalFallback from "@/features/jobs/components/job-view-modal-fallback";
+import JobViewModalSlot from "@/features/jobs/components/job-view-modal-slot";
 import { getDashboardStats, getRecentJobs } from "@/features/jobs/server/actions";
 
 export default async function Dashboard(props: { searchParams: Promise<JobViewSearchParams> }) {
   const searchParams = await props.searchParams;
   const { isAdding, isEditing } = getFormState(searchParams);
-
-  const [dashboardStats, recentJobs] = await Promise.all([getDashboardStats(), getRecentJobs(4)]);
-
-  const { jobToView, initialInterviewPrep } = await resolveJobViewState(
-    searchParams.view,
-    recentJobs,
-  );
 
   return (
     <main className="p-10">
@@ -31,8 +26,24 @@ export default async function Dashboard(props: { searchParams: Promise<JobViewSe
         addButtonDisabled={isEditing || isAdding}
       />
 
+      <Suspense
+        fallback={<DashboardContentFallback showJobViewFallback={Boolean(searchParams.view)} />}
+      >
+        <DashboardContent searchParams={searchParams} />
+      </Suspense>
+    </main>
+  );
+}
+
+async function DashboardContent({ searchParams }: { searchParams: JobViewSearchParams }) {
+  const [dashboardStats, recentJobs] = await Promise.all([getDashboardStats(), getRecentJobs(4)]);
+
+  return (
+    <>
       <JobModal />
-      <JobViewModal job={jobToView} initialInterviewPrep={initialInterviewPrep} />
+      <Suspense fallback={<JobViewModalFallback />}>
+        <JobViewModalSlot viewParam={searchParams.view} candidateJobs={recentJobs} />
+      </Suspense>
 
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -46,6 +57,21 @@ export default async function Dashboard(props: { searchParams: Promise<JobViewSe
 
         <RecentJobsTable jobs={recentJobs} />
       </div>
-    </main>
+    </>
+  );
+}
+
+function DashboardContentFallback({ showJobViewFallback }: { showJobViewFallback: boolean }) {
+  return (
+    <>
+      {showJobViewFallback ? <JobViewModalFallback /> : null}
+      <div className="space-y-6 animate-pulse">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="h-44 rounded-lg border border-gray-100 bg-white" />
+          <div className="h-44 rounded-lg border border-gray-100 bg-white" />
+        </div>
+        <div className="h-72 rounded-lg border border-gray-100 bg-white" />
+      </div>
+    </>
   );
 }
