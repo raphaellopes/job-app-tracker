@@ -7,3 +7,11 @@ export type JobsBoardFilters = {
   status?: string;
   sort?: string;
 };
+
+export type DashboardStats = {
+  statusDistribution: Array<{ status: string; count: number }>;
+  pipelineTotal: number;
+  offerCount: number;
+  interviewingCount: number;
+  totalJobs: number;
+};

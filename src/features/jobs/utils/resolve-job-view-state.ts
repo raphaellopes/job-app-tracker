@@ -1,7 +1,7 @@
 import type { Job } from "@/db/schema";
 
+import { getJobInterviewPrepByJobId } from "@/features/ai-interview-prep/server/actions";
 import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
-import { getJobInterviewPrepByJobId } from "@/features/jobs/server/actions";
 
 export async function resolveJobViewState(
   viewParam: string | undefined,

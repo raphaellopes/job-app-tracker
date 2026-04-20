@@ -5,15 +5,15 @@ import { analyzeJob } from "@/actions/gemini";
 
 import AIInterviewPrep from "./index";
 
+import { saveJobInterviewPrep } from "@/features/ai-interview-prep/server/actions";
 import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
-import { saveJobInterviewPrep } from "@/features/jobs/server/actions";
 import { createMockInterviewPrepResult, createMockJob } from "@/test-utils/factories";
 
 jest.mock("@/actions/gemini", () => ({
   analyzeJob: jest.fn(),
 }));
 
-jest.mock("@/features/jobs/server/actions", () => ({
+jest.mock("@/features/ai-interview-prep/server/actions", () => ({
   saveJobInterviewPrep: jest.fn(),
 }));
 
