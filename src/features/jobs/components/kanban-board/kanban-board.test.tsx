@@ -5,7 +5,8 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 
 import type { Job } from "@/db/schema";
 
-import KanbanBoard from "@/features/jobs/components/kanban-board";
+import KanbanBoard from "./index";
+
 import { useUpdateJobPositions, useUpdateJobStatus } from "@/features/jobs/mutations";
 import { createMockJob } from "@/test-utils/factories";
 

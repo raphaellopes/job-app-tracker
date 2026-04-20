@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 import { PlusIcon } from "@/components/icons/plus-icon";
 
-import type { JobStatusType } from "@/db/schema";
+import type { JobStatusType } from "@/features/jobs/types";
 
 interface AddJobButtonProps {
   isDisabled?: boolean;

@@ -4,6 +4,8 @@ import userEvent from "@testing-library/user-event";
 
 import type { Job } from "@/db/schema";
 
+import JobModal from "./index";
+
 import { createMockJob } from "@/test-utils/factories";
 
 jest.mock("@/features/jobs/components/job-form", () => ({
@@ -14,8 +16,6 @@ jest.mock("@/features/jobs/components/job-form", () => ({
     </div>
   ),
 }));
-
-import JobModal from "@/features/jobs/components/job-modal";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),

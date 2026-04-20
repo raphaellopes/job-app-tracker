@@ -1,7 +1,7 @@
 import { usePathname } from "next/navigation";
 import { render, screen } from "@testing-library/react";
 
-import { AddJobButton } from "@/features/jobs/components/add-job-button";
+import { AddJobButton } from "./index";
 
 jest.mock("next/navigation", () => ({
   usePathname: jest.fn(),

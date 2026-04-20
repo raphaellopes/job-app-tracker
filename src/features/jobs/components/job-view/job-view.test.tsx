@@ -3,6 +3,8 @@ import userEvent from "@testing-library/user-event";
 
 import type { Job } from "@/db/schema";
 
+import JobView from "./index";
+
 import { createMockJob } from "@/test-utils/factories";
 
 jest.mock("@/components/tag/tag-chip-list", () => ({
@@ -31,8 +33,6 @@ jest.mock("@/components/ai-interview-prep/ai-interview-prep", () => ({
     </div>
   ),
 }));
-
-import JobView from "@/features/jobs/components/job-view";
 
 describe("JobView", () => {
   it("defaults to the job information tab when opened", () => {

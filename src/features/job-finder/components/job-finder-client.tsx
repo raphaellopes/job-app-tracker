@@ -43,6 +43,16 @@ const JobFinderClient: React.FC = () => {
 
   const paginationLabel = useMemo(() => `Page ${filters.page}`, [filters.page]);
 
+  const jobFinderErrorMessage = useMemo(() => {
+    if (!canSubmitSearch && draftQuery) {
+      return "Enter a search query to find jobs.";
+    }
+    if (isError) {
+      return "Could not load jobs right now. Please try again.";
+    }
+    return null;
+  }, [canSubmitSearch, draftQuery, isError]);
+
   const updateSearchParams = (next: { query?: string; remoteOnly?: boolean; page?: number }) => {
     const newParams = new URLSearchParams(searchParams.toString());
 
@@ -91,13 +101,7 @@ const JobFinderClient: React.FC = () => {
         remoteOnly={filters.remoteOnly}
         isLoading={isLoading}
         canSearch={canSubmitSearch}
-        errorMessage={
-          !canSubmitSearch && draftQuery
-            ? "Enter a search query to find jobs."
-            : isError
-              ? "Could not load jobs right now. Please try again."
-              : null
-        }
+        errorMessage={jobFinderErrorMessage}
         onQueryChange={setDraftQuery}
         onRemoteOnlyChange={(nextRemoteOnly) =>
           updateSearchParams({ remoteOnly: nextRemoteOnly, page: 1 })

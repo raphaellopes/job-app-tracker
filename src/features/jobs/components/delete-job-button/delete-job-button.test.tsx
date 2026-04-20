@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { deleteJob } from "@/actions/jobs";
 
-import DeleteJobButton from "@/features/jobs/components/delete-job-button";
+import DeleteJobButton from "./index";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),

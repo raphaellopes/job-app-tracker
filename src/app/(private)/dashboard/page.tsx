@@ -5,8 +5,13 @@ import Header from "@/components/header";
 
 import { getDashboardStats, getRecentJobs } from "@/actions/jobs";
 
-import { JobModal, JobViewModal } from "@/features/jobs";
-import { getFormState, type JobViewSearchParams, resolveJobViewState } from "@/features/jobs";
+import {
+  getFormState,
+  JobModal,
+  JobViewModal,
+  type JobViewSearchParams,
+  resolveJobViewState,
+} from "@/features/jobs";
 
 export default async function Dashboard(props: { searchParams: Promise<JobViewSearchParams> }) {
   const searchParams = await props.searchParams;

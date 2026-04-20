@@ -5,8 +5,14 @@ import StatusFilter from "@/components/status-filter";
 
 import { getJobs } from "@/actions/jobs";
 
-import { JobModal, JobsBoardClient, JobViewModal } from "@/features/jobs";
-import { type BoardPageSearchParams, getFormState, resolveJobViewState } from "@/features/jobs";
+import {
+  type BoardPageSearchParams,
+  getFormState,
+  JobModal,
+  JobsBoardClient,
+  JobViewModal,
+  resolveJobViewState,
+} from "@/features/jobs";
 
 export default async function Board(props: { searchParams: Promise<BoardPageSearchParams> }) {
   const searchParams = await props.searchParams;

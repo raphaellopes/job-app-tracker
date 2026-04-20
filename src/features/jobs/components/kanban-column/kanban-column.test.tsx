@@ -1,9 +1,9 @@
 import { useDroppable } from "@dnd-kit/core";
 import { render, screen } from "@testing-library/react";
 
-import type { Job } from "@/db/schema";
+import KanbanColumn from "./index";
 
-import KanbanColumn from "@/features/jobs/components/kanban-column";
+import type { Job } from "@/features/jobs/types";
 import { createMockJob } from "@/test-utils/factories";
 
 jest.mock("@dnd-kit/core", () => ({

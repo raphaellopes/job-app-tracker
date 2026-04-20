@@ -6,7 +6,8 @@ import { toast } from "sonner";
 
 import { createJob, updateJob } from "@/actions/jobs";
 
-import { JobForm } from "@/features/jobs/components/job-form";
+import { JobForm } from "./index";
+
 import { createMockJob } from "@/test-utils/factories";
 
 jest.mock("next/navigation", () => ({
