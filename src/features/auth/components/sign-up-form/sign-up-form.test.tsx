@@ -6,13 +6,14 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 
 import { registerUser } from "@/actions/sign-up";
 
+import { getFormattedFirebaseError } from "@/lib/firebase/client";
+
+import SignUpForm from "./index";
+
 import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
 } from "@/features/auth/client";
-import { getFormattedFirebaseError } from "@/lib/firebase/client";
-
-import SignUpForm from "./index";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),

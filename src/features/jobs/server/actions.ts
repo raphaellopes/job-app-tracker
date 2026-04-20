@@ -8,9 +8,8 @@ import { z } from "zod";
 import { db } from "@/db";
 import { jobInterviewPrep, jobs } from "@/db/schema";
 
-import { getDbUserForSession } from "@/features/auth/server";
-
 import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
+import { getDbUserForSession } from "@/features/auth/server";
 
 async function requireDbUserId(): Promise<number> {
   const { session, dbUser } = await getDbUserForSession();

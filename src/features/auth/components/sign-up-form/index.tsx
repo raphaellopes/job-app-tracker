@@ -14,11 +14,12 @@ import Input from "@/components/form/input";
 
 import { registerUser } from "@/actions/sign-up";
 
+import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
+
 import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
 } from "@/features/auth/client";
-import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
 
 const signUpSchema = Yup.object({
   firstName: Yup.string().trim().required("First name is required"),

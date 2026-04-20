@@ -4,13 +4,14 @@ import userEvent from "@testing-library/user-event";
 import { FirebaseError } from "firebase/app";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
+import { getFormattedFirebaseError } from "@/lib/firebase/client";
+
+import SignInForm from "./index";
+
 import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
 } from "@/features/auth/client";
-import { getFormattedFirebaseError } from "@/lib/firebase/client";
-
-import SignInForm from "./index";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),

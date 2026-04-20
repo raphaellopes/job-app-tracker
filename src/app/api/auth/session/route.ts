@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 
-import { getSessionCookieName } from "@/features/auth/server";
 import { firebaseAdminAuth } from "@/lib/firebase/admin";
+
+import { getSessionCookieName } from "@/features/auth/server";
 
 const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
 

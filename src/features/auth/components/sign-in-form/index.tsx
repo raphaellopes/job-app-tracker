@@ -12,11 +12,12 @@ import DividerText from "@/components/divider-text";
 import ErrorBox from "@/components/form/error-box";
 import Input from "@/components/form/input";
 
+import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
+
 import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
 } from "@/features/auth/client";
-import { firebaseAuth, getFormattedFirebaseError } from "@/lib/firebase/client";
 
 const signInSchema = Yup.object({
   email: Yup.string().trim().email("Enter a valid email address").required("Email is required"),
