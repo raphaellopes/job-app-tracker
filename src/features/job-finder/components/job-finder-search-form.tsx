@@ -6,7 +6,7 @@ import Input from "@/components/form/input";
 interface JobFinderSearchFormProps {
   query: string;
   remoteOnly: boolean;
-  isLoading: boolean;
+  isSearching: boolean;
   canSearch: boolean;
   errorMessage: string | null;
   onQueryChange: (nextQuery: string) => void;
@@ -17,7 +17,7 @@ interface JobFinderSearchFormProps {
 const JobFinderSearchForm: React.FC<JobFinderSearchFormProps> = ({
   query,
   remoteOnly,
-  isLoading,
+  isSearching,
   canSearch,
   errorMessage,
   onQueryChange,
@@ -38,8 +38,8 @@ const JobFinderSearchForm: React.FC<JobFinderSearchFormProps> = ({
             onChange={(event) => onQueryChange(event.target.value)}
             placeholder="Search by role, company, or keywords..."
           />
-          <Button type="submit" disabled={!canSearch || isLoading}>
-            {isLoading ? "Searching..." : "Search"}
+          <Button type="submit" disabled={!canSearch || isSearching}>
+            {isSearching ? "Searching..." : "Search"}
           </Button>
         </div>
         <Checkbox

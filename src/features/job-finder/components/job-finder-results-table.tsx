@@ -2,17 +2,10 @@ import { JobFinderItem } from "@/features/job-finder/types";
 
 interface JobFinderResultsTableProps {
   results: JobFinderItem[];
-  isLoading: boolean;
-  hasResults: boolean;
   onSelectJob: (job: JobFinderItem) => void;
 }
 
-const JobFinderResultsTable: React.FC<JobFinderResultsTableProps> = ({
-  results,
-  isLoading,
-  hasResults,
-  onSelectJob,
-}) => {
+const JobFinderResultsTable: React.FC<JobFinderResultsTableProps> = ({ results, onSelectJob }) => {
   return (
     <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
       <div className="grid grid-cols-12 gap-3 px-4 py-3 text-xs font-semibold uppercase text-gray-500 border-b border-gray-200">
@@ -20,10 +13,6 @@ const JobFinderResultsTable: React.FC<JobFinderResultsTableProps> = ({
         <span className="col-span-3">Employer</span>
         <span className="col-span-2">Publisher</span>
       </div>
-
-      {!isLoading && !hasResults && (
-        <div className="p-6 text-sm text-gray-500">Search for jobs to see results here.</div>
-      )}
 
       {results.map((job) => (
         <button

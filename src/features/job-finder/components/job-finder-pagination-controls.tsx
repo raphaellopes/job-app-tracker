@@ -1,30 +1,29 @@
 import Button from "@/components/buttons/button";
 
 interface JobFinderPaginationControlsProps {
-  page: number;
   hasNextPage: boolean;
-  isLoading: boolean;
-  paginationLabel: string;
-  onPrevious: () => void;
-  onNext: () => void;
+  isLoadingMore: boolean;
+  onViewMore: () => void;
 }
 
 const JobFinderPaginationControls: React.FC<JobFinderPaginationControlsProps> = ({
-  page,
   hasNextPage,
-  isLoading,
-  paginationLabel,
-  onPrevious,
-  onNext,
+  isLoadingMore,
+  onViewMore,
 }) => {
+  if (!hasNextPage) {
+    return null;
+  }
+
   return (
-    <div className="flex items-center justify-between">
-      <Button type="button" onClick={onPrevious} disabled={page <= 1 || isLoading}>
-        Previous
-      </Button>
-      <p className="text-sm text-gray-600">{paginationLabel}</p>
-      <Button type="button" onClick={onNext} disabled={!hasNextPage || isLoading}>
-        Next
+    <div className="space-y-3 flex justify-center">
+      <Button
+        type="button"
+        onClick={onViewMore}
+        disabled={isLoadingMore}
+        className="w-full sm:max-w-xs"
+      >
+        {isLoadingMore ? "Loading more jobs..." : "View more"}
       </Button>
     </div>
   );
