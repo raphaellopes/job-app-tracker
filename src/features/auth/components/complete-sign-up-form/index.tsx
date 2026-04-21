@@ -12,7 +12,7 @@ import Input from "@/components/form/input";
 
 import { firebaseAuth } from "@/lib/firebase/client";
 
-import { registerUser } from "@/features/auth/server/register-user";
+import { registerUser } from "@/features/auth/server/actions";
 
 const schema = Yup.object({
   firstName: Yup.string().trim().required("First name is required"),

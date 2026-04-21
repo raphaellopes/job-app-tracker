@@ -1,4 +1,1 @@
-export {
-  createSessionFromCurrentUser,
-  signInWithGoogleAndCreateSession,
-} from "@/features/auth/client/session";
+export { createSessionFromCurrentUser, signInWithGoogleAndCreateSession } from "./session";

@@ -1,19 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { analyzeJob } from "@/actions/gemini";
-
 import AIInterviewPrep from "./index";
 
-import { saveJobInterviewPrep } from "@/features/ai-interview-prep/server/actions";
+import { analyzeJob, saveJobInterviewPrep } from "@/features/ai-interview-prep/server";
 import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
 import { createMockInterviewPrepResult, createMockJob } from "@/test-utils/factories";
 
-jest.mock("@/actions/gemini", () => ({
+jest.mock("@/features/ai-interview-prep/server", () => ({
   analyzeJob: jest.fn(),
-}));
-
-jest.mock("@/features/ai-interview-prep/server/actions", () => ({
   saveJobInterviewPrep: jest.fn(),
 }));
 

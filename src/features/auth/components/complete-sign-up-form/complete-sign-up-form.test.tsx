@@ -7,7 +7,7 @@ import { firebaseAuth } from "@/lib/firebase/client";
 
 import CompleteSignUpForm from "./index";
 
-import { registerUser, type RegisterUserResult } from "@/features/auth/server/register-user";
+import { registerUser, type RegisterUserResult } from "@/features/auth/server/actions";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -26,7 +26,7 @@ jest.mock("@/lib/firebase/client", () => ({
   },
 }));
 
-jest.mock("@/features/auth/server/register-user", () => ({
+jest.mock("@/features/auth/server/actions", () => ({
   registerUser: jest.fn(),
 }));
 
