@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { getJobInterviewPrepByJobId } from "@/features/ai-interview-prep/server/actions";
+import { getJobInterviewPrepByJobId } from "@/features/ai-interview-prep/server";
 
 interface RouteParams {
   params: Promise<{

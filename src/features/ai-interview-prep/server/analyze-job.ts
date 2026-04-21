@@ -1,19 +1,17 @@
 "use server";
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { Type } from "@google/genai";
 
-import { Job } from "@/db/schema";
+import type { Job } from "@/db/schema";
+
+import { gemini, GEMINI_MODEL } from "@/lib/ai/gemini";
 
 import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
-
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-const gemini = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
 
 export const analyzeJob = async (job: Job): Promise<InterviewPrepResult | null> => {
   const { jobTitle, description } = job;
   const response = await gemini.models.generateContent({
-    model: "gemini-3-flash-preview",
+    model: GEMINI_MODEL,
     contents: `Analyze this job application for a ${jobTitle}. 
     Job Description: ${description}. 
     Please provide: 
