@@ -16,6 +16,7 @@ interface TabsProps {
   className?: string;
   tabsListClassName?: string;
   panelClassName?: string;
+  onTabChange?: (tabId: string) => void;
 }
 
 const Tabs: React.FC<TabsProps> = ({
@@ -24,6 +25,7 @@ const Tabs: React.FC<TabsProps> = ({
   className,
   tabsListClassName,
   panelClassName,
+  onTabChange,
 }) => {
   const generatedId = useId();
   const firstEnabledTab = items.find((item) => !item.disabled);
@@ -54,7 +56,10 @@ const Tabs: React.FC<TabsProps> = ({
               aria-controls={panelId}
               disabled={item.disabled}
               tabIndex={isActive ? 0 : -1}
-              onClick={() => setActiveTabId(item.id)}
+              onClick={() => {
+                setActiveTabId(item.id);
+                onTabChange?.(item.id);
+              }}
               className={classNames(
                 "flex-1 px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors cursor-pointer",
                 {

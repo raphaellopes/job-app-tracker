@@ -6,13 +6,13 @@ import {
   type BoardPageSearchParams,
   getFormState,
   JobModal,
+  JobViewModal,
   JobsBoardClient,
   SearchInput,
   SortSelect,
   StatusFilter,
 } from "@/features/jobs";
 import JobViewModalFallback from "@/features/jobs/components/job-view-modal-fallback";
-import JobViewModalSlot from "@/features/jobs/components/job-view-modal-slot";
 import { getJobs } from "@/features/jobs/server/actions";
 
 export default async function Board(props: { searchParams: Promise<BoardPageSearchParams> }) {
@@ -46,13 +46,14 @@ async function BoardContent({ searchParams }: { searchParams: BoardPageSearchPar
   const jobToEdit = searchParams.edit
     ? jobs.find((j) => j.id === Number(searchParams.edit))
     : undefined;
+  const jobToView = searchParams.view
+    ? jobs.find((job) => job.id === Number(searchParams.view))
+    : undefined;
 
   return (
     <>
       <JobModal job={jobToEdit} />
-      <Suspense fallback={<JobViewModalFallback />}>
-        <JobViewModalSlot viewParam={searchParams.view} candidateJobs={jobs} filters={filters} />
-      </Suspense>
+      <JobViewModal job={jobToView} filters={filters} />
 
       <div className="space-y-4 flex-1 flex flex-col">
         <div className="flex flex-wrap gap-4 mb-6">

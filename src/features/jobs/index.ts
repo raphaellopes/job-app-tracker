@@ -19,4 +19,3 @@ export { jobsKeys } from "@/features/jobs/query-keys";
 export type { Job, JobsBoardFilters, JobStatusType } from "@/features/jobs/types";
 export type { BoardPageSearchParams, JobViewSearchParams } from "@/features/jobs/utils/query-state";
 export { getFormState } from "@/features/jobs/utils/query-state";
-export { resolveJobViewState } from "@/features/jobs/utils/resolve-job-view-state";

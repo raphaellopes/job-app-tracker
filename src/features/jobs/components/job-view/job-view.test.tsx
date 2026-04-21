@@ -26,10 +26,9 @@ jest.mock("@/features/jobs/components/job-notes-form", () => ({
 
 jest.mock("@/features/ai-interview-prep", () => ({
   __esModule: true,
-  AIInterviewPrep: ({ job, initialSavedResult }: { job: Job; initialSavedResult: unknown }) => (
-    <div data-testid="ai-interview-prep">
+  LazyAIInterviewPrep: ({ job }: { job: Job }) => (
+    <div data-testid="lazy-ai-interview-prep">
       <span data-testid="prep-job-id">{job.id}</span>
-      <span data-testid="prep-initial">{initialSavedResult === null ? "null" : "set"}</span>
     </div>
   ),
 }));
@@ -47,7 +46,7 @@ describe("JobView", () => {
       "false",
     );
     expect(screen.getByText("Job publisher")).toBeVisible();
-    expect(screen.getByTestId("ai-interview-prep")).not.toBeVisible();
+    expect(screen.queryByTestId("lazy-ai-interview-prep")).not.toBeInTheDocument();
   });
 
   it("shows tag chips when the job has tags", () => {
@@ -79,20 +78,14 @@ describe("JobView", () => {
     expect(screen.getByTestId("notes-initial")).toHaveTextContent("Follow up Monday");
   });
 
-  it("passes the job and interview prep into AIInterviewPrep", () => {
+  it("passes the job into LazyAIInterviewPrep after activating the tab", async () => {
+    const user = userEvent.setup();
     const job = createMockJob({ id: 99 });
-    const prep = { suggestedSkills: [], mockQuestions: [] } as never;
+    render(<JobView job={job} />);
 
-    render(<JobView job={job} initialInterviewPrep={prep} />);
+    await user.click(screen.getByRole("tab", { name: "AI interview prep" }));
 
     expect(screen.getByTestId("prep-job-id")).toHaveTextContent("99");
-    expect(screen.getByTestId("prep-initial")).toHaveTextContent("set");
-  });
-
-  it("passes null interview prep when omitted", () => {
-    render(<JobView job={createMockJob()} />);
-
-    expect(screen.getByTestId("prep-initial")).toHaveTextContent("null");
   });
 
   it("switches to the AI interview prep tab", async () => {
@@ -105,7 +98,7 @@ describe("JobView", () => {
       "aria-selected",
       "true",
     );
-    expect(screen.getByTestId("ai-interview-prep")).toBeVisible();
+    expect(screen.getByTestId("lazy-ai-interview-prep")).toBeVisible();
     expect(screen.getByText("Job publisher")).not.toBeVisible();
     expect(screen.getByTestId("prep-job-id")).toHaveTextContent("7");
   });
