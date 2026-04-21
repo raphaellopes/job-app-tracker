@@ -44,12 +44,12 @@ async function BoardContent({ searchParams }: { searchParams: BoardPageSearchPar
   };
   const jobs = await getJobs(filters.search, filters.status, filters.sort);
 
-  const getJobToView = (jobId?: string) => {
+  const getJobBySearchParamJobId = (jobId?: string) => {
     return jobId ? jobs.find((j) => j.id === Number(jobId)) : undefined;
   };
 
-  const jobToEdit = getJobToView(searchParams.edit);
-  const jobToView = getJobToView(searchParams.view);
+  const jobToEdit = getJobBySearchParamJobId(searchParams.edit);
+  const jobToView = getJobBySearchParamJobId(searchParams.view);
 
   return (
     <>
