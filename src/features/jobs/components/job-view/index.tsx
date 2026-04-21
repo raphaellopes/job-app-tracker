@@ -1,16 +1,17 @@
+"use client";
+
+import { useState } from "react";
 import classNames from "classnames";
 
 import Tabs from "@/components/tabs";
 import TagChipList from "@/components/tag/tag-chip-list";
 
-import { AIInterviewPrep } from "@/features/ai-interview-prep";
-import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
+import { LazyAIInterviewPrep } from "@/features/ai-interview-prep";
 import JobNotesForm from "@/features/jobs/components/job-notes-form";
 import type { Job, JobsBoardFilters } from "@/features/jobs/types";
 
 interface JobViewProps {
   job: Job;
-  initialInterviewPrep?: InterviewPrepResult | null;
   filters?: JobsBoardFilters;
 }
 
@@ -31,7 +32,9 @@ const SectionContent: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({
   children,
 }) => <p className={classNames("text-sm text-gray-600", className)}>{children}</p>;
 
-const JobView: React.FC<JobViewProps> = ({ job, initialInterviewPrep = null, filters = {} }) => {
+const JobView: React.FC<JobViewProps> = ({ job, filters = {} }) => {
+  const [hasOpenedInterviewPrepTab, setHasOpenedInterviewPrepTab] = useState(false);
+
   const renderJobContent = (
     <div className="space-y-5">
       <Section title="Job publisher">
@@ -74,6 +77,11 @@ const JobView: React.FC<JobViewProps> = ({ job, initialInterviewPrep = null, fil
       <Tabs
         defaultTabId="job-information"
         tabsListClassName="sticky top-12 bg-white"
+        onTabChange={(tabId) => {
+          if (tabId === "ai-interview-prep") {
+            setHasOpenedInterviewPrepTab(true);
+          }
+        }}
         items={[
           { id: "job-information", label: "Job information", content: renderJobContent },
           {
@@ -81,7 +89,7 @@ const JobView: React.FC<JobViewProps> = ({ job, initialInterviewPrep = null, fil
             label: "AI interview prep",
             content: (
               <div className="min-h-[70vh]">
-                <AIInterviewPrep job={job} initialSavedResult={initialInterviewPrep} />
+                {hasOpenedInterviewPrepTab ? <LazyAIInterviewPrep job={job} /> : null}
               </div>
             ),
           },

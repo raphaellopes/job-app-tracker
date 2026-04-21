@@ -5,13 +5,13 @@ import Header from "@/components/header";
 import {
   getFormState,
   JobModal,
+  JobViewModal,
   type JobViewSearchParams,
   RecentJobsTable,
   StatusDistributionCard,
   SuccessMetricsCard,
 } from "@/features/jobs";
 import JobViewModalFallback from "@/features/jobs/components/job-view-modal-fallback";
-import JobViewModalSlot from "@/features/jobs/components/job-view-modal-slot";
 import { getDashboardStats, getRecentJobs } from "@/features/jobs/server/actions";
 
 export default async function Dashboard(props: { searchParams: Promise<JobViewSearchParams> }) {
@@ -37,13 +37,14 @@ export default async function Dashboard(props: { searchParams: Promise<JobViewSe
 
 async function DashboardContent({ searchParams }: { searchParams: JobViewSearchParams }) {
   const [dashboardStats, recentJobs] = await Promise.all([getDashboardStats(), getRecentJobs(4)]);
+  const jobToView = searchParams.view
+    ? recentJobs.find((job) => job.id === Number(searchParams.view))
+    : undefined;
 
   return (
     <>
       <JobModal />
-      <Suspense fallback={<JobViewModalFallback />}>
-        <JobViewModalSlot viewParam={searchParams.view} candidateJobs={recentJobs} />
-      </Suspense>
+      <JobViewModal job={jobToView} />
 
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

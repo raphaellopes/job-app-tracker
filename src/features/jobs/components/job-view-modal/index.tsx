@@ -4,21 +4,15 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import Modal from "@/components/modals/modal";
 
-import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
 import JobView from "@/features/jobs/components/job-view";
 import type { Job, JobsBoardFilters } from "@/features/jobs/types";
 
 interface JobViewModalProps {
   job?: Job;
-  initialInterviewPrep?: InterviewPrepResult | null;
   filters?: JobsBoardFilters;
 }
 
-const JobViewModal: React.FC<JobViewModalProps> = ({
-  job,
-  initialInterviewPrep = null,
-  filters = {},
-}) => {
+const JobViewModal: React.FC<JobViewModalProps> = ({ job, filters = {} }) => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -36,7 +30,7 @@ const JobViewModal: React.FC<JobViewModalProps> = ({
 
   return (
     <Modal title={job.jobTitle} description={job.companyName} size="md" onClose={handleClose}>
-      <JobView job={job} initialInterviewPrep={initialInterviewPrep} filters={filters} />
+      <JobView job={job} filters={filters} />
     </Modal>
   );
 };
