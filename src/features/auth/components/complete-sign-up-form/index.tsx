@@ -10,9 +10,9 @@ import Button from "@/components/buttons/button";
 import ErrorBox from "@/components/form/error-box";
 import Input from "@/components/form/input";
 
-import { registerUser } from "@/actions/sign-up";
-
 import { firebaseAuth } from "@/lib/firebase/client";
+
+import { registerUser } from "@/features/auth/server/register-user";
 
 const schema = Yup.object({
   firstName: Yup.string().trim().required("First name is required"),

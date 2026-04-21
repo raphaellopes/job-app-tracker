@@ -3,12 +3,11 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { onAuthStateChanged } from "firebase/auth";
 
-import type { RegisterUserResult } from "@/actions/sign-up";
-import { registerUser } from "@/actions/sign-up";
-
 import { firebaseAuth } from "@/lib/firebase/client";
 
 import CompleteSignUpForm from "./index";
+
+import { registerUser, type RegisterUserResult } from "@/features/auth/server/register-user";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -27,7 +26,7 @@ jest.mock("@/lib/firebase/client", () => ({
   },
 }));
 
-jest.mock("@/actions/sign-up", () => ({
+jest.mock("@/features/auth/server/register-user", () => ({
   registerUser: jest.fn(),
 }));
 
