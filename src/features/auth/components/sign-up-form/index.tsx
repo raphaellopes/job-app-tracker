@@ -18,7 +18,7 @@ import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
 } from "@/features/auth/client";
-import { registerUser } from "@/features/auth/server/register-user";
+import { registerUser } from "@/features/auth/server/actions";
 
 const signUpSchema = Yup.object({
   firstName: Yup.string().trim().required("First name is required"),

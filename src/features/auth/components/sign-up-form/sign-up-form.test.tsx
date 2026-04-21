@@ -12,7 +12,7 @@ import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
 } from "@/features/auth/client";
-import { registerUser } from "@/features/auth/server/register-user";
+import { registerUser } from "@/features/auth/server/actions";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -32,7 +32,7 @@ jest.mock("@/features/auth/client", () => ({
   signInWithGoogleAndCreateSession: jest.fn(() => Promise.resolve()),
 }));
 
-jest.mock("@/features/auth/server/register-user", () => ({
+jest.mock("@/features/auth/server/actions", () => ({
   registerUser: jest.fn(),
 }));
 
