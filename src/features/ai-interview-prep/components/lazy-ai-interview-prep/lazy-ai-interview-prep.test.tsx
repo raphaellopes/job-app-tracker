@@ -2,18 +2,12 @@ import { render, screen } from "@testing-library/react";
 
 import LazyAIInterviewPrep from "./index";
 
-import { createMockInterviewPrepResult, createMockJob } from "@/test-utils/factories";
 import { useJobInterviewPrep } from "@/features/ai-interview-prep/queries";
+import { createMockInterviewPrepResult, createMockJob } from "@/test-utils/factories";
 
 jest.mock("@/features/ai-interview-prep/components/ai-interview-prep", () => ({
   __esModule: true,
-  default: ({
-    job,
-    initialSavedResult,
-  }: {
-    job: { id: number };
-    initialSavedResult: unknown;
-  }) => (
+  default: ({ job, initialSavedResult }: { job: { id: number }; initialSavedResult: unknown }) => (
     <div data-testid="ai-interview-prep">
       <span data-testid="prep-job-id">{job.id}</span>
       <span data-testid="prep-initial">{initialSavedResult ? "set" : "null"}</span>

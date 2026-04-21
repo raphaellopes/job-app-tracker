@@ -18,7 +18,11 @@ const LazyAIInterviewPrep: React.FC<LazyAIInterviewPrepProps> = ({ job }) => {
   }
 
   if (error) {
-    return <ErrorBox>{error instanceof Error ? error.message : "Could not load saved interview prep."}</ErrorBox>;
+    return (
+      <ErrorBox>
+        {error instanceof Error ? error.message : "Could not load saved interview prep."}
+      </ErrorBox>
+    );
   }
 
   return <AIInterviewPrep job={job} initialSavedResult={data ?? null} />;
