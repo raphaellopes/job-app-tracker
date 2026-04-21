@@ -4,8 +4,6 @@ import userEvent from "@testing-library/user-event";
 import { FirebaseError } from "firebase/app";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 
-import { registerUser } from "@/actions/sign-up";
-
 import { getFormattedFirebaseError } from "@/lib/firebase/client";
 
 import SignUpForm from "./index";
@@ -14,6 +12,7 @@ import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
 } from "@/features/auth/client";
+import { registerUser } from "@/features/auth/server/register-user";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -33,7 +32,7 @@ jest.mock("@/features/auth/client", () => ({
   signInWithGoogleAndCreateSession: jest.fn(() => Promise.resolve()),
 }));
 
-jest.mock("@/actions/sign-up", () => ({
+jest.mock("@/features/auth/server/register-user", () => ({
   registerUser: jest.fn(),
 }));
 
