@@ -16,20 +16,32 @@ const JobFinderClient: React.FC = () => {
   const pathname = usePathname();
 
   const [selectedJob, setSelectedJob] = useState<JobFinderItem | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loadedPages, setLoadedPages] = useState<number[]>([]);
+  const [appendedResults, setAppendedResults] = useState<JobFinderItem[]>([]);
 
   const query = searchParams.get("q") ?? "";
   const [draftQuery, setDraftQuery] = useState(query);
   const remoteOnly = searchParams.get("remoteOnly") === "true";
-  const page = Number(searchParams.get("page") ?? "1");
+
+  const cleanUpResults = () => {
+    setCurrentPage(1);
+    setLoadedPages([]);
+    setAppendedResults([]);
+  };
 
   useEffect(() => {
     setDraftQuery(query);
   }, [query]);
 
+  useEffect(() => {
+    cleanUpResults();
+  }, [query, remoteOnly]);
+
   const filters = {
     query,
     remoteOnly,
-    page: Number.isNaN(page) || page < 1 ? 1 : page,
+    page: currentPage,
   } as const;
 
   const canSearch = filters.query.trim().length > 0;
@@ -37,11 +49,31 @@ const JobFinderClient: React.FC = () => {
 
   const { data, isLoading, isError } = useJobFinderSearch(filters, canSearch);
 
-  const results = data?.items ?? [];
-  const hasResults = results.length > 0;
-  const hasNextPage = data?.pagination.hasNextPage ?? false;
+  useEffect(() => {
+    if (!data || loadedPages.includes(currentPage)) {
+      return;
+    }
 
-  const paginationLabel = useMemo(() => `Page ${filters.page}`, [filters.page]);
+    setLoadedPages((previousPages) => [...previousPages, currentPage]);
+    setAppendedResults((previousResults) => {
+      if (currentPage === 1) {
+        return data.items;
+      }
+
+      const seenIds = new Set(previousResults.map((job) => job.externalJobId));
+      const nextJobs = data.items.filter((job) => !seenIds.has(job.externalJobId));
+      return [...previousResults, ...nextJobs];
+    });
+  }, [currentPage, data, loadedPages]);
+
+  const hasSearched = canSearch;
+  const isSearchingFirstPage = isLoading && currentPage === 1;
+  const isLoadingMore = isLoading && currentPage > 1;
+  const hasResults = appendedResults.length > 0;
+  const hasNextPage = data?.pagination.hasNextPage ?? false;
+  const canRenderViewMore = hasNextPage || isLoadingMore;
+  const showIdleState = !hasSearched;
+  const showEmptyResultsState = hasSearched && !isSearchingFirstPage && !hasResults;
 
   const jobFinderErrorMessage = useMemo(() => {
     if (!canSubmitSearch && draftQuery) {
@@ -53,7 +85,7 @@ const JobFinderClient: React.FC = () => {
     return null;
   }, [canSubmitSearch, draftQuery, isError]);
 
-  const updateSearchParams = (next: { query?: string; remoteOnly?: boolean; page?: number }) => {
+  const updateSearchParams = (next: { query?: string; remoteOnly?: boolean }) => {
     const newParams = new URLSearchParams(searchParams.toString());
 
     if (next.query !== undefined) {
@@ -72,14 +104,6 @@ const JobFinderClient: React.FC = () => {
       }
     }
 
-    if (next.page !== undefined) {
-      if (next.page > 1) {
-        newParams.set("page", String(next.page));
-      } else {
-        newParams.delete("page");
-      }
-    }
-
     const queryString = newParams.toString();
     const href = queryString ? `${pathname}?${queryString}` : pathname;
     router.push(href);
@@ -91,7 +115,8 @@ const JobFinderClient: React.FC = () => {
       return;
     }
 
-    updateSearchParams({ query: draftQuery, page: 1 });
+    cleanUpResults();
+    updateSearchParams({ query: draftQuery });
   };
 
   return (
@@ -99,31 +124,37 @@ const JobFinderClient: React.FC = () => {
       <JobFinderSearchForm
         query={draftQuery}
         remoteOnly={filters.remoteOnly}
-        isLoading={isLoading}
+        isSearching={isSearchingFirstPage}
         canSearch={canSubmitSearch}
         errorMessage={jobFinderErrorMessage}
         onQueryChange={setDraftQuery}
-        onRemoteOnlyChange={(nextRemoteOnly) =>
-          updateSearchParams({ remoteOnly: nextRemoteOnly, page: 1 })
-        }
+        onRemoteOnlyChange={(nextRemoteOnly) => updateSearchParams({ remoteOnly: nextRemoteOnly })}
         onSubmit={handleSubmit}
       />
 
-      <JobFinderResultsTable
-        results={results}
-        isLoading={isLoading}
-        hasResults={hasResults}
-        onSelectJob={setSelectedJob}
-      />
+      {showIdleState && (
+        <div className="rounded-lg border border-dashed border-gray-300 bg-white p-6 text-sm text-gray-600">
+          Start by entering a search term to find open roles.
+        </div>
+      )}
 
-      <JobFinderPaginationControls
-        page={filters.page}
-        hasNextPage={hasNextPage}
-        isLoading={isLoading}
-        paginationLabel={paginationLabel}
-        onPrevious={() => updateSearchParams({ page: Math.max(1, filters.page - 1) })}
-        onNext={() => updateSearchParams({ page: filters.page + 1 })}
-      />
+      {showEmptyResultsState && (
+        <div className="rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-600">
+          No jobs found for this search yet. Try a different keyword or disable the remote-only
+          filter.
+        </div>
+      )}
+
+      {hasResults && (
+        <>
+          <JobFinderResultsTable results={appendedResults} onSelectJob={setSelectedJob} />
+          <JobFinderPaginationControls
+            hasNextPage={canRenderViewMore}
+            isLoadingMore={isLoadingMore}
+            onViewMore={() => setCurrentPage((previousPage) => previousPage + 1)}
+          />
+        </>
+      )}
 
       <JobFinderJobModal job={selectedJob} onClose={() => setSelectedJob(null)} />
     </div>
