@@ -24,6 +24,16 @@ jest.mock("@/features/jobs/components/job-notes-form", () => ({
   ),
 }));
 
+jest.mock("@/features/jobs/components/job-status-select", () => ({
+  __esModule: true,
+  default: ({ jobId, status }: { jobId: number; status: string }) => (
+    <div data-testid="job-status-select">
+      <span data-testid="job-status-select-job-id">{jobId}</span>
+      <span data-testid="job-status-select-status">{status}</span>
+    </div>
+  ),
+}));
+
 jest.mock("@/features/ai-interview-prep", () => ({
   __esModule: true,
   LazyAIInterviewPrep: ({ job }: { job: Job }) => (
@@ -53,6 +63,21 @@ describe("JobView", () => {
     render(<JobView job={createMockJob({ tags: ["remote", "typescript"] })} />);
 
     expect(screen.getByTestId("tag-chip-list")).toHaveTextContent("remote,typescript");
+  });
+
+  it("renders status section before job publisher and passes status props", () => {
+    render(<JobView job={createMockJob({ id: 123, status: "APPLIED" })} />);
+
+    expect(screen.getByText("Status")).toBeInTheDocument();
+    expect(screen.getByText("Job publisher")).toBeInTheDocument();
+    expect(screen.getByTestId("job-status-select-job-id")).toHaveTextContent("123");
+    expect(screen.getByTestId("job-status-select-status")).toHaveTextContent("APPLIED");
+
+    const headings = screen.getAllByRole("heading", { level: 3 }).map((item) => item.textContent);
+    const statusIndex = headings.indexOf("Status");
+    const publisherIndex = headings.indexOf("Job publisher");
+    expect(statusIndex).toBeGreaterThanOrEqual(0);
+    expect(publisherIndex).toBeGreaterThan(statusIndex);
   });
 
   it("shows an empty-tags message when there are no tags", () => {
