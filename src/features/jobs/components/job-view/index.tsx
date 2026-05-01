@@ -8,6 +8,7 @@ import TagChipList from "@/components/tag/tag-chip-list";
 
 import { LazyAIInterviewPrep } from "@/features/ai-interview-prep";
 import JobNotesForm from "@/features/jobs/components/job-notes-form";
+import JobStatusSelect from "@/features/jobs/components/job-status-select";
 import type { Job, JobsBoardFilters } from "@/features/jobs/types";
 
 interface JobViewProps {
@@ -37,6 +38,9 @@ const JobView: React.FC<JobViewProps> = ({ job, filters = {} }) => {
 
   const renderJobContent = (
     <div className="space-y-5">
+      <Section title="Status">
+        <JobStatusSelect jobId={job.id} status={job.status} filters={filters} />
+      </Section>
       <Section title="Job publisher">
         <SectionContent>{job.jobPublisher ?? "Not provided"}</SectionContent>
       </Section>
