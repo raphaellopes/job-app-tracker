@@ -11,6 +11,7 @@ import Input from "@/components/form/input";
 import Select from "@/components/form/select";
 import Textarea from "@/components/form/textarea";
 
+import { jobErrorMessage } from "@/features/jobs/errors";
 import { jobsKeys } from "@/features/jobs/query-keys";
 import { createJob, updateJob } from "@/features/jobs/server/actions";
 import type { Job, JobStatusType } from "@/features/jobs/types";
@@ -72,6 +73,11 @@ export function JobForm({ job, initialStatus }: JobFormProps) {
           toast.success(job ? "Job updated successfully." : "Job added successfully.");
           router.replace(returnPath);
           router.refresh();
+          return;
+        }
+        if ("error" in result && result.error) {
+          toast.error(jobErrorMessage(result.error));
+          return;
         }
       } catch (error) {
         unstable_rethrow(error);

@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
 
 import { getDbUserForSession } from "@/features/auth/server";
+import type { JobActionResult } from "@/features/jobs/errors";
 import type { JobStatusType } from "@/features/jobs/types";
 
-export type SaveJobResult = { success: true } | { error: string };
+export type SaveJobResult = JobActionResult;
 
 export async function requireDbUserId(): Promise<number> {
   const { session, dbUser } = await getDbUserForSession();

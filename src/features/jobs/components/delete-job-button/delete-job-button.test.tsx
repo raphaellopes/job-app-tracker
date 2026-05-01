@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import DeleteJobButton from "./index";
 
+import { jobErrorMessage } from "@/features/jobs/errors";
 import { deleteJob } from "@/features/jobs/server/actions";
 
 jest.mock("next/navigation", () => ({
@@ -172,14 +173,14 @@ describe("DeleteJobButton", () => {
 
     it("shows a generic error toast when deleteJob returns another error code", async () => {
       const user = userEvent.setup();
-      mockedDeleteJob.mockResolvedValueOnce({ error: "unknown" });
+      mockedDeleteJob.mockResolvedValueOnce({ error: "internal_error" });
       render(<DeleteJobButton id={4} />);
 
       await user.click(getDeleteFormControls(4).submitButton);
       await user.click(screen.getByRole("button", { name: /^delete$/i }));
 
       await waitFor(() => {
-        expect(mockedToast.error).toHaveBeenCalledWith("Could not delete this job.");
+        expect(mockedToast.error).toHaveBeenCalledWith(jobErrorMessage("internal_error"));
       });
       expect(mockedToast.success).not.toHaveBeenCalled();
       expect(mockRefresh).toHaveBeenCalled();

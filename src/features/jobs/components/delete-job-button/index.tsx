@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { TrashIcon } from "@/components/icons/trash-icon";
 import ConfirmModal from "@/components/modals/confirm-modal";
 
+import { jobErrorMessage } from "@/features/jobs/errors";
 import { jobsKeys } from "@/features/jobs/query-keys";
 import { deleteJob } from "@/features/jobs/server/actions";
 
@@ -41,7 +42,7 @@ const DeleteJobButton: React.FC<DeleteJobButtonProps> = ({ id }) => {
         toast.error(
           result.error === "invalid_id"
             ? "This job could not be found or removed."
-            : "Could not delete this job.",
+            : jobErrorMessage(result.error),
         );
       }
       router.refresh();

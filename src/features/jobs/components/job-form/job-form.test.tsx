@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { JobForm } from "./index";
 
+import { jobErrorMessage } from "@/features/jobs/errors";
 import { createJob, updateJob } from "@/features/jobs/server/actions";
 import { createMockJob } from "@/test-utils/factories";
 
@@ -28,6 +29,7 @@ jest.mock("@/features/jobs/server/actions", () => ({
 jest.mock("sonner", () => ({
   toast: {
     success: jest.fn(),
+    error: jest.fn(),
   },
 }));
 
@@ -170,9 +172,9 @@ describe("JobForm", () => {
       expect(mockedUpdateJob).not.toHaveBeenCalled();
     });
 
-    it("does not toast or navigate when the action returns without success", async () => {
+    it("shows an error toast and does not navigate when the action returns validation_failed", async () => {
       const user = userEvent.setup();
-      mockedCreateJob.mockResolvedValueOnce({ error: "validation" });
+      mockedCreateJob.mockResolvedValueOnce({ error: "validation_failed" });
       render(<JobForm />);
 
       await user.type(screen.getByLabelText(/company name/i), "Solo");
@@ -182,6 +184,7 @@ describe("JobForm", () => {
       await waitFor(() => {
         expect(mockedCreateJob).toHaveBeenCalled();
       });
+      expect(mockedToast.error).toHaveBeenCalledWith(jobErrorMessage("validation_failed"));
       expect(mockedToast.success).not.toHaveBeenCalled();
       expect(mockReplace).not.toHaveBeenCalled();
       expect(mockRefresh).not.toHaveBeenCalled();

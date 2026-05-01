@@ -5,6 +5,7 @@ import Button from "@/components/buttons/button";
 import Modal from "@/components/modals/modal";
 
 import { JobFinderItem } from "@/features/job-finder/types";
+import { jobErrorMessage } from "@/features/jobs/errors";
 import { saveFoundJob } from "@/features/jobs/server/actions";
 
 interface JobFinderJobModalProps {
@@ -51,11 +52,13 @@ const JobFinderJobModal: React.FC<JobFinderJobModalProps> = ({ job, onClose }) =
       }
 
       if ("error" in result && result.error === "already_saved") {
-        toast.info("This job is already saved in your board.");
+        toast.info(jobErrorMessage("already_saved"));
         return;
       }
 
-      toast.error("Could not save this job.");
+      if ("error" in result && result.error) {
+        toast.error(jobErrorMessage(result.error));
+      }
     } catch (error) {
       console.error("Failed saving found job:", error);
       toast.error("Something went wrong while saving the job.");

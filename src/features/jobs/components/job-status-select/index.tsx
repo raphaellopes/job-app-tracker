@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { JOB_STATUSES } from "@/db/schema";
 
+import { jobErrorMessage } from "@/features/jobs/errors";
 import { useUpdateJobStatus } from "@/features/jobs/mutations";
 import type { JobsBoardFilters, JobStatusType } from "@/features/jobs/types";
 import { formatStatusName } from "@/utils/format-status-name";
@@ -56,7 +57,7 @@ const JobStatusSelect: React.FC<JobStatusSelectProps> = ({ jobId, status, filter
       const result = await updateStatusMutation.mutateAsync({ jobId, status: nextStatus });
       if ("error" in result) {
         setSelectedStatus(previousStatus);
-        toast.error("Could not update the job status.");
+        toast.error(jobErrorMessage(result.error));
         return;
       }
       toast.success("Status updated successfully.");
