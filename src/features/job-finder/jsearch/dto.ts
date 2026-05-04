@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Wire shape from JSearch / RapidAPI (partial, snake_case). Unknown keys are preserved via passthrough.
+ * Wire shape from JSearch / RapidAPI (partial, snake_case). Unknown keys are preserved via looseObject.
  */
 export const jSearchJobHighlightsDtoSchema = z
   .looseObject({

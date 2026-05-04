@@ -2,6 +2,9 @@ import { type JSearchJobDto, type JSearchSearchResponseDto, parseJSearchJobDto }
 
 import type { JobFinderItem, JobFinderSearchResponse } from "@/features/job-finder/types";
 
+const MAX_ITEMS_PER_PAGE = 10;
+const DEFAULT_CURRENCY = "USD";
+
 function formatSalary(job: JSearchJobDto): string | undefined {
   const min = job?.job_min_salary;
   const max = job?.job_max_salary;
@@ -9,7 +12,7 @@ function formatSalary(job: JSearchJobDto): string | undefined {
     return undefined;
   }
 
-  const currency = job?.job_salary_currency ?? "USD";
+  const currency = job?.job_salary_currency ?? DEFAULT_CURRENCY;
   const period = job?.job_salary_period ? ` / ${job.job_salary_period}` : "";
   if (typeof min === "number" && typeof max === "number") {
     return `${currency} ${min.toLocaleString()} - ${max.toLocaleString()}${period}`;
@@ -69,7 +72,7 @@ export function mapJSearchResponseToJobFinderSearch(
 ): JobFinderSearchResponse {
   const rows = dto.data ?? [];
   const mapped = rows.map((raw) => mapJSearchJobDtoToJobFinderItem(parseJSearchJobDto(raw)));
-  const hasNextPage = mapped.length >= 10;
+  const hasNextPage = mapped.length >= MAX_ITEMS_PER_PAGE;
   const items = mapped.filter((job) => job.externalJobId);
 
   return {
