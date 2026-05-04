@@ -174,7 +174,7 @@ describe("KanbanBoard", () => {
     });
 
     it("does not refresh when updateJobPositions returns an error", async () => {
-      mockedMutatePositionsAsync.mockResolvedValueOnce({ error: "Invalid job IDs" });
+      mockedMutatePositionsAsync.mockResolvedValueOnce({ error: "job_ids_not_found" });
       const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
 
       const jobs = [

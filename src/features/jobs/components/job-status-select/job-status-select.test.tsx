@@ -4,6 +4,7 @@ import { toast } from "sonner";
 
 import JobStatusSelect from "./index";
 
+import { jobErrorMessage } from "@/features/jobs/errors";
 import { useUpdateJobStatus } from "@/features/jobs/mutations";
 
 jest.mock("@/features/jobs/mutations", () => ({
@@ -73,14 +74,14 @@ describe("JobStatusSelect", () => {
 
   it("shows an error toast and reverts selection when mutation returns an error", async () => {
     const user = userEvent.setup();
-    mutateAsync.mockResolvedValueOnce({ error: "Failed to update job status" });
+    mutateAsync.mockResolvedValueOnce({ error: "internal_error" });
     render(<JobStatusSelect jobId={7} status="WISHLIST" />);
 
     await user.click(screen.getByRole("button", { name: /wishlist/i }));
     await user.click(screen.getByRole("button", { name: "Applied" }));
 
     await waitFor(() => {
-      expect(mockedToast.error).toHaveBeenCalledWith("Could not update the job status.");
+      expect(mockedToast.error).toHaveBeenCalledWith(jobErrorMessage("internal_error"));
     });
     expect(screen.getByRole("button", { name: /wishlist/i })).toBeInTheDocument();
   });

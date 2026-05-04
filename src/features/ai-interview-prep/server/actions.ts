@@ -6,6 +6,7 @@ import { and, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { jobInterviewPrep, jobs } from "@/db/schema";
 
+import type { InterviewPrepActionResult } from "@/features/ai-interview-prep/errors";
 import { interviewPrepSchema } from "@/features/ai-interview-prep/server/schemas";
 import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
 import { requireDbUserId } from "@/features/jobs/server/shared";
@@ -48,12 +49,12 @@ export async function getJobInterviewPrepByJobId(
 export async function saveJobInterviewPrep(
   jobId: number,
   prep: InterviewPrepResult,
-): Promise<{ success: true } | { error: string }> {
+): Promise<InterviewPrepActionResult> {
   try {
     const userId = await requireDbUserId();
 
     if (!jobId || typeof jobId !== "number") {
-      return { error: "Invalid job ID" };
+      return { error: "invalid_id" };
     }
 
     const [owned] = await db
@@ -63,12 +64,12 @@ export async function saveJobInterviewPrep(
       .limit(1);
 
     if (!owned) {
-      return { error: "Job not found" };
+      return { error: "not_found" };
     }
 
     const validatedPrep = interviewPrepSchema.safeParse(prep);
     if (!validatedPrep.success) {
-      return { error: "Invalid interview prep payload" };
+      return { error: "validation_failed" };
     }
 
     await db
@@ -97,6 +98,6 @@ export async function saveJobInterviewPrep(
     return { success: true };
   } catch (error) {
     console.error("Error saving interview prep:", error);
-    return { error: "Failed to save interview prep" };
+    return { error: "internal_error" };
   }
 }

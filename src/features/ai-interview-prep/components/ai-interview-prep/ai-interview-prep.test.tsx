@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 
 import AIInterviewPrep from "./index";
 
+import { interviewPrepErrorMessage } from "@/features/ai-interview-prep/errors";
 import { analyzeJob, saveJobInterviewPrep } from "@/features/ai-interview-prep/server";
 import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
 import { createMockInterviewPrepResult, createMockJob } from "@/test-utils/factories";
@@ -126,7 +127,7 @@ describe("AIInterviewPrep", () => {
       const user = userEvent.setup();
       const prep = createMockInterviewPrepResult();
       mockedAnalyzeJob.mockResolvedValueOnce(prep);
-      mockedSaveJobInterviewPrep.mockResolvedValueOnce({ error: "Job not found" });
+      mockedSaveJobInterviewPrep.mockResolvedValueOnce({ error: "not_found" });
       render(<AIInterviewPrep job={createMockJob()} />);
 
       await user.click(screen.getByRole("button", { name: /^generate$/i }));
@@ -136,7 +137,7 @@ describe("AIInterviewPrep", () => {
       await user.click(screen.getByRole("button", { name: /^save$/i }));
 
       await waitFor(() => {
-        expect(screen.getByText("Job not found")).toBeInTheDocument();
+        expect(screen.getByText(interviewPrepErrorMessage("not_found"))).toBeInTheDocument();
       });
     });
 

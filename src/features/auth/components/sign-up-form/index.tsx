@@ -18,6 +18,7 @@ import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
 } from "@/features/auth/client";
+import { authRegisterErrorMessage } from "@/features/auth/errors";
 import { registerUser } from "@/features/auth/server/actions";
 
 const signUpSchema = Yup.object({
@@ -100,8 +101,8 @@ const SignUpForm: React.FC = () => {
         data.append("idToken", idToken);
 
         const result = await registerUser(data);
-        if (!result.ok) {
-          setServerError(result.message);
+        if ("error" in result) {
+          setServerError(authRegisterErrorMessage(result.error));
           return;
         }
 

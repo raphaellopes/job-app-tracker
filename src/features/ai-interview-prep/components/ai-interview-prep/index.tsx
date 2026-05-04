@@ -7,6 +7,7 @@ import type { ButtonProps } from "@/components/buttons/button";
 import ErrorBox from "@/components/form/error-box";
 
 import AIInterviewPrepResult from "@/features/ai-interview-prep/components/ai-interview-prep-result";
+import { interviewPrepErrorMessage } from "@/features/ai-interview-prep/errors";
 import { analyzeJob, saveJobInterviewPrep } from "@/features/ai-interview-prep/server";
 import type { InterviewPrepResult } from "@/features/ai-interview-prep/types";
 import type { Job } from "@/features/jobs/types";
@@ -53,7 +54,7 @@ const AIInterviewPrep: React.FC<AIInterviewPrepProps> = ({ job, initialSavedResu
     try {
       const saveResult = await saveJobInterviewPrep(job.id, result);
       if ("error" in saveResult) {
-        setError(saveResult.error);
+        setError(interviewPrepErrorMessage(saveResult.error));
         return;
       }
 

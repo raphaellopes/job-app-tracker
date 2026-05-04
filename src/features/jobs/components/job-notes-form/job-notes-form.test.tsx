@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
 
 import JobNotesForm from "./index";
 
+import { jobErrorMessage } from "@/features/jobs/errors";
 import { useUpdateJobNotes } from "@/features/jobs/mutations";
 import { updateJobNotes } from "@/features/jobs/server/actions";
 
@@ -142,7 +143,7 @@ describe("JobNotesForm", () => {
 
   describe("errors", () => {
     it("surfaces an error message from updateJobNotes when the action returns an error", async () => {
-      mockedUpdateJobNotes.mockResolvedValueOnce({ error: "Job not found" });
+      mockedUpdateJobNotes.mockResolvedValueOnce({ error: "not_found" });
 
       render(<JobNotesForm jobId={5} initialNotes="" />);
 
@@ -151,7 +152,7 @@ describe("JobNotesForm", () => {
       await advanceTimers(700);
 
       await waitFor(() => {
-        expect(screen.getByText("Job not found")).toBeInTheDocument();
+        expect(screen.getByText(jobErrorMessage("not_found"))).toBeInTheDocument();
       });
     });
 

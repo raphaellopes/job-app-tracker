@@ -7,6 +7,7 @@ import JobFinderJobModal from "@/features/job-finder/components/job-finder-job-m
 import JobFinderPaginationControls from "@/features/job-finder/components/job-finder-pagination-controls";
 import JobFinderResultsTable from "@/features/job-finder/components/job-finder-results-table";
 import JobFinderSearchForm from "@/features/job-finder/components/job-finder-search-form";
+import { JobFinderApiError, jobFinderErrorMessage } from "@/features/job-finder/errors";
 import { useJobFinderSearch } from "@/features/job-finder/queries";
 import { JobFinderItem } from "@/features/job-finder/types";
 
@@ -47,7 +48,7 @@ const JobFinderClient: React.FC = () => {
   const canSearch = filters.query.trim().length > 0;
   const canSubmitSearch = draftQuery.trim().length > 0;
 
-  const { data, isLoading, isError } = useJobFinderSearch(filters, canSearch);
+  const { data, isLoading, isError, error } = useJobFinderSearch(filters, canSearch);
 
   useEffect(() => {
     if (!data || loadedPages.includes(currentPage)) {
@@ -75,15 +76,18 @@ const JobFinderClient: React.FC = () => {
   const showIdleState = !hasSearched;
   const showEmptyResultsState = hasSearched && !isSearchingFirstPage && !hasResults;
 
-  const jobFinderErrorMessage = useMemo(() => {
+  const jobFinderErrorDisplay = useMemo(() => {
     if (!canSubmitSearch && draftQuery) {
       return "Enter a search query to find jobs.";
     }
-    if (isError) {
-      return "Could not load jobs right now. Please try again.";
+    if (isError && error) {
+      if (error instanceof JobFinderApiError) {
+        return jobFinderErrorMessage(error.code);
+      }
+      return jobFinderErrorMessage("provider_request_failed");
     }
     return null;
-  }, [canSubmitSearch, draftQuery, isError]);
+  }, [canSubmitSearch, draftQuery, isError, error]);
 
   const updateSearchParams = (next: { query?: string; remoteOnly?: boolean }) => {
     const newParams = new URLSearchParams(searchParams.toString());
@@ -126,7 +130,7 @@ const JobFinderClient: React.FC = () => {
         remoteOnly={filters.remoteOnly}
         isSearching={isSearchingFirstPage}
         canSearch={canSubmitSearch}
-        errorMessage={jobFinderErrorMessage}
+        errorMessage={jobFinderErrorDisplay}
         onQueryChange={setDraftQuery}
         onRemoteOnlyChange={(nextRemoteOnly) => updateSearchParams({ remoteOnly: nextRemoteOnly })}
         onSubmit={handleSubmit}

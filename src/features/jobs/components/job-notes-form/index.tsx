@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import Textarea from "@/components/form/textarea";
 
+import { jobErrorMessage } from "@/features/jobs/errors";
 import { useUpdateJobNotes } from "@/features/jobs/mutations";
 import type { JobsBoardFilters } from "@/features/jobs/types";
 
@@ -27,7 +28,7 @@ const JobNotesForm: React.FC<JobNotesFormProps> = ({ jobId, initialNotes, filter
     try {
       const result = await mutation.mutateAsync({ jobId, notes: nextNotes });
       if ("error" in result && result.error) {
-        setError(result.error);
+        setError(jobErrorMessage(result.error));
         return;
       }
       lastSavedNotesRef.current = nextNotes;

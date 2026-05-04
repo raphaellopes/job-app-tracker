@@ -6,22 +6,26 @@ import { and, eq, inArray, max } from "drizzle-orm";
 import { db } from "@/db";
 import { jobs } from "@/db/schema";
 
+import type { JobActionResult } from "@/features/jobs/errors";
 import { JobStatus, type JobStatusType } from "@/features/jobs/server/schemas";
 import { appliedDatePatchForStatusChange, requireDbUserId } from "@/features/jobs/server/shared";
 
-export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
+export async function updateJobStatus(
+  jobId: number,
+  newStatus: JobStatusType,
+): Promise<JobActionResult> {
   try {
     const userId = await requireDbUserId();
 
     if (!jobId || typeof jobId !== "number") {
       console.error("Invalid job ID:", jobId);
-      return { error: "Invalid job ID" };
+      return { error: "invalid_id" };
     }
 
     const validatedStatus = JobStatus.safeParse(newStatus);
     if (!validatedStatus.success) {
       console.error("Validation Errors:", validatedStatus.error.flatten().fieldErrors);
-      return { error: "Invalid status value" };
+      return { error: "invalid_status" };
     }
 
     const [existing] = await db
@@ -31,7 +35,7 @@ export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
       .limit(1);
 
     if (!existing) {
-      return { error: "Job not found" };
+      return { error: "not_found" };
     }
 
     const maxPositionResult = await db
@@ -56,29 +60,29 @@ export async function updateJobStatus(jobId: number, newStatus: JobStatusType) {
     return { success: true };
   } catch (error) {
     console.error("Error updating job status:", error);
-    return { error: "Failed to update job status" };
+    return { error: "internal_error" };
   }
 }
 
 export async function updateJobPositions(
   jobIds: number[],
   status?: JobStatusType,
-): Promise<{ success: true } | { error: string }> {
+): Promise<JobActionResult> {
   try {
     const userId = await requireDbUserId();
 
     if (!Array.isArray(jobIds) || jobIds.length === 0) {
-      return { error: "Job IDs array is required and cannot be empty" };
+      return { error: "empty_job_ids" };
     }
 
     if (!jobIds.every((id) => typeof id === "number" && id > 0)) {
-      return { error: "All job IDs must be valid positive numbers" };
+      return { error: "invalid_job_ids" };
     }
 
     if (status) {
       const validatedStatus = JobStatus.safeParse(status);
       if (!validatedStatus.success) {
-        return { error: "Invalid status value" };
+        return { error: "invalid_status" };
       }
     }
 
@@ -88,7 +92,7 @@ export async function updateJobPositions(
       .where(and(eq(jobs.userId, userId), inArray(jobs.id, jobIds)));
 
     if (owned.length !== jobIds.length) {
-      return { error: "Invalid job IDs" };
+      return { error: "job_ids_not_found" };
     }
 
     await db.transaction(async (tx) => {
@@ -112,23 +116,20 @@ export async function updateJobPositions(
     return { success: true };
   } catch (error) {
     console.error("Error updating job positions:", error);
-    return { error: "Failed to update job positions" };
+    return { error: "internal_error" };
   }
 }
 
-export async function updateJobNotes(
-  jobId: number,
-  notes: string,
-): Promise<{ success: true } | { error: string }> {
+export async function updateJobNotes(jobId: number, notes: string): Promise<JobActionResult> {
   try {
     const userId = await requireDbUserId();
 
     if (!jobId || typeof jobId !== "number") {
-      return { error: "Invalid job ID" };
+      return { error: "invalid_id" };
     }
 
     if (typeof notes !== "string") {
-      return { error: "Invalid notes value" };
+      return { error: "invalid_notes" };
     }
 
     const updated = await db
@@ -138,7 +139,7 @@ export async function updateJobNotes(
       .returning({ id: jobs.id });
 
     if (updated.length === 0) {
-      return { error: "Job not found" };
+      return { error: "not_found" };
     }
 
     revalidatePath("/board");
@@ -147,6 +148,6 @@ export async function updateJobNotes(
     return { success: true };
   } catch (error) {
     console.error("Error updating job notes:", error);
-    return { error: "Failed to update job notes" };
+    return { error: "internal_error" };
   }
 }
