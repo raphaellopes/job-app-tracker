@@ -1,3 +1,4 @@
+/** Normalized job row used in the UI (mapped from JSearch wire DTOs in `jsearch/`). */
 export type JobFinderItem = {
   externalJobId: string;
   title: string;
