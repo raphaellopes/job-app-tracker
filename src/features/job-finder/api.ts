@@ -1,3 +1,4 @@
+import { JobFinderApiError, resolveJobFinderErrorCode } from "@/features/job-finder/errors";
 import type { JobFinderSearchResult } from "@/features/job-finder/types";
 
 export async function fetchJobFinderResults(params: {
@@ -15,9 +16,22 @@ export async function fetchJobFinderResults(params: {
     method: "GET",
   });
 
-  if (!response.ok) {
-    throw new Error("Failed to load job finder results");
+  const text = await response.text();
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text) as unknown;
+  } catch {
+    if (!response.ok) {
+      throw new JobFinderApiError(resolveJobFinderErrorCode(undefined, response.status));
+    }
+    throw new JobFinderApiError("provider_request_failed");
   }
 
-  return (await response.json()) as JobFinderSearchResult;
+  const body = parsed as { error?: string };
+
+  if (!response.ok) {
+    throw new JobFinderApiError(resolveJobFinderErrorCode(body.error, response.status));
+  }
+
+  return parsed as JobFinderSearchResult;
 }

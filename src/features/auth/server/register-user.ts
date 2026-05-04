@@ -9,14 +9,14 @@ import { users } from "@/db/schema";
 
 import { firebaseAdminAuth } from "@/lib/firebase/admin";
 
+import type { AuthRegisterResult } from "@/features/auth/errors";
+
 const registerUserSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required"),
   lastName: z.string().trim().min(1, "Last name is required"),
   email: z.email("Enter a valid email address").trim(),
   idToken: z.string().min(1, "Authentication token is required"),
 });
-
-export type RegisterUserResult = { ok: true } | { ok: false; message: string };
 
 /**
  * @TODO: Check if this is the correct way to check for unique violations. The code seems
@@ -34,7 +34,9 @@ function isPostgresUniqueViolation(error: unknown): boolean {
   return false;
 }
 
-export async function registerUser(formData: FormData): Promise<RegisterUserResult> {
+export type RegisterUserResult = AuthRegisterResult;
+
+export async function registerUser(formData: FormData): Promise<AuthRegisterResult> {
   const validated = registerUserSchema.safeParse({
     firstName: formData.get("firstName"),
     lastName: formData.get("lastName"),
@@ -43,16 +45,22 @@ export async function registerUser(formData: FormData): Promise<RegisterUserResu
   });
 
   if (!validated.success) {
-    const first = Object.values(validated.error.flatten().fieldErrors)[0]?.[0];
-    return { ok: false, message: first ?? "Invalid input." };
+    return { error: "validation_failed" };
   }
 
   const { firstName, lastName, email, idToken } = validated.data;
   const emailNormalized = email.toLowerCase();
 
-  const decodedToken = await firebaseAdminAuth.verifyIdToken(idToken);
+  let decodedToken;
+  try {
+    decodedToken = await firebaseAdminAuth.verifyIdToken(idToken);
+  } catch (error) {
+    console.error("registerUser: verifyIdToken failed:", error);
+    return { error: "internal_error" };
+  }
+
   if (!decodedToken.email || decodedToken.email.toLowerCase() !== emailNormalized) {
-    return { ok: false, message: "The authenticated email does not match." };
+    return { error: "email_token_mismatch" };
   }
 
   try {
@@ -79,14 +87,12 @@ export async function registerUser(formData: FormData): Promise<RegisterUserResu
     }
   } catch (error) {
     if (isPostgresUniqueViolation(error)) {
-      return {
-        ok: false,
-        message: "An account with this email already exists.",
-      };
+      return { error: "email_already_exists" };
     }
-    throw error;
+    console.error("registerUser: database error:", error);
+    return { error: "internal_error" };
   }
 
   revalidatePath("/dashboard");
-  return { ok: true };
+  return { success: true };
 }

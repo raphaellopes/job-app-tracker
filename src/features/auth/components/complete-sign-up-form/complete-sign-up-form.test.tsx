@@ -7,6 +7,7 @@ import { firebaseAuth } from "@/lib/firebase/client";
 
 import CompleteSignUpForm from "./index";
 
+import { authClientErrorMessage, authRegisterErrorMessage } from "@/features/auth/errors";
 import { registerUser, type RegisterUserResult } from "@/features/auth/server/actions";
 
 jest.mock("next/navigation", () => ({
@@ -73,7 +74,7 @@ describe("CompleteSignUpForm", () => {
       push: mockPush,
       refresh: mockRefresh,
     } as unknown as ReturnType<typeof useRouter>);
-    mockedRegisterUser.mockResolvedValue({ ok: true });
+    mockedRegisterUser.mockResolvedValue({ success: true });
     setFirebaseCurrentUser({
       email: "user@example.com",
       getIdToken: jest.fn().mockResolvedValue("mock-id-token"),
@@ -191,7 +192,7 @@ describe("CompleteSignUpForm", () => {
       expect(screen.getByRole("button", { name: /^saving/i })).toBeDisabled();
 
       await act(async () => {
-        resolveRegister({ ok: true });
+        resolveRegister({ success: true });
       });
 
       await waitFor(() => {
@@ -267,7 +268,7 @@ describe("CompleteSignUpForm", () => {
       await user.click(screen.getByRole("button", { name: /^continue$/i }));
 
       expect(
-        await screen.findByText("Unable to read your session. Please sign in again."),
+        await screen.findByText(authClientErrorMessage("session_unavailable")),
       ).toBeInTheDocument();
       expect(mockedRegisterUser).not.toHaveBeenCalled();
     });
@@ -275,8 +276,7 @@ describe("CompleteSignUpForm", () => {
     it("shows registerUser failure message", async () => {
       const user = userEvent.setup();
       mockedRegisterUser.mockResolvedValueOnce({
-        ok: false,
-        message: "Could not save profile.",
+        error: "email_already_exists",
       });
 
       render(<CompleteSignUpForm />);
@@ -289,7 +289,9 @@ describe("CompleteSignUpForm", () => {
       await user.type(screen.getByLabelText(/^last name/i), "Doe");
       await user.click(screen.getByRole("button", { name: /^continue$/i }));
 
-      expect(await screen.findByText("Could not save profile.")).toBeInTheDocument();
+      expect(
+        await screen.findByText(authRegisterErrorMessage("email_already_exists")),
+      ).toBeInTheDocument();
       expect(mockedFetch).not.toHaveBeenCalled();
       expect(mockPush).not.toHaveBeenCalled();
     });
@@ -309,12 +311,12 @@ describe("CompleteSignUpForm", () => {
       await user.click(screen.getByRole("button", { name: /^continue$/i }));
 
       expect(
-        await screen.findByText("Unable to refresh your session. Please try again."),
+        await screen.findByText(authClientErrorMessage("session_refresh_failed")),
       ).toBeInTheDocument();
       expect(mockPush).not.toHaveBeenCalled();
     });
 
-    it("shows Error.message when registerUser throws", async () => {
+    it("shows internal_error message when registerUser throws", async () => {
       const user = userEvent.setup();
       mockedRegisterUser.mockRejectedValueOnce(new Error("Network down"));
 
@@ -328,10 +330,12 @@ describe("CompleteSignUpForm", () => {
       await user.type(screen.getByLabelText(/^last name/i), "Doe");
       await user.click(screen.getByRole("button", { name: /^continue$/i }));
 
-      expect(await screen.findByText("Network down")).toBeInTheDocument();
+      expect(
+        await screen.findByText(authRegisterErrorMessage("internal_error")),
+      ).toBeInTheDocument();
     });
 
-    it("shows a generic message when registerUser rejects a non-Error", async () => {
+    it("shows internal_error message when registerUser rejects a non-Error", async () => {
       const user = userEvent.setup();
       mockedRegisterUser.mockRejectedValueOnce("unexpected");
 
@@ -345,7 +349,9 @@ describe("CompleteSignUpForm", () => {
       await user.type(screen.getByLabelText(/^last name/i), "Doe");
       await user.click(screen.getByRole("button", { name: /^continue$/i }));
 
-      expect(await screen.findByText("Something went wrong.")).toBeInTheDocument();
+      expect(
+        await screen.findByText(authRegisterErrorMessage("internal_error")),
+      ).toBeInTheDocument();
     });
   });
 });

@@ -12,6 +12,7 @@ import {
   createSessionFromCurrentUser,
   signInWithGoogleAndCreateSession,
 } from "@/features/auth/client";
+import { authRegisterErrorMessage } from "@/features/auth/errors";
 import { registerUser } from "@/features/auth/server/actions";
 
 jest.mock("next/navigation", () => ({
@@ -62,7 +63,7 @@ describe("SignUpForm", () => {
       refresh: mockRefresh,
     } as unknown as ReturnType<typeof useRouter>);
     mockedCreateUser.mockResolvedValue(mockCredential());
-    mockedRegisterUser.mockResolvedValue({ ok: true });
+    mockedRegisterUser.mockResolvedValue({ success: true });
     mockedCreateSession.mockResolvedValue(undefined);
     mockedGoogleSignUp.mockResolvedValue(undefined);
   });
@@ -150,11 +151,10 @@ describe("SignUpForm", () => {
       expect(mockRefresh).toHaveBeenCalled();
     });
 
-    it("shows the server message when registerUser returns ok: false", async () => {
+    it("shows the mapped message when registerUser returns an error code", async () => {
       const user = userEvent.setup();
       mockedRegisterUser.mockResolvedValueOnce({
-        ok: false,
-        message: "An account with this email already exists.",
+        error: "email_already_exists",
       });
 
       render(<SignUpForm />);
@@ -166,7 +166,7 @@ describe("SignUpForm", () => {
       await user.click(screen.getByRole("button", { name: /create account$/i }));
 
       expect(
-        await screen.findByText("An account with this email already exists."),
+        await screen.findByText(authRegisterErrorMessage("email_already_exists")),
       ).toBeInTheDocument();
       expect(mockedCreateSession).not.toHaveBeenCalled();
       expect(mockPush).not.toHaveBeenCalled();

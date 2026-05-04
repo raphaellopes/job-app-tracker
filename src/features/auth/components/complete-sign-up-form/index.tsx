@@ -12,6 +12,7 @@ import Input from "@/components/form/input";
 
 import { firebaseAuth } from "@/lib/firebase/client";
 
+import { authClientErrorMessage, authRegisterErrorMessage } from "@/features/auth/errors";
 import { registerUser } from "@/features/auth/server/actions";
 
 const schema = Yup.object({
@@ -61,7 +62,7 @@ const CompleteSignUpForm: React.FC = () => {
       try {
         const user = firebaseAuth.currentUser;
         if (!user) {
-          setServerError("Unable to read your session. Please sign in again.");
+          setServerError(authClientErrorMessage("session_unavailable"));
           return;
         }
         const idToken = await user.getIdToken();
@@ -73,8 +74,8 @@ const CompleteSignUpForm: React.FC = () => {
         data.append("idToken", idToken);
 
         const result = await registerUser(data);
-        if (!result.ok) {
-          setServerError(result.message);
+        if ("error" in result) {
+          setServerError(authRegisterErrorMessage(result.error));
           return;
         }
 
@@ -87,18 +88,14 @@ const CompleteSignUpForm: React.FC = () => {
         });
 
         if (!response.ok) {
-          setServerError("Unable to refresh your session. Please try again.");
+          setServerError(authClientErrorMessage("session_refresh_failed"));
           return;
         }
 
         router.push("/dashboard");
         router.refresh();
-      } catch (error) {
-        if (error instanceof Error) {
-          setServerError(error.message);
-          return;
-        }
-        setServerError("Something went wrong.");
+      } catch {
+        setServerError(authRegisterErrorMessage("internal_error"));
       } finally {
         setIsSubmitting(false);
       }
