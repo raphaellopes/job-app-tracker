@@ -2,71 +2,16 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getDbUserForSession } from "@/features/auth/server";
+import {
+  mapJSearchResponseToJobFinderSearch,
+  parseJSearchSearchResponseDto,
+} from "@/features/job-finder/jsearch";
 
 const searchParamsSchema = z.object({
   q: z.string().trim().min(1).max(120),
   page: z.coerce.number().int().min(1).max(100).default(1),
   remoteOnly: z.coerce.boolean().default(false),
 });
-
-type JSearchJob = {
-  job_id?: string;
-  job_title?: string;
-  employer_name?: string;
-  employer_logo?: string | null;
-  job_publisher?: string;
-  job_employment_type?: string;
-  job_employment_types?: string[];
-  job_apply_link?: string;
-  job_description?: string;
-  job_min_salary?: number | null;
-  job_max_salary?: number | null;
-  job_salary_currency?: string | null;
-  job_salary_period?: string | null;
-  job_is_remote?: boolean;
-  employer_company_type?: string | null;
-  job_naics_name?: string | null;
-  job_city?: string | null;
-  job_state?: string | null;
-  job_country?: string | null;
-  job_required_skills?: string[] | null;
-  job_highlights?: {
-    Qualifications?: string[];
-    Responsibilities?: string[];
-  } | null;
-};
-
-type JSearchResponse = {
-  data?: JSearchJob[];
-};
-
-function formatSalary(job: JSearchJob): string | undefined {
-  const min = job.job_min_salary;
-  const max = job.job_max_salary;
-  if (typeof min !== "number" && typeof max !== "number") {
-    return undefined;
-  }
-
-  const currency = job.job_salary_currency ?? "USD";
-  const period = job.job_salary_period ? ` / ${job.job_salary_period}` : "";
-  if (typeof min === "number" && typeof max === "number") {
-    return `${currency} ${min.toLocaleString()} - ${max.toLocaleString()}${period}`;
-  }
-  const value = (min ?? max) as number;
-  return `${currency} ${value.toLocaleString()}${period}`;
-}
-
-function buildLocationTag(job: JSearchJob): string | undefined {
-  const parts = [job.job_city, job.job_state, job.job_country]
-    .map((part) => part?.trim())
-    .filter(Boolean);
-
-  if (parts.length === 0) {
-    return undefined;
-  }
-
-  return parts.join(", ");
-}
 
 export async function GET(request: Request) {
   const { session, dbUser } = await getDbUserForSession();
@@ -117,41 +62,15 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "provider_error" }, { status: response.status });
     }
 
-    const payload = (await response.json()) as JSearchResponse;
-    const jobs = (payload.data ?? []).map((job) => {
-      const employmentTypes = job.job_employment_types?.filter(Boolean) ?? [];
-      const primaryEmploymentType = job.job_employment_type?.trim();
-      if (primaryEmploymentType && !employmentTypes.includes(primaryEmploymentType)) {
-        employmentTypes.unshift(primaryEmploymentType);
-      }
+    const raw: unknown = await response.json();
+    const parsed = parseJSearchSearchResponseDto(raw);
+    if (!parsed.success) {
+      console.error("JSearch response validation failed:", parsed.error.flatten());
+      return NextResponse.json({ error: "provider_error" }, { status: 502 });
+    }
 
-      return {
-        externalJobId: job.job_id ?? "",
-        title: job.job_title ?? "Untitled role",
-        employerName: job.employer_name ?? "Unknown company",
-        employerLogo: job.employer_logo ?? null,
-        jobPublisher: job.job_publisher ?? "Unknown publisher",
-        employmentTypes,
-        applyLink: job.job_apply_link ?? "",
-        description: job.job_description ?? "",
-        salary: formatSalary(job),
-        isRemote: job.job_is_remote ?? false,
-        employerCompanyType: job.employer_company_type ?? undefined,
-        naicsName: job.job_naics_name ?? undefined,
-        locationTag: buildLocationTag(job),
-        requiredSkills: job.job_required_skills?.filter(Boolean) ?? [],
-        highlightQualifications: job.job_highlights?.Qualifications?.filter(Boolean) ?? [],
-        highlightResponsibilities: job.job_highlights?.Responsibilities?.filter(Boolean) ?? [],
-      };
-    });
-
-    return NextResponse.json({
-      items: jobs.filter((job) => job.externalJobId),
-      pagination: {
-        page,
-        hasNextPage: jobs.length >= 10,
-      },
-    });
+    const payload = mapJSearchResponseToJobFinderSearch(parsed.data, page);
+    return NextResponse.json(payload);
   } catch (error) {
     if ((error as Error).name === "AbortError") {
       return NextResponse.json({ error: "provider_timeout" }, { status: 504 });
