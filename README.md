@@ -2,6 +2,8 @@
 
 A full-stack web app for tracking job applications through a simple pipeline: wishlist, applied, interviewing, offer, or rejected. You can manage roles in a Kanban board, skim metrics on a dashboard, dig into analytics, and optionally run an AI-assisted pass over a posting (skills to highlight, mock questions, a rough resume fit score, and a short tip) backed by Google’s Gemini API.
 
+**Live demo:** [Vercel deployment](https://project-xi7gf-cfxm9wxut-raphaellopes-projects.vercel.app)
+
 ## What it does
 
 - **Authentication** — Firebase Auth on the client; the server exchanges the Firebase ID token for an HTTP-only session cookie and verifies it with the Firebase Admin SDK on each request.
