@@ -80,7 +80,7 @@ const JobView: React.FC<JobViewProps> = ({ job, filters = {} }) => {
     <div className="w-full sm:min-w-[36rem]">
       <Tabs
         defaultTabId="job-information"
-        tabsListClassName="sticky top-12 bg-white"
+        tabsListClassName="sticky top-12 bg-white z-10"
         onTabChange={(tabId) => {
           if (tabId === "ai-interview-prep") {
             setHasOpenedInterviewPrepTab(true);

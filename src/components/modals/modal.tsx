@@ -1,7 +1,12 @@
+"use client";
+
 import { ReactNode } from "react";
 import classNames from "classnames";
+import { createPortal } from "react-dom";
 
 import ModalHeader from "./modal-header";
+
+import { useBodyScrollLock } from "@/hooks/use-body-scroll-lock";
 
 type ModalSizes = "sm" | "md";
 
@@ -19,10 +24,11 @@ const modalSizeClasses: Record<ModalSizes, string> = {
 };
 
 const Modal: React.FC<ModalProps> = ({ title, description, size = "sm", onClose, children }) => {
+  useBodyScrollLock(true);
   const maxWidthClassName = modalSizeClasses[size];
   const isSmallSize = size === "sm";
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm"
       onClick={onClose}
@@ -37,14 +43,15 @@ const Modal: React.FC<ModalProps> = ({ title, description, size = "sm", onClose,
         onClick={(e) => e.stopPropagation()}
       >
         <ModalHeader
-          className="bg-white sticky top-0"
+          className="bg-white sticky top-0 z-10"
           title={title ?? ""}
           description={description}
           onClose={onClose}
         />
         <div className="p-4">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

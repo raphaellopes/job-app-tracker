@@ -15,6 +15,10 @@ import { SearchIcon } from "@/components/icons/search-icon";
 import Logo from "@/components/logo";
 
 import { SignOutButton } from "@/features/auth";
+import {
+  MOBILE_DRAWER_SCROLL_LOCK_MEDIA_QUERY,
+  useBodyScrollLock,
+} from "@/hooks/use-body-scroll-lock";
 
 const menuItems = [
   {
@@ -47,6 +51,8 @@ export function Sidebar({ userName, userEmail, avatarUrl }: SidebarProps) {
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
   };
+
+  useBodyScrollLock(isMobileMenuOpen, MOBILE_DRAWER_SCROLL_LOCK_MEDIA_QUERY);
 
   useEffect(() => {
     if (!isMobileMenuOpen) {
