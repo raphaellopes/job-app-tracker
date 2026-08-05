@@ -1,4 +1,6 @@
 /** Normalized job row used in the UI (mapped from JSearch wire DTOs in `jsearch/`). */
+export type JobFinderUserState = "none" | "saved" | "not_a_fit";
+
 export type JobFinderItem = {
   externalJobId: string;
   title: string;
@@ -16,6 +18,7 @@ export type JobFinderItem = {
   requiredSkills: string[];
   highlightQualifications: string[];
   highlightResponsibilities: string[];
+  userState?: JobFinderUserState;
 };
 
 export type JobFinderSearchResponse = {

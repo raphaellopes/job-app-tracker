@@ -9,6 +9,8 @@ import TagChipList from "@/components/tag/tag-chip-list";
 import { LazyAIInterviewPrep } from "@/features/ai-interview-prep";
 import JobNotesForm from "@/features/jobs/components/job-notes-form";
 import JobStatusSelect from "@/features/jobs/components/job-status-select";
+import MarkNotApplicableButton from "@/features/jobs/components/mark-not-applicable-button";
+import RestoreJobButton from "@/features/jobs/components/restore-job-button";
 import type { Job, JobsBoardFilters } from "@/features/jobs/types";
 
 interface JobViewProps {
@@ -35,11 +37,25 @@ const SectionContent: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({
 
 const JobView: React.FC<JobViewProps> = ({ job, filters = {} }) => {
   const [hasOpenedInterviewPrepTab, setHasOpenedInterviewPrepTab] = useState(false);
+  const isNotAFit = job.status === "NOT_A_FIT";
 
   const renderJobContent = (
     <div className="space-y-5">
       <Section title="Status">
-        <JobStatusSelect jobId={job.id} status={job.status} filters={filters} />
+        {isNotAFit ? (
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm text-gray-600">Not a fit</span>
+            <RestoreJobButton jobId={job.id} />
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center gap-3">
+            <JobStatusSelect jobId={job.id} status={job.status} filters={filters} />
+            <MarkNotApplicableButton
+              id={job.id}
+              className="text-gray-400 hover:text-amber-600 transition-colors cursor-pointer"
+            />
+          </div>
+        )}
       </Section>
       <Section title="Job publisher">
         <SectionContent>{job.jobPublisher ?? "Not provided"}</SectionContent>

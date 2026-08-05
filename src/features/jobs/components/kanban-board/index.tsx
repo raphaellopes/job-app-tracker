@@ -13,12 +13,14 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 
-import { JOB_STATUSES } from "@/db/schema";
+import { BOARD_PIPELINE_STATUSES } from "@/db/schema";
 
 import JobCard from "@/features/jobs/components/job-card";
 import KanbanColumn from "@/features/jobs/components/kanban-column";
 import { useUpdateJobPositions, useUpdateJobStatus } from "@/features/jobs/mutations";
-import type { Job, JobsBoardFilters, JobStatusType } from "@/features/jobs/types";
+import type { Job, JobsBoardFilters } from "@/features/jobs/types";
+
+type PipelineStatus = (typeof BOARD_PIPELINE_STATUSES)[number];
 
 interface KanbanBoardProps {
   jobs: Job[];
@@ -38,12 +40,12 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ jobs, filters = {} }) => {
     }),
   );
 
-  const jobsByStatus = JOB_STATUSES.reduce(
+  const jobsByStatus = BOARD_PIPELINE_STATUSES.reduce(
     (acc, status) => {
       acc[status] = jobs.filter((job) => job.status === status);
       return acc;
     },
-    {} as Record<JobStatusType, Job[]>,
+    {} as Record<PipelineStatus, Job[]>,
   );
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -60,12 +62,14 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ jobs, filters = {} }) => {
     const draggedJob = jobs.find((j) => j.id === jobId);
     if (!draggedJob) return;
 
-    let newStatus: JobStatusType | null = null;
-    if (JOB_STATUSES.includes(over.id as JobStatusType)) {
-      newStatus = over.id as JobStatusType;
+    let newStatus: PipelineStatus | null = null;
+    if ((BOARD_PIPELINE_STATUSES as readonly string[]).includes(over.id as string)) {
+      newStatus = over.id as PipelineStatus;
     } else {
       const targetJob = jobs.find((j) => j.id === over.id);
-      if (targetJob) newStatus = targetJob.status;
+      if (targetJob && targetJob.status !== "NOT_A_FIT") {
+        newStatus = targetJob.status as PipelineStatus;
+      }
     }
     if (!newStatus) return;
 
@@ -74,7 +78,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ jobs, filters = {} }) => {
       const oldIndex = columnJobs.findIndex((j) => j.id === jobId);
       if (oldIndex === -1) return;
 
-      const newIndex = JOB_STATUSES.includes(over.id as JobStatusType)
+      const newIndex = (BOARD_PIPELINE_STATUSES as readonly string[]).includes(over.id as string)
         ? columnJobs.length - 1
         : columnJobs.findIndex((j) => j.id === over.id);
 
@@ -107,7 +111,7 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ jobs, filters = {} }) => {
     >
       <div className="w-full overflow-x-auto pb-4 -mx-2 px-2 pt-2 scroll-smooth">
         <div className="flex gap-4 min-w-max">
-          {JOB_STATUSES.map((status) => {
+          {BOARD_PIPELINE_STATUSES.map((status) => {
             const columnJobs = jobsByStatus[status];
             return (
               <SortableContext

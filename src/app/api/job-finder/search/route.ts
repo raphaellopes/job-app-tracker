@@ -6,6 +6,7 @@ import {
   mapJSearchResponseToJobFinderSearch,
   parseJSearchSearchResponseDto,
 } from "@/features/job-finder/jsearch";
+import { getJobFinderUserStates } from "@/features/jobs/server/job-finder-states";
 
 const searchParamsSchema = z.object({
   q: z.string().trim().min(1).max(120),
@@ -70,7 +71,19 @@ export async function GET(request: Request) {
     }
 
     const payload = mapJSearchResponseToJobFinderSearch(parsed.data, page);
-    return NextResponse.json(payload);
+
+    const externalJobIds = payload.items.map((item) => item.externalJobId);
+    const userStates = await getJobFinderUserStates(dbUser.id, externalJobIds);
+
+    const enrichedItems = payload.items.map((item) => ({
+      ...item,
+      userState: userStates.get(item.externalJobId) ?? ("none" as const),
+    }));
+
+    return NextResponse.json({
+      ...payload,
+      items: enrichedItems,
+    });
   } catch (error) {
     if ((error as Error).name === "AbortError") {
       return NextResponse.json({ error: "provider_timeout" }, { status: 504 });

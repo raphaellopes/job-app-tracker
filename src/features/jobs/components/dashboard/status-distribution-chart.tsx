@@ -11,8 +11,8 @@ import {
   Tooltip,
 } from "recharts";
 
-import { formatStatusName } from "@/utils/format-status-name";
 import { getStatusColor } from "@/utils/status-colors";
+import { getStatusLabel } from "@/utils/status-labels";
 
 interface StatusDistributionChartProps {
   data: Array<{ status: string; count: number }>;
@@ -24,6 +24,7 @@ const TAILWIND_COLORS: Record<string, string> = {
   "bg-amber-500": "#f59e0b",
   "bg-green-500": "#22c55e",
   "bg-red-500": "#ef4444",
+  "bg-gray-400": "#9ca3af",
   "bg-gray-500": "#6b7280",
 };
 
@@ -80,7 +81,7 @@ const CustomTooltip: React.FC<CustomTooltipProps> = ({ active, payload }) => {
     const data = payload[0].payload;
     return (
       <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-        <p className="font-semibold text-gray-800">{formatStatusName(data.status)}</p>
+        <p className="font-semibold text-gray-800">{getStatusLabel(data.status)}</p>
         <p className="text-sm text-gray-600">
           Count: <span className="font-medium">{data.count}</span>
         </p>
@@ -137,7 +138,7 @@ export function StatusDistributionChart({ data }: StatusDistributionChartProps) 
           <Legend
             formatter={(value, entry) => {
               const item = entry?.payload as { status: string; count: number };
-              return item ? formatStatusName(item.status) : value;
+              return item ? getStatusLabel(item.status) : value;
             }}
             wrapperStyle={{ paddingTop: "20px" }}
           />

@@ -1,5 +1,9 @@
 import { type JSearchJobDto, type JSearchSearchResponseDto, parseJSearchJobDto } from "./dto";
 
+import {
+  generateExternalJobId,
+  hasUsableExternalJobIdentity,
+} from "@/features/job-finder/generate-external-job-id";
 import type { JobFinderItem, JobFinderSearchResponse } from "@/features/job-finder/types";
 
 const MAX_ITEMS_PER_PAGE = 10;
@@ -41,9 +45,16 @@ export function mapJSearchJobDtoToJobFinderItem(job: JSearchJobDto): JobFinderIt
   }
 
   const highlights = job.job_highlights;
+  const rawTitle = job.job_title ?? "";
+  const rawCompanyName = job.employer_name ?? "";
+  const locationTag = buildLocationTag(job);
 
   return {
-    externalJobId: job.job_id ?? "",
+    externalJobId: generateExternalJobId({
+      title: rawTitle,
+      companyName: rawCompanyName,
+      location: locationTag ?? "",
+    }),
     title: job.job_title ?? "Untitled role",
     employerName: job.employer_name ?? "Unknown company",
     employerLogo: job.employer_logo ?? null,
@@ -55,25 +66,31 @@ export function mapJSearchJobDtoToJobFinderItem(job: JSearchJobDto): JobFinderIt
     isRemote: job.job_is_remote ?? false,
     employerCompanyType: job.employer_company_type ?? undefined,
     naicsName: job.job_naics_name ?? undefined,
-    locationTag: buildLocationTag(job),
+    locationTag,
     requiredSkills: job.job_required_skills?.filter(Boolean) ?? [],
     highlightQualifications: highlights?.Qualifications?.filter(Boolean) ?? [],
     highlightResponsibilities: highlights?.Responsibilities?.filter(Boolean) ?? [],
   };
 }
 
+function hasUsableIdentityFromDto(job: JSearchJobDto): boolean {
+  return hasUsableExternalJobIdentity(job.job_title ?? "", job.employer_name ?? "");
+}
+
 /**
  * Maps a validated JSearch list response into the app job-finder domain shape.
- * `hasNextPage` matches prior behavior: based on mapped row count before dropping rows without `externalJobId`.
+ * `hasNextPage` is based on mapped row count before dropping rows without usable identity.
  */
 export function mapJSearchResponseToJobFinderSearch(
   dto: JSearchSearchResponseDto,
   page: number,
 ): JobFinderSearchResponse {
   const rows = dto.data ?? [];
-  const mapped = rows.map((raw) => mapJSearchJobDtoToJobFinderItem(parseJSearchJobDto(raw)));
-  const hasNextPage = mapped.length >= MAX_ITEMS_PER_PAGE;
-  const items = mapped.filter((job) => job.externalJobId);
+  const parsed = rows.map((raw) => parseJSearchJobDto(raw));
+  const hasNextPage = parsed.length >= MAX_ITEMS_PER_PAGE;
+  const items = parsed
+    .filter((job) => hasUsableIdentityFromDto(job))
+    .map((job) => mapJSearchJobDtoToJobFinderItem(job));
 
   return {
     items,

@@ -5,7 +5,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { AddJobButton } from "@/features/jobs/components/add-job-button";
 import JobCard from "@/features/jobs/components/job-card";
 import type { Job, JobStatusType } from "@/features/jobs/types";
-import { formatStatusName } from "@/utils/format-status-name";
+import { getStatusLabel } from "@/utils/status-labels";
 
 interface KanbanColumnProps {
   status: JobStatusType;
@@ -17,7 +17,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ status, jobs }) => {
     id: status,
   });
 
-  const formattedStatus = formatStatusName(status);
+  const formattedStatus = getStatusLabel(status);
   const jobCount = jobs.length;
   const isEmpty = jobs.length === 0;
 

@@ -32,6 +32,11 @@ export const STATUS_COLORS: Record<JobStatusType, StatusColors> = {
     text: "text-red-200",
     border: "border-red-900",
   },
+  NOT_A_FIT: {
+    bg: "bg-gray-400",
+    text: "text-gray-200",
+    border: "border-gray-600",
+  },
 };
 
 /**

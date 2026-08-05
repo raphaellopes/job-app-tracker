@@ -1,3 +1,6 @@
+import classNames from "classnames";
+
+import JobFinderUserStateBadge from "@/features/job-finder/components/job-finder-user-state-badge";
 import { JobFinderItem } from "@/features/job-finder/types";
 
 interface JobFinderResultsTableProps {
@@ -14,25 +17,43 @@ const JobFinderResultsTable: React.FC<JobFinderResultsTableProps> = ({ results, 
         <span className="col-span-2">Publisher</span>
       </div>
 
-      {results.map((job) => (
-        <button
-          type="button"
-          key={job.externalJobId}
-          onClick={() => onSelectJob(job)}
-          className="grid w-full grid-cols-12 gap-3 px-4 py-3 text-left text-sm border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
-        >
-          <span className="col-span-7 font-medium text-gray-900">{job.title}</span>
-          <span className="col-span-3 text-gray-700 flex items-center gap-2">
-            {job.employerLogo && (
-              // JSearch logo hosts vary and are not preconfigured for next/image allowlists.
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={job.employerLogo} alt={`${job.employerName} logo`} width={32} height={32} />
+      {results.map((job) => {
+        const userState = job.userState ?? "none";
+        const isNotAFit = userState === "not_a_fit";
+
+        return (
+          <button
+            type="button"
+            key={job.externalJobId}
+            onClick={() => onSelectJob(job)}
+            className={classNames(
+              "grid w-full grid-cols-12 gap-3 px-4 py-3 text-left text-sm border-b border-gray-100 hover:bg-gray-50 cursor-pointer",
+              {
+                "opacity-70 bg-gray-100": isNotAFit,
+              },
             )}
-            {job.employerName}
-          </span>
-          <span className="col-span-2 text-gray-700">{job.jobPublisher}</span>
-        </button>
-      ))}
+          >
+            <span className="col-span-7 font-medium text-gray-900 flex items-center gap-2 flex-wrap">
+              {job.title}
+              <JobFinderUserStateBadge userState={userState} />
+            </span>
+            <span className="col-span-3 text-gray-700 flex items-center gap-2">
+              {job.employerLogo && (
+                // JSearch logo hosts vary and are not preconfigured for next/image allowlists.
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={job.employerLogo}
+                  alt={`${job.employerName} logo`}
+                  width={32}
+                  height={32}
+                />
+              )}
+              {job.employerName}
+            </span>
+            <span className="col-span-2 text-gray-700">{job.jobPublisher}</span>
+          </button>
+        );
+      })}
     </div>
   );
 };

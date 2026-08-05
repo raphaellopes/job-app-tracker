@@ -1,0 +1,1 @@
+ALTER TYPE "job_status" ADD VALUE 'NOT_A_FIT';

@@ -6,7 +6,7 @@ import { JOB_STATUSES } from "@/db/schema";
 
 import StatusFilter from "./index";
 
-import { formatStatusName } from "@/utils/format-status-name";
+import { getStatusLabel } from "@/utils/status-labels";
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
@@ -43,7 +43,7 @@ describe("StatusFilter", () => {
       const select = screen.getByRole("combobox");
       expect(within(select).getByRole("option", { name: "All Statuses" })).toHaveValue("");
       for (const status of JOB_STATUSES) {
-        expect(within(select).getByRole("option", { name: formatStatusName(status) })).toHaveValue(
+        expect(within(select).getByRole("option", { name: getStatusLabel(status) })).toHaveValue(
           status,
         );
       }

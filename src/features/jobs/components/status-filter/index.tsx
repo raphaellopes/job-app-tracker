@@ -4,7 +4,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { JOB_STATUSES } from "@/db/schema";
 
-import { formatStatusName } from "@/utils/format-status-name";
+import { getStatusLabel } from "@/utils/status-labels";
 
 const StatusFilter: React.FC = () => {
   const searchParams = useSearchParams();
@@ -30,7 +30,7 @@ const StatusFilter: React.FC = () => {
       <option value="">All Statuses</option>
       {JOB_STATUSES.map((status) => (
         <option key={status} value={status}>
-          {formatStatusName(status)}
+          {getStatusLabel(status)}
         </option>
       ))}
     </select>

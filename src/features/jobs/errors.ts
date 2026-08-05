@@ -3,6 +3,7 @@ export type JobErrorCode =
   | "invalid_id"
   | "not_found"
   | "already_saved"
+  | "already_not_a_fit"
   | "invalid_status"
   | "empty_job_ids"
   | "invalid_job_ids"
@@ -17,6 +18,7 @@ const jobErrorMessages: Record<JobErrorCode, string> = {
   invalid_id: "This job could not be found.",
   not_found: "We couldn't find that job.",
   already_saved: "This job is already saved in your board.",
+  already_not_a_fit: "This job is marked as not a fit.",
   invalid_status: "That status is not valid.",
   empty_job_ids: "No jobs to update.",
   invalid_job_ids: "One or more job IDs are invalid.",

@@ -4,13 +4,13 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { toast } from "sonner";
 
-import { JOB_STATUSES } from "@/db/schema";
+import { BOARD_PIPELINE_STATUSES } from "@/db/schema";
 
 import { jobErrorMessage } from "@/features/jobs/errors";
 import { useUpdateJobStatus } from "@/features/jobs/mutations";
 import type { JobsBoardFilters, JobStatusType } from "@/features/jobs/types";
-import { formatStatusName } from "@/utils/format-status-name";
 import { getStatusColor } from "@/utils/status-colors";
+import { getStatusLabel } from "@/utils/status-labels";
 
 interface JobStatusSelectProps {
   jobId: number;
@@ -83,7 +83,7 @@ const JobStatusSelect: React.FC<JobStatusSelectProps> = ({ jobId, status, filter
       >
         <span className="flex items-center gap-2">
           <span className={classNames("w-2 h-2 block rounded-full", selectedStatusColor.bg)}></span>
-          {formatStatusName(selectedStatus)}
+          {getStatusLabel(selectedStatus)}
         </span>
         <span aria-hidden="true" className={classNames("ml-3 text-xs", selectedStatusColor.text)}>
           {isOpen ? "▲" : "▼"}
@@ -96,7 +96,7 @@ const JobStatusSelect: React.FC<JobStatusSelectProps> = ({ jobId, status, filter
           aria-label="Select job status"
           className="absolute left-0 top-full z-10 mt-1 w-52 rounded-md border border-gray-200 bg-white p-1 shadow-lg"
         >
-          {JOB_STATUSES.map((statusOption) => {
+          {BOARD_PIPELINE_STATUSES.map((statusOption) => {
             const statusColor = getStatusColor(statusOption);
             const isSelected = selectedStatus === statusOption;
             return (
@@ -112,7 +112,7 @@ const JobStatusSelect: React.FC<JobStatusSelectProps> = ({ jobId, status, filter
                     <span
                       className={classNames("w-2 h-2 block rounded-full", statusColor.bg)}
                     ></span>
-                    {formatStatusName(statusOption)}
+                    {getStatusLabel(statusOption)}
                   </span>
                 </button>
               </li>

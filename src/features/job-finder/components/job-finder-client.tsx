@@ -2,6 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
+
+import Checkbox from "@/components/form/checkbox";
 
 import JobFinderJobModal from "@/features/job-finder/components/job-finder-job-modal";
 import JobFinderPaginationControls from "@/features/job-finder/components/job-finder-pagination-controls";
@@ -9,17 +12,20 @@ import JobFinderResultsTable from "@/features/job-finder/components/job-finder-r
 import JobFinderSearchForm from "@/features/job-finder/components/job-finder-search-form";
 import { JobFinderApiError, jobFinderErrorMessage } from "@/features/job-finder/errors";
 import { useJobFinderSearch } from "@/features/job-finder/queries";
-import { JobFinderItem } from "@/features/job-finder/types";
+import { jobFinderKeys } from "@/features/job-finder/query-keys";
+import { JobFinderItem, JobFinderUserState } from "@/features/job-finder/types";
 
 const JobFinderClient: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const queryClient = useQueryClient();
 
   const [selectedJob, setSelectedJob] = useState<JobFinderItem | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loadedPages, setLoadedPages] = useState<number[]>([]);
   const [appendedResults, setAppendedResults] = useState<JobFinderItem[]>([]);
+  const [hideNotAFit, setHideNotAFit] = useState(false);
 
   const query = searchParams.get("q") ?? "";
   const [draftQuery, setDraftQuery] = useState(query);
@@ -51,30 +57,54 @@ const JobFinderClient: React.FC = () => {
   const { data, isLoading, isError, error } = useJobFinderSearch(filters, canSearch);
 
   useEffect(() => {
-    if (!data || loadedPages.includes(currentPage)) {
+    if (!data) {
+      return;
+    }
+
+    // Page 1 always syncs to latest query data (covers refetch after save/dismiss).
+    if (currentPage === 1) {
+      setLoadedPages((previousPages) =>
+        previousPages.length === 1 && previousPages[0] === 1 ? previousPages : [1],
+      );
+      setAppendedResults(data.items);
+      return;
+    }
+
+    if (loadedPages.includes(currentPage)) {
       return;
     }
 
     setLoadedPages((previousPages) => [...previousPages, currentPage]);
     setAppendedResults((previousResults) => {
-      if (currentPage === 1) {
-        return data.items;
-      }
-
       const seenIds = new Set(previousResults.map((job) => job.externalJobId));
       const nextJobs = data.items.filter((job) => !seenIds.has(job.externalJobId));
       return [...previousResults, ...nextJobs];
     });
   }, [currentPage, data, loadedPages]);
 
+  const hiddenNotAFitCount = useMemo(
+    () => appendedResults.filter((job) => (job.userState ?? "none") === "not_a_fit").length,
+    [appendedResults],
+  );
+
+  const visibleResults = useMemo(() => {
+    if (!hideNotAFit) {
+      return appendedResults;
+    }
+
+    return appendedResults.filter((job) => (job.userState ?? "none") !== "not_a_fit");
+  }, [appendedResults, hideNotAFit]);
+
   const hasSearched = canSearch;
   const isSearchingFirstPage = isLoading && currentPage === 1;
   const isLoadingMore = isLoading && currentPage > 1;
-  const hasResults = appendedResults.length > 0;
+  const hasResults = visibleResults.length > 0;
+  const hasAnyResults = appendedResults.length > 0;
   const hasNextPage = data?.pagination.hasNextPage ?? false;
   const canRenderViewMore = hasNextPage || isLoadingMore;
   const showIdleState = !hasSearched;
-  const showEmptyResultsState = hasSearched && !isSearchingFirstPage && !hasResults;
+  const showEmptyResultsState =
+    hasSearched && !isSearchingFirstPage && !hasResults && !hasAnyResults;
 
   const jobFinderErrorDisplay = useMemo(() => {
     if (!canSubmitSearch && draftQuery) {
@@ -120,7 +150,19 @@ const JobFinderClient: React.FC = () => {
     }
 
     cleanUpResults();
+    void queryClient.invalidateQueries({ queryKey: jobFinderKeys.all });
     updateSearchParams({ query: draftQuery });
+  };
+
+  const handleJobStateChange = (externalJobId: string, userState: JobFinderUserState) => {
+    setAppendedResults((previousResults) =>
+      previousResults.map((job) =>
+        job.externalJobId === externalJobId ? { ...job, userState } : job,
+      ),
+    );
+    setSelectedJob((currentJob) =>
+      currentJob?.externalJobId === externalJobId ? { ...currentJob, userState } : currentJob,
+    );
   };
 
   return (
@@ -149,9 +191,31 @@ const JobFinderClient: React.FC = () => {
         </div>
       )}
 
-      {hasResults && (
+      {hasAnyResults && (
         <>
-          <JobFinderResultsTable results={appendedResults} onSelectJob={setSelectedJob} />
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Checkbox
+              id="hide-not-a-fit"
+              label="Hide not-a-fit jobs"
+              checked={hideNotAFit}
+              onChange={(event) => setHideNotAFit(event.target.checked)}
+            />
+            {hideNotAFit && hiddenNotAFitCount > 0 ? (
+              <p className="text-sm text-gray-500">
+                {hiddenNotAFitCount} not-a-fit {hiddenNotAFitCount === 1 ? "job" : "jobs"} hidden
+              </p>
+            ) : null}
+          </div>
+
+          {hasResults ? (
+            <JobFinderResultsTable results={visibleResults} onSelectJob={setSelectedJob} />
+          ) : (
+            <div className="rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-600">
+              All results in this search are marked as not a fit. Uncheck the filter above to view
+              them.
+            </div>
+          )}
+
           <JobFinderPaginationControls
             hasNextPage={canRenderViewMore}
             isLoadingMore={isLoadingMore}
@@ -160,7 +224,11 @@ const JobFinderClient: React.FC = () => {
         </>
       )}
 
-      <JobFinderJobModal job={selectedJob} onClose={() => setSelectedJob(null)} />
+      <JobFinderJobModal
+        job={selectedJob}
+        onClose={() => setSelectedJob(null)}
+        onJobStateChange={handleJobStateChange}
+      />
     </div>
   );
 };

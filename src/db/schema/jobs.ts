@@ -9,10 +9,16 @@ export const jobStatusEnum = pgEnum("job_status", [
   "INTERVIEWING",
   "OFFER",
   "REJECTED",
+  "NOT_A_FIT",
 ]);
 
 export const JOB_STATUSES = jobStatusEnum.enumValues;
 export type JobStatusType = (typeof JOB_STATUSES)[number];
+
+/** Pipeline statuses shown on the kanban board (excludes NOT_A_FIT). */
+export const BOARD_PIPELINE_STATUSES = JOB_STATUSES.filter(
+  (status) => status !== "NOT_A_FIT",
+) as Exclude<JobStatusType, "NOT_A_FIT">[];
 
 export const jobs = pgTable("jobs", {
   id: serial("id").primaryKey(),

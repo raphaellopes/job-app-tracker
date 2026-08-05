@@ -5,7 +5,14 @@ const MAX_SAVE_FOUND_JOB_LIST_ITEMS = 20;
 const MAX_SAVED_TAGS = 10;
 const MAX_HIGHLIGHT_TAG_LENGTH = 60;
 
-export const JobStatus = z.enum(["WISHLIST", "APPLIED", "INTERVIEWING", "OFFER", "REJECTED"]);
+export const JobStatus = z.enum([
+  "WISHLIST",
+  "APPLIED",
+  "INTERVIEWING",
+  "OFFER",
+  "REJECTED",
+  "NOT_A_FIT",
+]);
 export type JobStatusType = z.infer<typeof JobStatus>;
 
 export const createJobSchema = z.object({
