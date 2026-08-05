@@ -1,21 +1,22 @@
+import classNames from "classnames";
+
+import Badge, { type BadgeProps } from "@/components/badge";
+
 import type { JobStatusType } from "@/db/schema";
 
 import { getStatusColor } from "@/utils/status-colors";
 import { getStatusLabel } from "@/utils/status-labels";
 
-interface JobStatusTagProps extends React.HTMLAttributes<HTMLSpanElement> {
+interface JobStatusTagProps extends BadgeProps {
   status: JobStatusType;
 }
 
-const JobStatusTag: React.FC<JobStatusTagProps> = ({ status, ...props }) => {
+const JobStatusTag: React.FC<JobStatusTagProps> = ({ status, className, ...props }) => {
   const statusColor = getStatusColor(status);
   return (
-    <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor.bg} ${statusColor.text} bg-opacity-10`}
-      {...props}
-    >
+    <Badge className={classNames(statusColor.bg, statusColor.text, className)} {...props}>
       {getStatusLabel(status)}
-    </span>
+    </Badge>
   );
 };
 
