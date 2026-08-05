@@ -29,7 +29,7 @@ const JobFinderResultsTable: React.FC<JobFinderResultsTableProps> = ({ results, 
             className={classNames(
               "grid w-full grid-cols-12 gap-3 px-4 py-3 text-left text-sm border-b border-gray-100 hover:bg-gray-50 cursor-pointer",
               {
-                "opacity-60": isNotAFit,
+                "opacity-70 bg-gray-100": isNotAFit,
               },
             )}
           >
