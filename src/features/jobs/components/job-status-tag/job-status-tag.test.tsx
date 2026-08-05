@@ -25,6 +25,7 @@ describe("JobStatusTag", () => {
     ["INTERVIEWING", "Interviewing"],
     ["OFFER", "Offer"],
     ["REJECTED", "Rejected"],
+    ["NOT_A_FIT", "Not a fit"],
   ] as const)("formats %s as %s", (status, expectedLabel) => {
     render(<JobStatusTag status={status} />);
 

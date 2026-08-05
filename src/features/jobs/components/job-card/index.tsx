@@ -10,6 +10,7 @@ import { EditIcon } from "@/components/icons/edit-icon";
 import TagChipList from "@/components/tag/tag-chip-list";
 
 import DeleteJobButton from "@/features/jobs/components/delete-job-button";
+import MarkNotApplicableButton from "@/features/jobs/components/mark-not-applicable-button";
 import type { Job } from "@/features/jobs/types";
 
 interface JobCardProps {
@@ -68,6 +69,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
             >
               <EditIcon className="w-4 h-4" />
             </Link>
+            <MarkNotApplicableButton id={job.id} />
             <DeleteJobButton id={job.id} />
           </div>
         </div>

@@ -14,9 +14,10 @@ import { deleteJob } from "@/features/jobs/server/actions";
 
 interface DeleteJobButtonProps {
   id: number;
+  alwaysVisible?: boolean;
 }
 
-const DeleteJobButton: React.FC<DeleteJobButtonProps> = ({ id }) => {
+const DeleteJobButton: React.FC<DeleteJobButtonProps> = ({ id, alwaysVisible = false }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -61,7 +62,7 @@ const DeleteJobButton: React.FC<DeleteJobButtonProps> = ({ id }) => {
           e.preventDefault();
           setIsOpen(true);
         }}
-        className="hidden group-hover:flex"
+        className={alwaysVisible ? "flex" : "hidden group-hover:flex"}
       >
         <input type="hidden" name="id" value={id} />
         <button

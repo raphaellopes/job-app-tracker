@@ -33,7 +33,7 @@ export function appliedDatePatchForStatusChange(
   if (prevStatus === nextStatus) {
     return {};
   }
-  if (nextStatus === "WISHLIST") {
+  if (nextStatus === "WISHLIST" || nextStatus === "NOT_A_FIT") {
     return { appliedDate: null };
   }
   if (prevStatus === "WISHLIST") {

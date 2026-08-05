@@ -10,6 +10,13 @@ jest.mock("@/features/jobs/components/delete-job-button", () => ({
   default: ({ id }: { id: number }) => <span data-testid={`delete-job-${id}`}>Delete</span>,
 }));
 
+jest.mock("@/features/jobs/components/mark-not-applicable-button", () => ({
+  __esModule: true,
+  default: ({ id }: { id: number }) => (
+    <span data-testid={`mark-not-applicable-${id}`}>Not a fit</span>
+  ),
+}));
+
 import JobCard from "@/features/jobs/components/job-card";
 
 const navigationState = {

@@ -1,14 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import classNames from "classnames";
+import { toast } from "sonner";
 
+import Button from "@/components/buttons/button";
 import Tabs from "@/components/tabs";
 import TagChipList from "@/components/tag/tag-chip-list";
 
 import { LazyAIInterviewPrep } from "@/features/ai-interview-prep";
+import MarkNotApplicableButton from "@/features/jobs/components/mark-not-applicable-button";
 import JobNotesForm from "@/features/jobs/components/job-notes-form";
 import JobStatusSelect from "@/features/jobs/components/job-status-select";
+import { jobErrorMessage } from "@/features/jobs/errors";
+import { jobsKeys } from "@/features/jobs/query-keys";
+import { restoreJob } from "@/features/jobs/server/actions";
 import type { Job, JobsBoardFilters } from "@/features/jobs/types";
 
 interface JobViewProps {
@@ -33,13 +41,62 @@ const SectionContent: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({
   children,
 }) => <p className={classNames("text-sm text-gray-600", className)}>{children}</p>;
 
+const RestoreJobButton: React.FC<{ jobId: number }> = ({ jobId }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const handleRestore = async () => {
+    if (isSubmitting) {
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const result = await restoreJob(jobId);
+      if ("success" in result && result.success) {
+        await queryClient.invalidateQueries({ queryKey: jobsKeys.all });
+        toast.success("Job restored to wishlist.");
+      } else if ("error" in result) {
+        toast.error(jobErrorMessage(result.error));
+      }
+      router.refresh();
+    } catch (error) {
+      console.error("Error restoring job:", error);
+      toast.error("Something went wrong while restoring the job.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Button type="button" variant="secondary" onClick={handleRestore} disabled={isSubmitting}>
+      {isSubmitting ? "Restoring..." : "Restore to wishlist"}
+    </Button>
+  );
+};
+
 const JobView: React.FC<JobViewProps> = ({ job, filters = {} }) => {
   const [hasOpenedInterviewPrepTab, setHasOpenedInterviewPrepTab] = useState(false);
+  const isNotAFit = job.status === "NOT_A_FIT";
 
   const renderJobContent = (
     <div className="space-y-5">
       <Section title="Status">
-        <JobStatusSelect jobId={job.id} status={job.status} filters={filters} />
+        {isNotAFit ? (
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-sm text-gray-600">Not a fit</span>
+            <RestoreJobButton jobId={job.id} />
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center gap-3">
+            <JobStatusSelect jobId={job.id} status={job.status} filters={filters} />
+            <MarkNotApplicableButton
+              id={job.id}
+              className="text-gray-400 hover:text-amber-600 transition-colors cursor-pointer"
+            />
+          </div>
+        )}
       </Section>
       <Section title="Job publisher">
         <SectionContent>{job.jobPublisher ?? "Not provided"}</SectionContent>

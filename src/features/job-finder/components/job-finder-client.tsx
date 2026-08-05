@@ -3,13 +3,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import Checkbox from "@/components/form/checkbox";
+
 import JobFinderJobModal from "@/features/job-finder/components/job-finder-job-modal";
 import JobFinderPaginationControls from "@/features/job-finder/components/job-finder-pagination-controls";
 import JobFinderResultsTable from "@/features/job-finder/components/job-finder-results-table";
 import JobFinderSearchForm from "@/features/job-finder/components/job-finder-search-form";
 import { JobFinderApiError, jobFinderErrorMessage } from "@/features/job-finder/errors";
 import { useJobFinderSearch } from "@/features/job-finder/queries";
-import { JobFinderItem } from "@/features/job-finder/types";
+import { JobFinderItem, JobFinderUserState } from "@/features/job-finder/types";
 
 const JobFinderClient: React.FC = () => {
   const searchParams = useSearchParams();
@@ -20,6 +22,7 @@ const JobFinderClient: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loadedPages, setLoadedPages] = useState<number[]>([]);
   const [appendedResults, setAppendedResults] = useState<JobFinderItem[]>([]);
+  const [hideNotAFit, setHideNotAFit] = useState(false);
 
   const query = searchParams.get("q") ?? "";
   const [draftQuery, setDraftQuery] = useState(query);
@@ -67,14 +70,29 @@ const JobFinderClient: React.FC = () => {
     });
   }, [currentPage, data, loadedPages]);
 
+  const hiddenNotAFitCount = useMemo(
+    () => appendedResults.filter((job) => (job.userState ?? "none") === "not_a_fit").length,
+    [appendedResults],
+  );
+
+  const visibleResults = useMemo(() => {
+    if (!hideNotAFit) {
+      return appendedResults;
+    }
+
+    return appendedResults.filter((job) => (job.userState ?? "none") !== "not_a_fit");
+  }, [appendedResults, hideNotAFit]);
+
   const hasSearched = canSearch;
   const isSearchingFirstPage = isLoading && currentPage === 1;
   const isLoadingMore = isLoading && currentPage > 1;
-  const hasResults = appendedResults.length > 0;
+  const hasResults = visibleResults.length > 0;
+  const hasAnyResults = appendedResults.length > 0;
   const hasNextPage = data?.pagination.hasNextPage ?? false;
   const canRenderViewMore = hasNextPage || isLoadingMore;
   const showIdleState = !hasSearched;
-  const showEmptyResultsState = hasSearched && !isSearchingFirstPage && !hasResults;
+  const showEmptyResultsState =
+    hasSearched && !isSearchingFirstPage && !hasResults && !hasAnyResults;
 
   const jobFinderErrorDisplay = useMemo(() => {
     if (!canSubmitSearch && draftQuery) {
@@ -123,6 +141,17 @@ const JobFinderClient: React.FC = () => {
     updateSearchParams({ query: draftQuery });
   };
 
+  const handleJobStateChange = (externalJobId: string, userState: JobFinderUserState) => {
+    setAppendedResults((previousResults) =>
+      previousResults.map((job) =>
+        job.externalJobId === externalJobId ? { ...job, userState } : job,
+      ),
+    );
+    setSelectedJob((currentJob) =>
+      currentJob?.externalJobId === externalJobId ? { ...currentJob, userState } : currentJob,
+    );
+  };
+
   return (
     <div className="space-y-6">
       <JobFinderSearchForm
@@ -149,9 +178,31 @@ const JobFinderClient: React.FC = () => {
         </div>
       )}
 
-      {hasResults && (
+      {hasAnyResults && (
         <>
-          <JobFinderResultsTable results={appendedResults} onSelectJob={setSelectedJob} />
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Checkbox
+              id="hide-not-a-fit"
+              label="Hide not-a-fit jobs"
+              checked={hideNotAFit}
+              onChange={(event) => setHideNotAFit(event.target.checked)}
+            />
+            {hideNotAFit && hiddenNotAFitCount > 0 ? (
+              <p className="text-sm text-gray-500">
+                {hiddenNotAFitCount} not-a-fit {hiddenNotAFitCount === 1 ? "job" : "jobs"} hidden
+              </p>
+            ) : null}
+          </div>
+
+          {hasResults ? (
+            <JobFinderResultsTable results={visibleResults} onSelectJob={setSelectedJob} />
+          ) : (
+            <div className="rounded-lg border border-gray-200 bg-white p-6 text-sm text-gray-600">
+              All results in this search are marked as not a fit. Uncheck the filter above to view
+              them.
+            </div>
+          )}
+
           <JobFinderPaginationControls
             hasNextPage={canRenderViewMore}
             isLoadingMore={isLoadingMore}
@@ -160,7 +211,11 @@ const JobFinderClient: React.FC = () => {
         </>
       )}
 
-      <JobFinderJobModal job={selectedJob} onClose={() => setSelectedJob(null)} />
+      <JobFinderJobModal
+        job={selectedJob}
+        onClose={() => setSelectedJob(null)}
+        onJobStateChange={handleJobStateChange}
+      />
     </div>
   );
 };

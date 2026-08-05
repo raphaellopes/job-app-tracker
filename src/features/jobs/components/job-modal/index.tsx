@@ -4,23 +4,21 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import Modal from "@/components/modals/modal";
 
+import { BOARD_PIPELINE_STATUSES } from "@/db/schema";
+
 import { JobForm } from "@/features/jobs/components/job-form";
-import type { Job, JobStatusType } from "@/features/jobs/types";
+import type { Job } from "@/features/jobs/types";
 
 interface JobModalProps {
   job?: Job;
 }
 
-const VALID_STATUSES: JobStatusType[] = [
-  "WISHLIST",
-  "APPLIED",
-  "INTERVIEWING",
-  "OFFER",
-  "REJECTED",
-];
+type PipelineStatus = (typeof BOARD_PIPELINE_STATUSES)[number];
 
-function isValidStatus(status: string | null): status is JobStatusType {
-  return status !== null && VALID_STATUSES.includes(status as JobStatusType);
+const VALID_STATUSES: readonly PipelineStatus[] = BOARD_PIPELINE_STATUSES;
+
+function isValidStatus(status: string | null): status is PipelineStatus {
+  return status !== null && VALID_STATUSES.includes(status as PipelineStatus);
 }
 
 const JobModal: React.FC<JobModalProps> = ({ job }) => {

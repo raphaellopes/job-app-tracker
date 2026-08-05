@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { and, asc, desc, eq, ilike, max } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, max, ne } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/db";
@@ -77,7 +77,11 @@ export async function getJobs(search?: string, status?: string, sort?: string) {
 
   const filters = [eq(jobs.userId, userId)];
   if (search) filters.push(ilike(jobs.companyName, `%${search}%`));
-  if (status) filters.push(eq(jobs.status, status as JobStatusType));
+  if (status) {
+    filters.push(eq(jobs.status, status as JobStatusType));
+  } else {
+    filters.push(ne(jobs.status, "NOT_A_FIT"));
+  }
 
   const orderBy = [asc(jobs.status), asc(jobs.position)];
 
@@ -113,7 +117,7 @@ export async function saveFoundJob(
 
     const data = validatedPayload.data;
     const [existingJob] = await db
-      .select({ id: jobs.id })
+      .select({ id: jobs.id, status: jobs.status })
       .from(jobs)
       .where(
         and(
@@ -125,6 +129,9 @@ export async function saveFoundJob(
       .limit(1);
 
     if (existingJob) {
+      if (existingJob.status === "NOT_A_FIT") {
+        return { error: "already_not_a_fit" };
+      }
       return { error: "already_saved" };
     }
 

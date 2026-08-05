@@ -34,6 +34,17 @@ jest.mock("@/features/jobs/components/job-status-select", () => ({
   ),
 }));
 
+jest.mock("@/features/jobs/components/mark-not-applicable-button", () => ({
+  __esModule: true,
+  default: ({ id }: { id: number }) => (
+    <span data-testid={`mark-not-applicable-${id}`}>Not a fit</span>
+  ),
+}));
+
+jest.mock("@/features/jobs/server/actions", () => ({
+  restoreJob: jest.fn(),
+}));
+
 jest.mock("@/features/ai-interview-prep", () => ({
   __esModule: true,
   LazyAIInterviewPrep: ({ job }: { job: Job }) => (
