@@ -9,8 +9,8 @@ import { BOARD_PIPELINE_STATUSES } from "@/db/schema";
 import { jobErrorMessage } from "@/features/jobs/errors";
 import { useUpdateJobStatus } from "@/features/jobs/mutations";
 import type { JobsBoardFilters, JobStatusType } from "@/features/jobs/types";
-import { getStatusLabel } from "@/utils/status-labels";
 import { getStatusColor } from "@/utils/status-colors";
+import { getStatusLabel } from "@/utils/status-labels";
 
 interface JobStatusSelectProps {
   jobId: number;

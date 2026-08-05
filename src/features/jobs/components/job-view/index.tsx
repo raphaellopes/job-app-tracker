@@ -7,9 +7,9 @@ import Tabs from "@/components/tabs";
 import TagChipList from "@/components/tag/tag-chip-list";
 
 import { LazyAIInterviewPrep } from "@/features/ai-interview-prep";
-import MarkNotApplicableButton from "@/features/jobs/components/mark-not-applicable-button";
 import JobNotesForm from "@/features/jobs/components/job-notes-form";
 import JobStatusSelect from "@/features/jobs/components/job-status-select";
+import MarkNotApplicableButton from "@/features/jobs/components/mark-not-applicable-button";
 import RestoreJobButton from "@/features/jobs/components/restore-job-button";
 import type { Job, JobsBoardFilters } from "@/features/jobs/types";
 
