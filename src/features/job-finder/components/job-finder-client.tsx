@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 import Checkbox from "@/components/form/checkbox";
 
@@ -11,12 +12,14 @@ import JobFinderResultsTable from "@/features/job-finder/components/job-finder-r
 import JobFinderSearchForm from "@/features/job-finder/components/job-finder-search-form";
 import { JobFinderApiError, jobFinderErrorMessage } from "@/features/job-finder/errors";
 import { useJobFinderSearch } from "@/features/job-finder/queries";
+import { jobFinderKeys } from "@/features/job-finder/query-keys";
 import { JobFinderItem, JobFinderUserState } from "@/features/job-finder/types";
 
 const JobFinderClient: React.FC = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const queryClient = useQueryClient();
 
   const [selectedJob, setSelectedJob] = useState<JobFinderItem | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,16 +57,25 @@ const JobFinderClient: React.FC = () => {
   const { data, isLoading, isError, error } = useJobFinderSearch(filters, canSearch);
 
   useEffect(() => {
-    if (!data || loadedPages.includes(currentPage)) {
+    if (!data) {
+      return;
+    }
+
+    // Page 1 always syncs to latest query data (covers refetch after save/dismiss).
+    if (currentPage === 1) {
+      setLoadedPages((previousPages) =>
+        previousPages.length === 1 && previousPages[0] === 1 ? previousPages : [1],
+      );
+      setAppendedResults(data.items);
+      return;
+    }
+
+    if (loadedPages.includes(currentPage)) {
       return;
     }
 
     setLoadedPages((previousPages) => [...previousPages, currentPage]);
     setAppendedResults((previousResults) => {
-      if (currentPage === 1) {
-        return data.items;
-      }
-
       const seenIds = new Set(previousResults.map((job) => job.externalJobId));
       const nextJobs = data.items.filter((job) => !seenIds.has(job.externalJobId));
       return [...previousResults, ...nextJobs];
@@ -138,6 +150,7 @@ const JobFinderClient: React.FC = () => {
     }
 
     cleanUpResults();
+    void queryClient.invalidateQueries({ queryKey: jobFinderKeys.all });
     updateSearchParams({ query: draftQuery });
   };
 

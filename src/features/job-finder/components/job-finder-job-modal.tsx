@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import Button from "@/components/buttons/button";
 import Modal from "@/components/modals/modal";
 
+import { jobFinderKeys } from "@/features/job-finder/query-keys";
 import { JobFinderItem, JobFinderUserState } from "@/features/job-finder/types";
 import { jobErrorMessage } from "@/features/jobs/errors";
 import { dismissFoundJob, restoreFoundJob, saveFoundJob } from "@/features/jobs/server/actions";
@@ -40,6 +42,7 @@ const JobFinderJobModal: React.FC<JobFinderJobModalProps> = ({
   onClose,
   onJobStateChange,
 }) => {
+  const queryClient = useQueryClient();
   const [isSaving, setIsSaving] = useState(false);
   const [isDismissing, setIsDismissing] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
@@ -50,6 +53,10 @@ const JobFinderJobModal: React.FC<JobFinderJobModalProps> = ({
 
   const userState = job.userState ?? "none";
   const isBusy = isSaving || isDismissing || isRestoring;
+
+  const invalidateJobFinderSearch = async () => {
+    await queryClient.invalidateQueries({ queryKey: jobFinderKeys.all });
+  };
 
   const handleSaveJob = async () => {
     if (isBusy) {
@@ -63,18 +70,21 @@ const JobFinderJobModal: React.FC<JobFinderJobModalProps> = ({
       if ("success" in result && result.success) {
         toast.success("Job saved to your wishlist.");
         onJobStateChange?.(job.externalJobId, "saved");
+        await invalidateJobFinderSearch();
         return;
       }
 
       if ("error" in result && result.error === "already_saved") {
         toast.info(jobErrorMessage("already_saved"));
         onJobStateChange?.(job.externalJobId, "saved");
+        await invalidateJobFinderSearch();
         return;
       }
 
       if ("error" in result && result.error === "already_not_a_fit") {
         toast.info(jobErrorMessage("already_not_a_fit"));
         onJobStateChange?.(job.externalJobId, "not_a_fit");
+        await invalidateJobFinderSearch();
         return;
       }
 
@@ -101,6 +111,7 @@ const JobFinderJobModal: React.FC<JobFinderJobModalProps> = ({
       if ("success" in result && result.success) {
         toast.success("Job marked as not a fit.");
         onJobStateChange?.(job.externalJobId, "not_a_fit");
+        await invalidateJobFinderSearch();
         return;
       }
 
@@ -127,6 +138,7 @@ const JobFinderJobModal: React.FC<JobFinderJobModalProps> = ({
       if ("success" in result && result.success) {
         toast.success("Job restored to your wishlist.");
         onJobStateChange?.(job.externalJobId, "saved");
+        await invalidateJobFinderSearch();
         return;
       }
 
