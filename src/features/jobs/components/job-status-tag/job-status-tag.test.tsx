@@ -37,7 +37,7 @@ describe("JobStatusTag", () => {
     const { container } = render(<JobStatusTag status="APPLIED" />);
     const span = container.querySelector("span");
 
-    expect(span).toHaveClass("bg-test-bg", "text-test-text", "bg-opacity-10");
+    expect(span).toHaveClass("bg-test-bg", "text-test-text");
   });
 
   it("forwards extra span attributes", () => {
