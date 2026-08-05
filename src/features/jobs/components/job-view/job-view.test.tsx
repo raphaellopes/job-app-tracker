@@ -48,8 +48,6 @@ jest.mock("@/features/jobs/components/restore-job-button", () => ({
   ),
 }));
 
-
-
 jest.mock("@/features/ai-interview-prep", () => ({
   __esModule: true,
   LazyAIInterviewPrep: ({ job }: { job: Job }) => (

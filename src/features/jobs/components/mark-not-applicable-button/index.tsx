@@ -53,7 +53,10 @@ const MarkNotApplicableButton: React.FC<MarkNotApplicableButtonProps> = ({ id, c
     <>
       <button
         type="button"
-        className={className ?? "hidden group-hover:block text-gray-400 hover:text-amber-600 transition-colors cursor-pointer"}
+        className={
+          className ??
+          "hidden group-hover:block text-gray-400 hover:text-amber-600 transition-colors cursor-pointer"
+        }
         aria-label="Mark as not a fit"
         onClick={() => setIsOpen(true)}
       >

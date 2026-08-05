@@ -6,11 +6,7 @@ import Modal from "@/components/modals/modal";
 
 import { JobFinderItem, JobFinderUserState } from "@/features/job-finder/types";
 import { jobErrorMessage } from "@/features/jobs/errors";
-import {
-  dismissFoundJob,
-  restoreFoundJob,
-  saveFoundJob,
-} from "@/features/jobs/server/actions";
+import { dismissFoundJob, restoreFoundJob, saveFoundJob } from "@/features/jobs/server/actions";
 
 interface JobFinderJobModalProps {
   job: JobFinderItem | null;
@@ -206,7 +202,12 @@ const JobFinderJobModal: React.FC<JobFinderJobModalProps> = ({
                     ? "Already in wishlist"
                     : "Save to wishlist"}
               </Button>
-              <Button type="button" variant="secondary" onClick={handleDismissJob} disabled={isBusy}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleDismissJob}
+                disabled={isBusy}
+              >
                 {isDismissing ? "Updating..." : "Mark as not a fit"}
               </Button>
             </>
