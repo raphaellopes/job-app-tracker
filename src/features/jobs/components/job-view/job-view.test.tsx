@@ -41,9 +41,14 @@ jest.mock("@/features/jobs/components/mark-not-applicable-button", () => ({
   ),
 }));
 
-jest.mock("@/features/jobs/server/actions", () => ({
-  restoreJob: jest.fn(),
+jest.mock("@/features/jobs/components/restore-job-button", () => ({
+  __esModule: true,
+  default: ({ jobId }: { jobId: number }) => (
+    <span data-testid={`restore-job-${jobId}`}>Restore</span>
+  ),
 }));
+
+
 
 jest.mock("@/features/ai-interview-prep", () => ({
   __esModule: true,

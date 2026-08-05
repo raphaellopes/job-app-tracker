@@ -1,30 +1,11 @@
 import classNames from "classnames";
 
+import JobFinderUserStateBadge from "@/features/job-finder/components/job-finder-user-state-badge";
 import { JobFinderItem } from "@/features/job-finder/types";
 
 interface JobFinderResultsTableProps {
   results: JobFinderItem[];
   onSelectJob: (job: JobFinderItem) => void;
-}
-
-function UserStateBadge({ userState }: { userState: JobFinderItem["userState"] }) {
-  if (userState === "not_a_fit") {
-    return (
-      <span className="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
-        Not a fit
-      </span>
-    );
-  }
-
-  if (userState === "saved") {
-    return (
-      <span className="inline-flex rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
-        In wishlist
-      </span>
-    );
-  }
-
-  return null;
 }
 
 const JobFinderResultsTable: React.FC<JobFinderResultsTableProps> = ({ results, onSelectJob }) => {
@@ -54,7 +35,7 @@ const JobFinderResultsTable: React.FC<JobFinderResultsTableProps> = ({ results, 
           >
             <span className="col-span-7 font-medium text-gray-900 flex items-center gap-2 flex-wrap">
               {job.title}
-              <UserStateBadge userState={userState} />
+              <JobFinderUserStateBadge userState={userState} />
             </span>
             <span className="col-span-3 text-gray-700 flex items-center gap-2">
               {job.employerLogo && (
